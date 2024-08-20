@@ -13,4 +13,7 @@ abstract class ApiAuthAbstract extends GetxService {
   Future<ApiAuthForgotResponseModel> forgot({
     required String username,
   });
+
+  Future<ApiAuthLoginResponseModel> register(
+      {required Map<String, String> value});
 }

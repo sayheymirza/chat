@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:chat/futures/auth_reigster/auth_registor.controller.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/dropdowns/dropdowns.widget.dart';
@@ -15,61 +17,63 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
   Widget build(BuildContext context) {
     Get.put(AuthRegisterController());
 
-    controller.loadDropdowns();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Image.asset("lib/app/assets/images/auth_logo.png"),
-        centerTitle: true,
-      ),
-      bottomNavigationBar: footer(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ثبت نام',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Gap(10),
-                  Text(
-                    'برای استفاده از امکانات این برنامه، لطفاً اطلاعات خود را وارد کنید.',
-                  ),
-                ],
-              ),
-            ),
-            const Gap(24),
-            Obx(
-              () => Column(
-                children: [
-                  StepperWidget(
-                    current: controller.step.value,
-                    count: 7,
-                  ),
-                  IndexedStack(
-                    index: controller.step.value,
+    return Obx(
+      () => PopScope(
+        canPop: controller.step.value == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (controller.step.value != 0) {
+            controller.step.value -= 1;
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Image.asset("lib/app/assets/images/auth_logo.png"),
+            centerTitle: true,
+          ),
+          bottomNavigationBar: footer(),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      step1(),
-                      step2(),
-                      step3(),
-                      step4(),
-                      step5(),
-                      step6(),
-                      step7(),
+                      Text(
+                        'ثبت نام',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Gap(10),
+                      Text(
+                        'برای استفاده از امکانات این برنامه، لطفاً اطلاعات خود را وارد کنید.',
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const Gap(24),
+                StepperWidget(
+                  current: controller.step.value,
+                  count: 7,
+                ),
+                IndexedStack(
+                  index: controller.step.value,
+                  children: [
+                    step1(),
+                    step2(),
+                    step3(),
+                    step4(),
+                    step5(),
+                    step6(),
+                    step7(),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -428,13 +432,61 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
             ),
             const Gap(16),
             DropdownsWidget(
-              group: "gender",
-              name: "gender",
-              items: controller.dropdownsItems['gender']!
+              group: 'LifeStyle',
+              name: 'living',
+              items: controller.dropdownsItems['living']!
                   .map((e) => e as DropdownMenuItem<String>)
                   .toList(),
               decoration: const InputDecoration(
-                labelText: "جنسیت",
+                labelText: 'سبک زندگی',
+              ),
+              validator: FormBuilderValidators.compose(
+                [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+            ),
+            const Gap(16),
+            DropdownsWidget(
+              group: 'SalaryRange',
+              name: 'salary',
+              items: controller.dropdownsItems['salary']!
+                  .map((e) => e as DropdownMenuItem<String>)
+                  .toList(),
+              decoration: const InputDecoration(
+                labelText: 'وضعیت درآمد',
+              ),
+              validator: FormBuilderValidators.compose(
+                [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+            ),
+            const Gap(16),
+            DropdownsWidget(
+              group: 'CarStatus',
+              name: 'car',
+              items: controller.dropdownsItems['car']!
+                  .map((e) => e as DropdownMenuItem<String>)
+                  .toList(),
+              decoration: const InputDecoration(
+                labelText: 'وضعیت اتومبیل',
+              ),
+              validator: FormBuilderValidators.compose(
+                [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+            ),
+            const Gap(16),
+            DropdownsWidget(
+              group: 'HouseStatus',
+              name: 'home',
+              items: controller.dropdownsItems['home']!
+                  .map((e) => e as DropdownMenuItem<String>)
+                  .toList(),
+              decoration: const InputDecoration(
+                labelText: 'وضعیت مسکن',
               ),
               validator: FormBuilderValidators.compose(
                 [
@@ -456,12 +508,90 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
         enabled: !controller.disabled.value,
         child: Column(
           children: [
-            FormBuilderTextField(
-              name: 'name',
+            DropdownsWidget(
+              group: 'Province',
+              name: 'province',
+              items: controller.dropdownsItems['province']!
+                  .map((e) => e as DropdownMenuItem<String>)
+                  .toList(),
               decoration: const InputDecoration(
-                labelText: 'نام',
+                labelText: 'استان محل سکونت',
+              ),
+              validator: FormBuilderValidators.compose(
+                [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+              onChange: (value) {
+                // onProvinceChanged(value);
+                if (value != null) {
+                  controller.setCitiesByProvider(value.toString());
+                  controller.registerStep6FormKey.currentState!
+                      .patchValue({"city": null});
+                }
+              },
+            ),
+            const Gap(16),
+            if (controller.cities.isNotEmpty)
+              DropdownsWidget(
+                group: 'City',
+                name: 'city',
+                items: controller.cities
+                    .map((e) => e as DropdownMenuItem<String>)
+                    .toList(),
+                decoration: const InputDecoration(
+                  labelText: 'شهر محل سکونت',
+                ),
+                validator: FormBuilderValidators.compose(
+                  [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+              ),
+            if (controller.cities.isNotEmpty) const Gap(16),
+            DropdownsWidget(
+              group: 'ReligionRate',
+              name: 'religion',
+              items: controller.dropdownsItems['religion']!
+                  .map((e) => e as DropdownMenuItem<String>)
+                  .toList(),
+              decoration: const InputDecoration(
+                labelText: 'میزان مذهبی بودن',
+              ),
+              validator: FormBuilderValidators.compose(
+                [
+                  FormBuilderValidators.required(),
+                ],
+              ),
+            ),
+            const Gap(16),
+            if ('type'.tr == 'dating')
+              // mariage type
+              DropdownsWidget(
+                group: 'MarriageType',
+                name: 'marriageType',
+                items: controller.dropdownsItems['marriageType']!
+                    .map((e) => e as DropdownMenuItem<String>)
+                    .toList(),
+                decoration: const InputDecoration(
+                  labelText: 'نوع ازدواج',
+                ),
+                validator: FormBuilderValidators.compose(
+                  [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+              ),
+            if ('type'.tr == 'dating') const Gap(16),
+            FormBuilderTextField(
+              name: 'about',
+              decoration: InputDecoration(
+                labelText:
+                    'type'.tr == 'dating' ? 'درباره همسر من' : 'درباره من',
                 helperText: " پس از بررسی و تایید قابل نمایش است",
               ),
+              minLines: 2,
+              maxLines: 4,
               validator: FormBuilderValidators.compose(
                 [
                   FormBuilderValidators.required(),
@@ -470,22 +600,6 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
                   CustomValidator.justPersian(
                       skipChars: [' '], errorText: 'فقط حروف فارسی وارد کنید'),
                   CustomValidator.justNotNumber(errorText: 'عدد وارد نکنید'),
-                ],
-              ),
-            ),
-            const Gap(16),
-            DropdownsWidget(
-              group: "gender",
-              name: "gender",
-              items: controller.dropdownsItems['gender']!
-                  .map((e) => e as DropdownMenuItem<String>)
-                  .toList(),
-              decoration: const InputDecoration(
-                labelText: "جنسیت",
-              ),
-              validator: FormBuilderValidators.compose(
-                [
-                  FormBuilderValidators.required(),
                 ],
               ),
             ),
@@ -503,36 +617,82 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
         enabled: !controller.disabled.value,
         child: Column(
           children: [
+            const Text(
+              " شماره موبایل صرفا جهت احراز هویت کاربران است و به هیچ عنوان در معرض نمایش دیگران قرار نمیگیرد و یا در اختیار دیگر کاربران قرار نخواهد گرفت ",
+            ),
+            const Gap(8),
             FormBuilderTextField(
-              name: 'name',
+              name: 'phone',
               decoration: const InputDecoration(
-                labelText: 'نام',
-                helperText: " پس از بررسی و تایید قابل نمایش است",
+                labelText: 'شماره موبایل',
               ),
+              textDirection: TextDirection.ltr,
+              keyboardType: TextInputType.phone,
               validator: FormBuilderValidators.compose(
                 [
                   FormBuilderValidators.required(),
-                  FormBuilderValidators.maxLength(10,
-                      errorText: 'نباید بیشتر از ۱۰ حرف وارد کنید'),
-                  CustomValidator.justPersian(
-                      skipChars: [' '], errorText: 'فقط حروف فارسی وارد کنید'),
-                  CustomValidator.justNotNumber(errorText: 'عدد وارد نکنید'),
+                  FormBuilderValidators.maxLength(11,
+                      errorText: 'نباید بیشتر از 11 حرف وارد کنید'),
                 ],
               ),
             ),
             const Gap(16),
-            DropdownsWidget(
-              group: "gender",
-              name: "gender",
-              items: controller.dropdownsItems['gender']!
-                  .map((e) => e as DropdownMenuItem<String>)
-                  .toList(),
-              decoration: const InputDecoration(
-                labelText: "جنسیت",
+            // password
+            FormBuilderTextField(
+              name: 'password',
+              obscureText: !controller.visablePassword.value,
+              decoration: InputDecoration(
+                labelText: 'رمز عبور',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    controller.visablePassword.value
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    controller.visablePassword.value =
+                        !controller.visablePassword.value;
+                  },
+                ),
               ),
+              textDirection: TextDirection.ltr,
               validator: FormBuilderValidators.compose(
                 [
+                  CustomValidator.justNotPersian(
+                    errorText: 'از حروف فارسی استفاده نکنید',
+                  ),
                   FormBuilderValidators.required(),
+                  FormBuilderValidators.minLength(4),
+                ],
+              ),
+            ),
+            const Gap(16),
+            // repeat password
+            FormBuilderTextField(
+              name: 'repeatPassword',
+              obscureText: !controller.visablePassword.value,
+              decoration: InputDecoration(
+                labelText: 'تکرار رمز عبور',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    controller.visablePassword.value
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    controller.visablePassword.value =
+                        !controller.visablePassword.value;
+                  },
+                ),
+              ),
+              textDirection: TextDirection.ltr,
+              validator: FormBuilderValidators.compose(
+                [
+                  CustomValidator.justNotPersian(
+                    errorText: 'از حروف فارسی استفاده نکنید',
+                  ),
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.minLength(4),
                 ],
               ),
             ),
@@ -591,7 +751,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
                             ),
                           )
                         : Text(
-                            controller.step.value == 7
+                            controller.step.value == 6
                                 ? 'تایید و ثبت نام'
                                 : 'مرحله بعد',
                             style: const TextStyle(
