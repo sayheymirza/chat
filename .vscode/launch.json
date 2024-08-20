@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "direct",
+        "request": "launch",
+        "type": "dart",
+        "program": "lib/main.direct.dart",
+        "args": ["--flavor", "direct", "--target", "lib/flavors/direct/main.dart" ]
+      },
+    ],
+    "compounds": []
+  }
