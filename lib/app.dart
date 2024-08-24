@@ -14,7 +14,16 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       initialRoute: '/',
       debugShowCheckedModeBanner: false,
-      theme: themeData,
+      theme: themeData.copyWith(
+        bottomNavigationBarTheme: themeData.bottomNavigationBarTheme.copyWith(
+          selectedItemColor: themeData.primaryColor,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: themeData.elevatedButtonTheme.style!.copyWith(
+            backgroundColor: WidgetStatePropertyAll(themeData.primaryColor),
+          ),
+        ),
+      ),
       getPages: pages,
       translations: I18NTranslations(),
       locale: const Locale('fa', 'social'),

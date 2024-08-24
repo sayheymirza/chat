@@ -14,7 +14,8 @@ List<String> persianNumbers = [
   '٦',
   '۷',
   '۸',
-  '۹'
+  '۹',
+  '۵'
 ];
 List<String> englishNumbers = [
   '0',
@@ -26,7 +27,8 @@ List<String> englishNumbers = [
   '6',
   '7',
   '8',
-  '9'
+  '9',
+  '5'
 ];
 
 class CustomValidator {

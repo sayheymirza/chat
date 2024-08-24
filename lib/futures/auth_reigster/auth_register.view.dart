@@ -17,6 +17,8 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
   Widget build(BuildContext context) {
     Get.put(AuthRegisterController());
 
+    controller.loadDropdowns();
+
     return Obx(
       () => PopScope(
         canPop: controller.step.value == 0,

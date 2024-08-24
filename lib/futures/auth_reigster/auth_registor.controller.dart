@@ -55,13 +55,6 @@ class AuthRegisterController extends GetxController {
   }.obs;
   RxList cities = [].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-
-    loadDropdowns();
-  }
-
   Future<void> setCitiesByProvider(String value) async {
     var query = database.select(database.dropdownTable);
 

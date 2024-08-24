@@ -1,3 +1,41 @@
+class ProfileSearchModel {
+  late int? id;
+  late String? seen;
+  late String? avatar;
+  late String? fullname;
+  late String? city;
+  late bool? ad;
+  late bool? special;
+  late bool? verified;
+  late int? age;
+
+  ProfileSearchModel({
+    this.id,
+    this.seen,
+    this.avatar,
+    this.fullname,
+    this.city,
+    this.ad,
+    this.special,
+    this.verified,
+    this.age,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['seen'] = seen;
+    data['avatar'] = avatar;
+    data['fullname'] = fullname;
+    data['city'] = city;
+    data['ad'] = ad;
+    data['special'] = special;
+    data['verified'] = verified;
+    data['age'] = age;
+    return data;
+  }
+}
+
 class ProfileModel {
   late int? id;
   late String? status;
