@@ -8,6 +8,8 @@ abstract class ApiUserAbstract extends GetxService {
 
   Future<ProfileModel?> me();
 
+  Future<ProfileModel?> one({required int id});
+
   Future<ApiUserSearchResponseModel> search({
     int page = 1,
     int limit = 10,

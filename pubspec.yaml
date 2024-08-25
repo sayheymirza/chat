@@ -42,3 +42,4 @@ flutter:
     - lib/app/assets/images/splash_logo.png
     - lib/app/assets/images/auth_logo.png
     - lib/app/assets/images/auth_hero.png
+    - lib/app/assets/images/star.png

@@ -41,11 +41,11 @@ class AppView extends GetView<AppController> {
               label: "app_name".tr,
             ),
             // chats
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  const Icon(Icons.chat),
+                  Icon(Icons.chat),
                   Positioned(
                     top: -5,
                     right: 14,

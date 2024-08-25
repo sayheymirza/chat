@@ -31,9 +31,6 @@ class AccountView extends GetView<AccountController> {
               icon: Icons.forum_rounded,
               color: Colors.cyan,
               onTap: () {
-                // Navigator.pushNamed(context, '/app/messages').then((_) {
-                //   fetchUnreadedMessages();
-                // });
                 Get.toNamed('/app/messages');
               },
               suffix: const Badge(
@@ -44,7 +41,11 @@ class AccountView extends GetView<AccountController> {
               title: 'نمایش پروفایل من',
               icon: Icons.visibility,
               color: Colors.green,
-              page: "/app/profile/${controller.profile.profile.value!.id}",
+              page: "/profile/${controller.profile.profile.value!.id}",
+              arguments: {
+                "id": 0,
+                "options": false,
+              },
             ),
             // edit profile
             item(
@@ -206,6 +207,7 @@ class AccountView extends GetView<AccountController> {
     required IconData icon,
     required Color color,
     String? page,
+    Map<String, dynamic> arguments = const {},
     Function? onTap,
     Widget? suffix,
   }) {
@@ -213,7 +215,7 @@ class AccountView extends GetView<AccountController> {
       onTap: () {
         if (page != null) {
           try {
-            Get.toNamed(page);
+            Get.toNamed(page, arguments: arguments);
           } catch (e) {
             //
           }
@@ -314,7 +316,11 @@ class AccountView extends GetView<AccountController> {
                 ),
                 child: controller.profile.profile.value?.avatar == null
                     ? const Icon(Icons.person)
-                    : Image.network(controller.profile.profile.value!.avatar!),
+                    : Image.network(
+                        controller.profile.profile.value!.avatar!,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.topCenter,
+                      ),
               ),
             ),
           ],

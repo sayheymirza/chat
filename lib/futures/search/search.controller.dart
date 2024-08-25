@@ -13,11 +13,13 @@ class SearchViewController extends GetxController {
       ApiUserSearchFilterRequestModel.empty;
 
   void reset() {
-    page.value = 1;
-    profiles.value = List<ProfileSearchModel>.empty();
-    lastPage.value = 0;
-    filters = ApiUserSearchFilterRequestModel.empty;
-    submit();
+    Future.delayed(const Duration(milliseconds: 100), () {
+      page.value = 1;
+      profiles.value = List<ProfileSearchModel>.empty();
+      lastPage.value = 0;
+      filters = ApiUserSearchFilterRequestModel.empty;
+      submit();
+    });
   }
 
   Future<void> submit() async {

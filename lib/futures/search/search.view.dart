@@ -1,8 +1,7 @@
-import 'package:chat/models/profile.model.dart';
-import 'package:chat/shared/snackbar.dart';
-import 'package:chat/shared/widgets/gradient_app_bar.dart';
-import 'package:chat/shared/widgets/avatar.dart';
 import 'package:chat/futures/search/search.controller.dart';
+import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/widgets/avatar.dart';
+import 'package:chat/shared/widgets/gradient_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -48,7 +47,14 @@ class SearchView extends GetView<SearchViewController> {
   Widget profile(ProfileSearchModel item) {
     return GestureDetector(
       onTap: () {
-        showSnackbar(message: 'باز شدن صفحه پروفایل');
+        // showSnackbar(message: 'باز شدن صفحه پروفایل');
+        Get.toNamed(
+          '/profile/${item.id}',
+          arguments: {
+            'id': item.id,
+            'options': true,
+          },
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
