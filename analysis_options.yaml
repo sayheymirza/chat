@@ -3,3 +3,4 @@ analyzer:
   errors:
     constant_identifier_names: ignore
     non_constant_identifier_names: ignore
+    prefer_final_fields: ignore

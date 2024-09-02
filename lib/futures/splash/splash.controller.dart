@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
-import 'package:chat/shared/env.dart';
+import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class SplashController extends GetxController {
   RxString status = 'در حال اتصال به سرور'.obs;
@@ -20,7 +20,7 @@ class SplashController extends GetxController {
 
   Future<void> move() async {
     // check access token exists in storage or not
-    var accessToken = GetStorage().read<String>(ENV.STORAGE_ACCESS_TOKEN);
+    var accessToken = Services.configs.get(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
 
     if (accessToken != null) {
       // move to /app

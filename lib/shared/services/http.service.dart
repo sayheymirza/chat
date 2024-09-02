@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:chat/shared/env.dart';
-import 'package:get/get.dart';
+import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/services.dart';
 import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:get/get.dart';
 
 class HttpService extends GetxService {
   final Dio _client = Dio();
@@ -19,12 +19,12 @@ class HttpService extends GetxService {
   }) async {
     if (endpoint == null || endpoint.isEmpty) {
       // get endpoint from storage
-      endpoint = GetStorage().read<String>(ENV.STORAGE_ENDPOINT_API);
+      endpoint = Services.configs.get(key: CONSTANTS.STORAGE_ENDPOINT_API);
     }
 
     if (endpoint == null || endpoint.isEmpty) {
       // use default
-      endpoint = ENV.DEFAULT_ENDPOINT_API;
+      endpoint = CONSTANTS.DEFAULT_ENDPOINT_API;
     }
 
     var url = "$endpoint$path";
@@ -34,7 +34,8 @@ class HttpService extends GetxService {
     };
 
     if (auth) {
-      var accessToken = GetStorage().read<String>(ENV.STORAGE_ACCESS_TOKEN);
+      var accessToken =
+          Services.configs.get(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
 
       if (accessToken != null) {
         headers['Authorization'] = 'Bearer $accessToken';

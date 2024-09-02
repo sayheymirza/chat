@@ -22,6 +22,12 @@ class SearchViewController extends GetxController {
     });
   }
 
+  void goToPage(int value) {
+    if (loading.value == true) return;
+    page.value = value;
+    submit();
+  }
+
   Future<void> submit() async {
     if (loading.value == true) return;
     try {
@@ -48,6 +54,7 @@ class SearchViewController extends GetxController {
         .then((values) {
       if (values != null) {
         filters = values;
+        page.value = 1;
         submit();
       }
     });

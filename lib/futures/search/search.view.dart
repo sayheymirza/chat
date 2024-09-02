@@ -1,7 +1,8 @@
 import 'package:chat/futures/search/search.controller.dart';
 import 'package:chat/models/profile.model.dart';
-import 'package:chat/shared/widgets/avatar.dart';
-import 'package:chat/shared/widgets/gradient_app_bar.dart';
+import 'package:chat/shared/widgets/avatar.widget.dart';
+import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
+import 'package:chat/shared/widgets/pagination.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -33,12 +34,33 @@ class SearchView extends GetView<SearchViewController> {
         ),
       ),
       body: Obx(
-        () => SingleChildScrollView(
-          child: Column(
-            children: [
-              for (var item in controller.profiles) profile(item),
-            ],
-          ),
+        () => Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  for (var item in controller.profiles) profile(item),
+                  if (controller.profiles.isNotEmpty)
+                    PaginationWidget(
+                      last: controller.lastPage.value,
+                      page: controller.page.value,
+                      onChange: (page) {
+                        controller.goToPage(page);
+                      },
+                    ),
+                ],
+              ),
+            ),
+            if (controller.loading.value)
+              const Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -87,11 +109,12 @@ class SearchView extends GetView<SearchViewController> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Gap(10),
+                      const Gap(6),
                       if (item.verified == true)
                         const Icon(
                           Icons.verified_rounded,
                           color: Colors.blue,
+                          size: 16,
                         ),
                     ],
                   ),

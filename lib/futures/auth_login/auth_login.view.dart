@@ -1,6 +1,6 @@
 import 'package:chat/futures/auth_login/auth_login.controller.dart';
 import 'package:chat/shared/validator.dart';
-import 'package:chat/shared/widgets/or.dart';
+import 'package:chat/shared/widgets/or.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';

@@ -1,4 +1,5 @@
 import 'package:chat/futures/account/account.controller.dart';
+import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -37,16 +38,17 @@ class AccountView extends GetView<AccountController> {
                 label: Text('0'),
               ),
             ),
-            item(
-              title: 'نمایش پروفایل من',
-              icon: Icons.visibility,
-              color: Colors.green,
-              page: "/profile/${controller.profile.profile.value!.id}",
-              arguments: {
-                "id": 0,
-                "options": false,
-              },
-            ),
+            if (controller.profile.profile.value?.id != null)
+              item(
+                title: 'نمایش پروفایل من',
+                icon: Icons.visibility,
+                color: Colors.green,
+                page: "/profile/0",
+                arguments: {
+                  "id": 0,
+                  "options": false,
+                },
+              ),
             // edit profile
             item(
               title: 'ویرایش پروفایل من',
@@ -151,7 +153,9 @@ class AccountView extends GetView<AccountController> {
               title: 'خروج از حساب کاربری',
               icon: Icons.logout,
               color: Colors.black,
-              onTap: () {},
+              onTap: () {
+                Get.dialog(const DialogLogoutView());
+              },
             ),
             // disable or delete account (red)
             item(

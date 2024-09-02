@@ -1,5 +1,5 @@
 import 'package:chat/futures/profile/profile.controller.dart';
-import 'package:chat/shared/widgets/title.dart';
+import 'package:chat/shared/widgets/title.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';

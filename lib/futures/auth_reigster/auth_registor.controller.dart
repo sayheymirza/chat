@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
-import 'package:chat/shared/env.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class AuthRegisterController extends GetxController {
   RxInt step = 0.obs;
@@ -147,7 +147,10 @@ class AuthRegisterController extends GetxController {
 
       if (result.token != null) {
         // store token
-        GetStorage().write(ENV.STORAGE_ACCESS_TOKEN, result.token);
+        Services.configs.set(
+          key: CONSTANTS.STORAGE_ACCESS_TOKEN,
+          value: result.token,
+        );
 
         Get.offAllNamed('/app');
       }
