@@ -12,159 +12,164 @@ class AccountView extends GetView<AccountController> {
     Get.put(AccountController());
 
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(
-          top: Get.mediaQuery.padding.top + 32,
-          bottom: 32,
-          left: 0,
-          right: 0,
-        ),
-        child: Column(
-          children: [
-            header(),
-            const Gap(16),
-            abilities(),
-            const Gap(16),
-            buy(),
-            const Gap(16),
-            item(
-              title: 'پیام های مدیریت',
-              icon: Icons.forum_rounded,
-              color: Colors.cyan,
-              onTap: () {
-                Get.toNamed('/app/messages');
-              },
-              suffix: const Badge(
-                label: Text('0'),
-              ),
-            ),
-            if (controller.profile.profile.value?.id != null)
+      body: RefreshIndicator(
+        onRefresh: () {
+          return controller.onRefresh();
+        },
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            top: Get.mediaQuery.padding.top + 32,
+            bottom: 32,
+            left: 0,
+            right: 0,
+          ),
+          child: Column(
+            children: [
+              header(),
+              const Gap(16),
+              abilities(),
+              const Gap(16),
+              buy(),
+              const Gap(16),
               item(
-                title: 'نمایش پروفایل من',
-                icon: Icons.visibility,
-                color: Colors.green,
-                page: "/profile/0",
-                arguments: {
-                  "id": 0,
-                  "options": false,
-                },
-              ),
-            // edit profile
-            item(
-              title: 'ویرایش پروفایل من',
-              icon: Icons.account_circle,
-              color: Colors.deepPurpleAccent,
-              page: "/app/account/profile",
-            ),
-            if (controller.profile.profile.value?.verified == false)
-              item(
-                title: 'تایید شماره موبایل',
-                icon: Icons.smartphone,
-                color: Colors.blue,
+                title: 'پیام های مدیریت',
+                icon: Icons.forum_rounded,
+                color: Colors.cyan,
                 onTap: () {
-                  Navigator.pushNamed(context, '/app/account/verify_phone');
+                  Get.toNamed('/app/messages');
+                },
+                suffix: const Badge(
+                  label: Text('0'),
+                ),
+              ),
+              if (controller.profile.profile.value?.id != null)
+                item(
+                  title: 'نمایش پروفایل من',
+                  icon: Icons.visibility,
+                  color: Colors.green,
+                  page: "/profile/0",
+                  arguments: {
+                    "id": 0,
+                    "options": false,
+                  },
+                ),
+              // edit profile
+              item(
+                title: 'ویرایش پروفایل من',
+                icon: Icons.account_circle,
+                color: Colors.deepPurpleAccent,
+                page: "/app/profile",
+              ),
+              if (controller.profile.profile.value?.verified == false)
+                item(
+                  title: 'تایید شماره موبایل',
+                  icon: Icons.smartphone,
+                  color: Colors.blue,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/app/account/verify_phone');
+                  },
+                ),
+              // sounds and notifications
+              item(
+                title: 'صدا و اعلانات',
+                icon: Icons.notifications,
+                color: Colors.orange,
+                page: "/app/account/notification",
+              ),
+              // privacy and security
+              item(
+                title: 'دسترسی ها و امنیت',
+                icon: Icons.lock,
+                color: Colors.blue,
+                page: "/app/account/privacy",
+              ),
+              item(
+                title: 'فضای ذخیره سازی',
+                icon: Icons.folder_copy,
+                color: Colors.blueGrey.shade600,
+                page: "/app/account/storage",
+              ),
+              // favorites (pink)
+              item(
+                title: 'علاقه مندی ها',
+                icon: Icons.favorite,
+                color: Colors.pink,
+                page: "/app/account/favorites",
+              ),
+              // blocked users (red)
+              item(
+                title: 'بلاکی ها',
+                icon: Icons.block,
+                color: Colors.red,
+                page: "/app/account/blocked",
+              ),
+              // transactions (green)
+              item(
+                title: 'تراکنش ها',
+                icon: Icons.receipt,
+                color: Colors.green,
+                page: "/app/account/transactions",
+              ),
+              item(
+                title: 'کسب درآمد میلیونی با دعوت از دوستان',
+                icon: Icons.payments,
+                color: Colors.blue,
+                page: "/app/account/invitation",
+              ),
+              item(
+                title: 'به ما امتیاز بدید',
+                icon: Icons.star_rounded,
+                color: Colors.yellow.shade600,
+                onTap: () {},
+              ),
+              item(
+                title: 'شرایط استفاده',
+                icon: Icons.gavel,
+                color: Colors.brown.shade600,
+                page: "/terms",
+              ),
+              item(
+                title: 'حریم خصوصی',
+                icon: Icons.privacy_tip,
+                color: Colors.blue,
+                page: "/privacy",
+              ),
+              // contact us (blue)
+              item(
+                title: 'تماس با ما',
+                icon: Icons.help_outline,
+                color: Colors.blue,
+                page: "/contact",
+              ),
+              item(
+                title: 'وبلاگ',
+                icon: Icons.article,
+                color: Colors.purple,
+                onTap: () async {},
+              ),
+              item(
+                title: 'ورود به وب',
+                icon: Icons.language,
+                color: Colors.green,
+                onTap: () async {},
+              ),
+              item(
+                title: 'خروج از حساب کاربری',
+                icon: Icons.logout,
+                color: Colors.black,
+                onTap: () {
+                  Get.dialog(const DialogLogoutView());
                 },
               ),
-            // sounds and notifications
-            item(
-              title: 'صدا و اعلانات',
-              icon: Icons.notifications,
-              color: Colors.orange,
-              page: "/app/account/notification",
-            ),
-            // privacy and security
-            item(
-              title: 'دسترسی ها و امنیت',
-              icon: Icons.lock,
-              color: Colors.blue,
-              page: "/app/account/privacy",
-            ),
-            item(
-              title: 'فضای ذخیره سازی',
-              icon: Icons.folder_copy,
-              color: Colors.blueGrey.shade600,
-              page: "/app/account/storage",
-            ),
-            // favorites (pink)
-            item(
-              title: 'علاقه مندی ها',
-              icon: Icons.favorite,
-              color: Colors.pink,
-              page: "/app/account/favorites",
-            ),
-            // blocked users (red)
-            item(
-              title: 'بلاکی ها',
-              icon: Icons.block,
-              color: Colors.red,
-              page: "/app/account/blocked",
-            ),
-            // transactions (green)
-            item(
-              title: 'تراکنش ها',
-              icon: Icons.receipt,
-              color: Colors.green,
-              page: "/app/account/transactions",
-            ),
-            item(
-              title: 'کسب درآمد میلیونی با دعوت از دوستان',
-              icon: Icons.payments,
-              color: Colors.blue,
-              page: "/app/account/invitation",
-            ),
-            item(
-              title: 'به ما امتیاز بدید',
-              icon: Icons.star_rounded,
-              color: Colors.yellow.shade600,
-              onTap: () {},
-            ),
-            item(
-              title: 'شرایط استفاده',
-              icon: Icons.gavel,
-              color: Colors.brown.shade600,
-              page: "/terms",
-            ),
-            item(
-              title: 'حریم خصوصی',
-              icon: Icons.privacy_tip,
-              color: Colors.blue,
-              page: "/privacy",
-            ),
-            // contact us (blue)
-            item(
-              title: 'تماس با ما',
-              icon: Icons.help_outline,
-              color: Colors.blue,
-              page: "/contact",
-            ),
-            item(
-              title: 'وبلاگ',
-              icon: Icons.article,
-              color: Colors.purple,
-              onTap: () async {},
-            ),
-            item(
-              title: 'ورود به وب',
-              icon: Icons.language,
-              color: Colors.green,
-              onTap: () async {},
-            ),
-            item(
-              title: 'خروج از حساب کاربری',
-              icon: Icons.logout,
-              color: Colors.black,
-              onTap: () {
-                Get.dialog(const DialogLogoutView());
-              },
-            ),
-            // disable or delete account (red)
-            item(
-              title: 'غیر فعال سازی و حذف',
-              icon: Icons.delete,
-              color: Colors.red,
-              page: '/app/account/delete-disable',
-            ),
-          ],
+              // disable or delete account (red)
+              item(
+                title: 'غیر فعال سازی و حذف',
+                icon: Icons.delete,
+                color: Colors.red,
+                page: '/app/account/delete-disable',
+              ),
+            ],
+          ),
         ),
       ),
     );

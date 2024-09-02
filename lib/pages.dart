@@ -5,6 +5,7 @@ import 'package:chat/futures/auth_forgot/auth_forgot.view.dart';
 import 'package:chat/futures/auth_login/auth_login.view.dart';
 import 'package:chat/futures/auth_reigster/auth_register.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
+import 'package:chat/futures/profile_edit/profile_edit.view.dart';
 import 'package:chat/futures/search_filter/search_filter.view.dart';
 import 'package:chat/futures/splash/splash.view.dart';
 import 'package:get/get.dart';
@@ -18,5 +19,6 @@ List<GetPage> pages = [
   GetPage(name: '/auth/register', page: () => const AuthRegisterView()),
   GetPage(name: '/app', page: () => const AppView()),
   GetPage(name: '/app/search/filter', page: () => const SearchFilterView()),
+  GetPage(name: '/app/profile', page: () => const ProfileEditView()),
   GetPage(name: '/profile/:id', page: () => const ProfileView()),
 ];
