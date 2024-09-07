@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chat/models/apis/user.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/services/http.service.dart';
@@ -15,4 +17,13 @@ abstract class ApiUserAbstract extends GetxService {
     int limit = 10,
     required ApiUserSearchFilterRequestModel filter,
   });
+
+  Future<ApiUserUpdateResponseModel> update(ProfileModel profile);
+
+  Future<ApiUserChangeAvatarResponseModel> changeAvatar({
+    required File file,
+    required Function(int precent) callback,
+  });
+
+  Future<bool> deleteAvatar();
 }

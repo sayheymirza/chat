@@ -1,5 +1,39 @@
 import 'package:chat/models/profile.model.dart';
 
+class ApiUserChangeAvatarResponseModel {
+  final bool success;
+  final String? url;
+
+  ApiUserChangeAvatarResponseModel({
+    required this.success,
+    required this.url,
+  });
+
+  static get unhandledError {
+    return ApiUserChangeAvatarResponseModel(
+      success: false,
+      url: null,
+    );
+  }
+}
+
+class ApiUserUpdateResponseModel {
+  final bool success;
+  final String message;
+
+  ApiUserUpdateResponseModel({
+    required this.success,
+    required this.message,
+  });
+
+  static get unhandledError {
+    return ApiUserUpdateResponseModel(
+      success: false,
+      message: 'خطایی نامشخص رخ داده است',
+    );
+  }
+}
+
 class ApiUserSearchResponseModel {
   final List<ProfileSearchModel> profiles;
   final int lastPage;

@@ -1,12 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:math' as Math;
 
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as Dio;
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 
 class HttpService extends GetxService {
-  final Dio _client = Dio();
+  final Dio.Dio _client = Dio.Dio();
   int index = 0;
 
   Future<dynamic> request({
@@ -15,7 +18,7 @@ class HttpService extends GetxService {
     String method = "GET",
     Map<String, dynamic>? data,
     bool auth = false,
-    CancelToken? cancelToken,
+    Dio.CancelToken? cancelToken,
   }) async {
     if (endpoint == null || endpoint.isEmpty) {
       // get endpoint from storage
@@ -54,7 +57,7 @@ class HttpService extends GetxService {
       url,
       data: data,
       cancelToken: cancelToken,
-      options: Options(
+      options: Dio.Options(
         method: method,
         headers: headers,
       ),
@@ -63,6 +66,71 @@ class HttpService extends GetxService {
     var end = DateTime.now();
 
     log('[http.service.dart#$i] $method $path (${end.difference(start).inMilliseconds}ms)');
+
+    return response.data;
+  }
+
+  Future<dynamic> upload({
+    required String path,
+    required File file,
+    required Function(int precent) callback,
+    String? endpoint,
+    Dio.CancelToken? cancelToken,
+  }) async {
+    if (endpoint == null || endpoint.isEmpty) {
+      // get endpoint from storage
+      endpoint = Services.configs.get(key: CONSTANTS.STORAGE_ENDPOINT_API);
+    }
+
+    if (endpoint == null || endpoint.isEmpty) {
+      // use default
+      endpoint = CONSTANTS.DEFAULT_ENDPOINT_API;
+    }
+
+    var url = "$endpoint$path";
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+    };
+
+    var accessToken = Services.configs.get(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
+
+    if (accessToken != null) {
+      headers['Authorization'] = 'Bearer $accessToken';
+    } else {
+      return Future.error("Unauthorized");
+    }
+
+    Dio.FormData data = Dio.FormData.fromMap({
+      "file": await Dio.MultipartFile.fromFile(
+        file.path,
+        filename: basename(file.path),
+      ),
+    });
+
+    var i = ++index;
+
+    var start = DateTime.now();
+
+    log('[http.service.dart#$i] POST $path');
+
+    var response = await _client.post(
+      url,
+      data: data,
+      options: Dio.Options(
+        headers: headers,
+      ),
+      cancelToken: cancelToken,
+      onSendProgress: (int sent, int total) {
+        var progress = Math.min(((100 * sent) / total).ceil(), 100);
+
+        callback(progress);
+      },
+    );
+
+    var end = DateTime.now();
+
+    log('[http.service.dart#$i] POST $path (${end.difference(start).inMilliseconds}ms)');
 
     return response.data;
   }

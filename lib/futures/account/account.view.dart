@@ -1,5 +1,6 @@
 import 'package:chat/futures/account/account.controller.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
+import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -42,7 +43,7 @@ class AccountView extends GetView<AccountController> {
                   label: Text('0'),
                 ),
               ),
-              if (controller.profile.profile.value?.id != null)
+              if (controller.profile.profile.value.id != null)
                 item(
                   title: 'نمایش پروفایل من',
                   icon: Icons.visibility,
@@ -60,7 +61,7 @@ class AccountView extends GetView<AccountController> {
                 color: Colors.deepPurpleAccent,
                 page: "/app/profile",
               ),
-              if (controller.profile.profile.value?.verified == false)
+              if (controller.profile.profile.value.verified == false)
                 item(
                   title: 'تایید شماره موبایل',
                   icon: Icons.smartphone,
@@ -74,7 +75,7 @@ class AccountView extends GetView<AccountController> {
                 title: 'صدا و اعلانات',
                 icon: Icons.notifications,
                 color: Colors.orange,
-                page: "/app/account/notification",
+                page: "/app/notification",
               ),
               // privacy and security
               item(
@@ -267,42 +268,40 @@ class AccountView extends GetView<AccountController> {
   Widget header() {
     return Obx(
       () => Row(
-        children: controller.profile.profile.value == null
-            ? []
-            : [
-                const Gap(16),
-                avatar(),
-                const Gap(16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // fullname and verified icon
-                    Row(
-                      children: [
-                        Text(
-                          controller.profile.profile.value?.fullname ?? '',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Gap(12),
-                        if (controller.profile.profile.value?.verified == true)
-                          const Icon(
-                            Icons.verified,
-                            color: Colors.blue,
-                            size: 20,
-                          )
-                      ],
+        children: [
+          const Gap(32),
+          avatar(),
+          const Gap(16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // fullname and verified icon
+              Row(
+                children: [
+                  Text(
+                    controller.profile.profile.value.fullname ?? '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const Gap(4),
-                    Text(
-                      controller.profile.profile.value?.phone ?? '',
-                      style: TextStyle(color: Colors.grey.shade700),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                  const Gap(12),
+                  if (controller.profile.profile.value.verified == true)
+                    const Icon(
+                      Icons.verified,
+                      color: Colors.blue,
+                      size: 20,
+                    )
+                ],
+              ),
+              const Gap(4),
+              Text(
+                controller.profile.profile.value.phone ?? '',
+                style: TextStyle(color: Colors.grey.shade700),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -313,6 +312,7 @@ class AccountView extends GetView<AccountController> {
       height: 90,
       child: Obx(
         () => Stack(
+          clipBehavior: Clip.none,
           children: [
             GestureDetector(
               child: Container(
@@ -323,13 +323,77 @@ class AccountView extends GetView<AccountController> {
                   shape: BoxShape.circle,
                   color: Colors.grey[300],
                 ),
-                child: controller.profile.profile.value?.avatar == null
+                child: controller.profile.profile.value.avatar == null
                     ? const Icon(Icons.person)
                     : Image.network(
-                        controller.profile.profile.value!.avatar!,
+                        controller.profile.profile.value.avatar!,
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
                       ),
+              ),
+            ),
+            Positioned(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: 10,
+              child: CircularProgressIndicator(
+                value: double.parse(
+                  controller.avatarUploadPercent.value.toString(),
+                ),
+              ),
+            ),
+            if (controller.profile.profile.value.defaultAvatar == false)
+              Positioned(
+                right: -10,
+                bottom: -8,
+                width: 36,
+                height: 36,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.delete,
+                    color: Get.theme.colorScheme.onError,
+                  ),
+                  iconSize: 18,
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      Get.theme.colorScheme.error,
+                    ),
+                  ),
+                ),
+              ),
+            Positioned(
+              left: -10,
+              bottom: -8,
+              width: 36,
+              height: 36,
+              child: IconButton(
+                onPressed: () {
+                  Get.bottomSheet(
+                    DialogPickImageView(
+                      deletable:
+                          controller.profile.profile.value.defaultAvatar ==
+                              false,
+                    ),
+                  ).then((value) {
+                    if (value == null) return;
+
+                    if (value['action'] == 'file') {
+                      controller.changeAvatar(value['data']);
+                    }
+                  });
+                },
+                icon: Icon(
+                  Icons.add_a_photo_rounded,
+                  color: Get.theme.colorScheme.onSecondaryContainer,
+                ),
+                iconSize: 18,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(
+                    Get.theme.colorScheme.secondaryContainer,
+                  ),
+                ),
               ),
             ),
           ],
@@ -390,7 +454,7 @@ class AccountView extends GetView<AccountController> {
         children: [
           item(
             text: 'account_ad_title'.tr,
-            value: controller.profile.profile.value?.plan?.adDays ?? 0,
+            value: controller.profile.profile.value.plan?.adDays ?? 0,
             suffix: 'روز',
           ),
           // divider line vertical
@@ -401,7 +465,7 @@ class AccountView extends GetView<AccountController> {
           ),
           item(
             text: 'اعتبار بسته ویژه',
-            value: controller.profile.profile.value?.plan?.specialDays ?? 0,
+            value: controller.profile.profile.value.plan?.specialDays ?? 0,
             suffix: 'روز',
           ),
           // divider line vertical
@@ -412,7 +476,7 @@ class AccountView extends GetView<AccountController> {
           ),
           item(
             text: 'تعداد پیامک',
-            value: controller.profile.profile.value?.plan?.sms ?? 0,
+            value: controller.profile.profile.value.plan?.sms ?? 0,
             suffix: 'عدد',
           ),
         ],

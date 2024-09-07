@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class ProfileService extends GetxService {
-  Rx<ProfileModel?> profile = null.obs;
+  Rx<ProfileModel> profile = ProfileModel().obs;
 
   Future<void> fetchMyProfile() async {
     try {
@@ -15,7 +15,7 @@ class ProfileService extends GetxService {
       if (result == null) {
         log('[profile.service.dart] fetch my profile got null');
       } else {
-        profile = result.obs;
+        profile.value = result;
         log('[profile.service.dart] fetched my profile');
       }
     } catch (e) {

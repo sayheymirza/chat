@@ -24,11 +24,26 @@ class ProfileEditView extends GetView<ProfileEditController> {
       floatingActionButton: Container(
         width: Get.width - 32,
         margin: const EdgeInsets.only(bottom: 10),
-        child: ElevatedButton(
-          onPressed: controller.disabled.value ? null : () {},
-          child: const Text(
-            'ثبت و ویرایش',
-            style: TextStyle(color: Colors.white),
+        child: Obx(
+          () => ElevatedButton(
+            onPressed: controller.disabled.value
+                ? null
+                : () {
+                    controller.submit();
+                  },
+            child: controller.disabled.value
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 3,
+                    ),
+                  )
+                : const Text(
+                    'ثبت و ویرایش',
+                    style: TextStyle(color: Colors.white),
+                  ),
           ),
         ),
       ),

@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
+import 'package:chat/shared/snackbar.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -66,7 +69,6 @@ class ProfileEditController extends GetxController {
       "beauty": profile.dropdowns!['beauty'].toString(),
       "health": profile.dropdowns!['health'].toString(),
       "education": profile.dropdowns!['education'].toString(),
-      "job": profile.job,
       "living": profile.dropdowns!['living'].toString(),
       "salary": profile.dropdowns!['salary'].toString(),
       "car": profile.dropdowns!['car'].toString(),
@@ -74,6 +76,7 @@ class ProfileEditController extends GetxController {
       "province": profile.dropdowns!['province'].toString(),
       "religion": profile.dropdowns!['religion'].toString(),
       "marriageType": profile.dropdowns!['marriageType'].toString(),
+      "job": profile.job,
       "about": profile.about,
     };
 
@@ -150,5 +153,32 @@ class ProfileEditController extends GetxController {
     dropdownsItems.value = output;
 
     log('[profile_edit.controller.dart] all dropdowns loaded');
+  }
+
+  Future<void> submit() async {
+    if (disabled.value) return;
+
+    if (!formKey.currentState!.saveAndValidate()) return;
+
+    try {
+      disabled.value = true;
+
+      var value = formKey.currentState!.value;
+
+      var result = await ApiService.user.update(
+        ProfileModel(
+          fullname: value['name'],
+          job: value['job'],
+          about: value['about'],
+          dropdowns: value,
+        ),
+      );
+
+      showSnackbar(message: result.message);
+      disabled.value = false;
+    } catch (e) {
+      disabled.value = false;
+      //
+    }
   }
 }
