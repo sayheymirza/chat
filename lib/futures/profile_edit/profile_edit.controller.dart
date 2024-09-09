@@ -52,7 +52,7 @@ class ProfileEditController extends GetxController {
   }
 
   void patchFormValueFromProfile() {
-    var profile = Services.profile.profile.value!;
+    var profile = Services.profile.profile.value;
 
     var value = {
       "name": profile.fullname,

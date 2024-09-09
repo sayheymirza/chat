@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 
 class CropperController extends GetxController {
   CropController cropController = CropController(
@@ -16,6 +16,13 @@ class CropperController extends GetxController {
   );
 
   RxBool cropping = false.obs;
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    Services.chrome.transparent();
+  }
 
   Future<void> submit() async {
     if (cropping.value) return;

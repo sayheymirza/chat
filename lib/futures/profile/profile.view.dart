@@ -560,7 +560,7 @@ class ProfileView extends GetView<ProfileController> {
     Widget? image,
   }) {
     return Container(
-      width: 'type'.tr == 'dating' ? 140 : 123,
+      width: 'type'.tr == 'dating' ? 140 : 130,
       padding: const EdgeInsets.symmetric(
         vertical: 8,
         horizontal: 12,

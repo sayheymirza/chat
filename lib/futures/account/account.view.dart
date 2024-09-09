@@ -12,164 +12,164 @@ class AccountView extends GetView<AccountController> {
   Widget build(BuildContext context) {
     Get.put(AccountController());
 
-    return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () {
-          return controller.onRefresh();
-        },
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            top: Get.mediaQuery.padding.top + 32,
-            bottom: 32,
-            left: 0,
-            right: 0,
-          ),
-          child: Column(
-            children: [
-              header(),
-              const Gap(16),
-              abilities(),
-              const Gap(16),
-              buy(),
-              const Gap(16),
-              item(
-                title: 'پیام های مدیریت',
-                icon: Icons.forum_rounded,
-                color: Colors.cyan,
-                onTap: () {
-                  Get.toNamed('/app/messages');
-                },
-                suffix: const Badge(
-                  label: Text('0'),
-                ),
-              ),
-              if (controller.profile.profile.value.id != null)
+    return Obx(
+      () => Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () {
+            return controller.onRefresh();
+          },
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: Get.mediaQuery.padding.top + 32,
+              bottom: 32,
+              left: 0,
+              right: 0,
+            ),
+            child: Column(
+              children: [
+                header(),
+                const Gap(16),
+                abilities(),
+                const Gap(16),
+                buy(),
+                const Gap(16),
                 item(
-                  title: 'نمایش پروفایل من',
-                  icon: Icons.visibility,
-                  color: Colors.green,
-                  page: "/profile/0",
-                  arguments: {
-                    "id": 0,
-                    "options": false,
-                  },
-                ),
-              // edit profile
-              item(
-                title: 'ویرایش پروفایل من',
-                icon: Icons.account_circle,
-                color: Colors.deepPurpleAccent,
-                page: "/app/profile",
-              ),
-              if (controller.profile.profile.value.verified == false)
-                item(
-                  title: 'تایید شماره موبایل',
-                  icon: Icons.smartphone,
-                  color: Colors.blue,
+                  title: 'پیام های مدیریت',
+                  icon: Icons.forum_rounded,
+                  color: Colors.cyan,
                   onTap: () {
-                    Navigator.pushNamed(context, '/app/account/verify_phone');
+                    Get.toNamed('/app/messages');
+                  },
+                  suffix: const Badge(
+                    label: Text('0'),
+                  ),
+                ),
+                if (controller.profile.profile.value.id != null)
+                  item(
+                    title: 'نمایش پروفایل من',
+                    icon: Icons.visibility,
+                    color: Colors.green,
+                    page: "/profile/0",
+                    arguments: {
+                      "id": 0,
+                      "options": false,
+                    },
+                  ),
+                // edit profile
+                item(
+                  title: 'ویرایش پروفایل من',
+                  icon: Icons.account_circle,
+                  color: Colors.deepPurpleAccent,
+                  page: "/app/profile",
+                ),
+                if (controller.profile.profile.value.verified != true)
+                  item(
+                    title: 'تایید شماره موبایل',
+                    icon: Icons.smartphone,
+                    color: Colors.blue,
+                    page: "/app/account_verify_phone",
+                  ),
+                // sounds and notifications
+                item(
+                  title: 'صدا و اعلانات',
+                  icon: Icons.notifications,
+                  color: Colors.orange,
+                  page: "/app/notification",
+                ),
+                // privacy and security
+                item(
+                  title: 'دسترسی ها و امنیت',
+                  icon: Icons.lock,
+                  color: Colors.blue,
+                  page: "/app/security",
+                ),
+                item(
+                  title: 'فضای ذخیره سازی',
+                  icon: Icons.folder_copy,
+                  color: Colors.blueGrey.shade600,
+                  page: "/app/account/storage",
+                ),
+                // favorites (pink)
+                item(
+                  title: 'علاقه مندی ها',
+                  icon: Icons.favorite,
+                  color: Colors.pink,
+                  page: "/app/account/favorites",
+                ),
+                // blocked users (red)
+                item(
+                  title: 'بلاکی ها',
+                  icon: Icons.block,
+                  color: Colors.red,
+                  page: "/app/account/blocked",
+                ),
+                // transactions (green)
+                item(
+                  title: 'تراکنش ها',
+                  icon: Icons.receipt,
+                  color: Colors.green,
+                  page: "/app/account/transactions",
+                ),
+                item(
+                  title: 'کسب درآمد میلیونی با دعوت از دوستان',
+                  icon: Icons.payments,
+                  color: Colors.blue,
+                  page: "/app/account/invitation",
+                ),
+                item(
+                  title: 'به ما امتیاز بدید',
+                  icon: Icons.star_rounded,
+                  color: Colors.yellow.shade600,
+                  onTap: () {},
+                ),
+                item(
+                  title: 'شرایط استفاده',
+                  icon: Icons.gavel,
+                  color: Colors.brown.shade600,
+                  page: "/terms",
+                ),
+                item(
+                  title: 'حریم خصوصی',
+                  icon: Icons.privacy_tip,
+                  color: Colors.blue,
+                  page: "/privacy",
+                ),
+                // contact us (blue)
+                item(
+                  title: 'تماس با ما',
+                  icon: Icons.help_outline,
+                  color: Colors.blue,
+                  page: "/contact",
+                ),
+                item(
+                  title: 'وبلاگ',
+                  icon: Icons.article,
+                  color: Colors.purple,
+                  onTap: () async {},
+                ),
+                item(
+                  title: 'ورود به وب',
+                  icon: Icons.language,
+                  color: Colors.green,
+                  onTap: () async {},
+                ),
+                item(
+                  title: 'خروج از حساب کاربری',
+                  icon: Icons.logout,
+                  color: Colors.black,
+                  onTap: () {
+                    Get.dialog(const DialogLogoutView());
                   },
                 ),
-              // sounds and notifications
-              item(
-                title: 'صدا و اعلانات',
-                icon: Icons.notifications,
-                color: Colors.orange,
-                page: "/app/notification",
-              ),
-              // privacy and security
-              item(
-                title: 'دسترسی ها و امنیت',
-                icon: Icons.lock,
-                color: Colors.blue,
-                page: "/app/account/privacy",
-              ),
-              item(
-                title: 'فضای ذخیره سازی',
-                icon: Icons.folder_copy,
-                color: Colors.blueGrey.shade600,
-                page: "/app/account/storage",
-              ),
-              // favorites (pink)
-              item(
-                title: 'علاقه مندی ها',
-                icon: Icons.favorite,
-                color: Colors.pink,
-                page: "/app/account/favorites",
-              ),
-              // blocked users (red)
-              item(
-                title: 'بلاکی ها',
-                icon: Icons.block,
-                color: Colors.red,
-                page: "/app/account/blocked",
-              ),
-              // transactions (green)
-              item(
-                title: 'تراکنش ها',
-                icon: Icons.receipt,
-                color: Colors.green,
-                page: "/app/account/transactions",
-              ),
-              item(
-                title: 'کسب درآمد میلیونی با دعوت از دوستان',
-                icon: Icons.payments,
-                color: Colors.blue,
-                page: "/app/account/invitation",
-              ),
-              item(
-                title: 'به ما امتیاز بدید',
-                icon: Icons.star_rounded,
-                color: Colors.yellow.shade600,
-                onTap: () {},
-              ),
-              item(
-                title: 'شرایط استفاده',
-                icon: Icons.gavel,
-                color: Colors.brown.shade600,
-                page: "/terms",
-              ),
-              item(
-                title: 'حریم خصوصی',
-                icon: Icons.privacy_tip,
-                color: Colors.blue,
-                page: "/privacy",
-              ),
-              // contact us (blue)
-              item(
-                title: 'تماس با ما',
-                icon: Icons.help_outline,
-                color: Colors.blue,
-                page: "/contact",
-              ),
-              item(
-                title: 'وبلاگ',
-                icon: Icons.article,
-                color: Colors.purple,
-                onTap: () async {},
-              ),
-              item(
-                title: 'ورود به وب',
-                icon: Icons.language,
-                color: Colors.green,
-                onTap: () async {},
-              ),
-              item(
-                title: 'خروج از حساب کاربری',
-                icon: Icons.logout,
-                color: Colors.black,
-                onTap: () {
-                  Get.dialog(const DialogLogoutView());
-                },
-              ),
-              // disable or delete account (red)
-              item(
-                title: 'غیر فعال سازی و حذف',
-                icon: Icons.delete,
-                color: Colors.red,
-                page: '/app/account/delete-disable',
-              ),
-            ],
+                // disable or delete account (red)
+                item(
+                  title: 'غیر فعال سازی و حذف',
+                  icon: Icons.delete,
+                  color: Colors.red,
+                  page: '/app/account/delete-disable',
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -285,12 +285,12 @@ class AccountView extends GetView<AccountController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Gap(12),
+                  const Gap(8),
                   if (controller.profile.profile.value.verified == true)
                     const Icon(
                       Icons.verified,
                       color: Colors.blue,
-                      size: 20,
+                      size: 16,
                     )
                 ],
               ),
@@ -314,22 +314,26 @@ class AccountView extends GetView<AccountController> {
         () => Stack(
           clipBehavior: Clip.none,
           children: [
-            GestureDetector(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[300],
+            AnimatedOpacity(
+              opacity: controller.avatarDisabled.value ? 0.4 : 1,
+              duration: const Duration(seconds: 1),
+              child: GestureDetector(
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[300],
+                  ),
+                  child: controller.profile.profile.value.avatar == null
+                      ? const Icon(Icons.person)
+                      : Image.network(
+                          controller.profile.profile.value.avatar!,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                        ),
                 ),
-                child: controller.profile.profile.value.avatar == null
-                    ? const Icon(Icons.person)
-                    : Image.network(
-                        controller.profile.profile.value.avatar!,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                      ),
               ),
             ),
             Positioned(
@@ -350,7 +354,11 @@ class AccountView extends GetView<AccountController> {
                 width: 36,
                 height: 36,
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: controller.avatarDisabled.value
+                      ? null
+                      : () {
+                          controller.deleteAvatar();
+                        },
                   icon: Icon(
                     Icons.delete,
                     color: Get.theme.colorScheme.onError,
@@ -369,21 +377,27 @@ class AccountView extends GetView<AccountController> {
               width: 36,
               height: 36,
               child: IconButton(
-                onPressed: () {
-                  Get.bottomSheet(
-                    DialogPickImageView(
-                      deletable:
-                          controller.profile.profile.value.defaultAvatar ==
-                              false,
-                    ),
-                  ).then((value) {
-                    if (value == null) return;
+                onPressed: controller.avatarDisabled.value
+                    ? null
+                    : () {
+                        Get.bottomSheet(
+                          DialogPickImageView(
+                            deletable: controller
+                                    .profile.profile.value.defaultAvatar ==
+                                false,
+                          ),
+                        ).then((value) {
+                          if (value == null) return;
 
-                    if (value['action'] == 'file') {
-                      controller.changeAvatar(value['data']);
-                    }
-                  });
-                },
+                          if (value['action'] == 'file') {
+                            controller.changeAvatar(value['data']);
+                          }
+
+                          if (value['action'] == 'delete') {
+                            controller.deleteAvatar();
+                          }
+                        });
+                      },
                 icon: Icon(
                   Icons.add_a_photo_rounded,
                   color: Get.theme.colorScheme.onSecondaryContainer,

@@ -7,6 +7,7 @@ import 'package:chat/shared/services/event.service.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:chat/shared/services/launch_instance.service.dart';
 import 'package:chat/shared/services/profile.service.dart';
+import 'package:chat/shared/services/queue.service.dart';
 import 'package:get/get.dart';
 
 class Services {
@@ -17,10 +18,12 @@ class Services {
   static ConfigsService get configs => Get.find(tag: 'configs');
   static EventService get event => Get.find(tag: 'event');
   static AppService get app => Get.find(tag: 'app');
+  static QueueService get queue => Get.find(tag: 'queue');
 
   static put() async {
     log('[services.dart] start put Get services');
     Get.put(HttpService(), tag: 'http');
+    Get.put(QueueService(), tag: 'queue');
     Get.lazyPut(() => ChromeService(), tag: 'chrome');
     Get.lazyPut(() => LaunchInstanceService(), tag: 'launch');
     Get.lazyPut(() => ProfileService(), tag: 'profile');

@@ -1,7 +1,10 @@
+import 'package:chat/shared/vibration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void showSnackbar({required String message}) {
+  vibrate();
+
   Get.snackbar(
     '',
     '',

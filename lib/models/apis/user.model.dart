@@ -1,5 +1,88 @@
 import 'package:chat/models/profile.model.dart';
 
+class ApiUserChangeSettingsRequestModel {
+  bool voiceCall;
+  bool videoCall;
+  bool notificationReaction;
+  bool notificationChat;
+  bool notificationVoiceCall;
+  bool notificationVideoCall;
+
+  ApiUserChangeSettingsRequestModel({
+    required this.voiceCall,
+    required this.videoCall,
+    required this.notificationReaction,
+    required this.notificationChat,
+    required this.notificationVoiceCall,
+    required this.notificationVideoCall,
+  });
+
+  Map<String, bool> toJson() {
+    return {
+      'voiceCall': voiceCall,
+      'videoCall': videoCall,
+      'notificationReaction': notificationReaction,
+      'notificationChat': notificationChat,
+      'notificationVoiceCall': notificationVoiceCall,
+      'notificationVideoCall': notificationVideoCall,
+    };
+  }
+}
+
+class ApiUserChangeResponseModel {
+  final bool success;
+  final String message;
+
+  ApiUserChangeResponseModel({
+    required this.success,
+    required this.message,
+  });
+
+  static get unhandledError {
+    return ApiUserChangeResponseModel(
+      success: false,
+      message: 'خطایی نامشخص رخ داده است',
+    );
+  }
+}
+
+class ApiUserOTPRequestResponseModel {
+  final int ttl;
+  final int end;
+  final String message;
+
+  ApiUserOTPRequestResponseModel({
+    required this.ttl,
+    required this.end,
+    required this.message,
+  });
+
+  static get unhandledError {
+    return ApiUserOTPRequestResponseModel(
+      ttl: 0,
+      end: DateTime.now().microsecondsSinceEpoch,
+      message: 'خطایی نامشخص رخ داده است',
+    );
+  }
+}
+
+class ApiUserOTPVerifyResponseModel {
+  final bool success;
+  final String message;
+
+  ApiUserOTPVerifyResponseModel({
+    required this.success,
+    required this.message,
+  });
+
+  static get unhandledError {
+    return ApiUserOTPVerifyResponseModel(
+      success: false,
+      message: 'خطایی نامشخص رخ داده است',
+    );
+  }
+}
+
 class ApiUserChangeAvatarResponseModel {
   final bool success;
   final String? url;

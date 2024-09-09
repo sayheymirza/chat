@@ -19,6 +19,7 @@ void run() async {
   await CONSTANTS.Load();
 
   Services.chrome.transparent();
+  Services.queue.loop();
 
   runApp(const App());
 }

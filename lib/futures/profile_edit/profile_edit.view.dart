@@ -541,8 +541,11 @@ class ProfileEditView extends GetView<ProfileEditController> {
                           validator: FormBuilderValidators.compose(
                             [
                               FormBuilderValidators.required(),
-                              FormBuilderValidators.maxLength(10,
-                                  errorText: 'نباید بیشتر از ۱۰ حرف وارد کنید'),
+                              FormBuilderValidators.minLength(4,
+                                  errorText: 'نباید بیشتر از ۴ حرف وارد کنید'),
+                              FormBuilderValidators.maxLength(500,
+                                  errorText:
+                                      'نباید بیشتر از ۵۰۰ حرف وارد کنید'),
                               CustomValidator.justPersian(
                                   skipChars: [' '],
                                   errorText: 'فقط حروف فارسی وارد کنید'),

@@ -11,74 +11,173 @@ class AccountNotificationView extends GetView<AccountNotificationController> {
     Get.put(AccountNotificationController());
 
     return Scaffold(
-      appBar: GradientAppBarWidget(
+      appBar: const GradientAppBarWidget(
         back: true,
         title: "صدا و اعلانات",
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // title for sounds
-            const ListTile(
-              title: Text(
-                "صدا",
+      body: Obx(
+        () => SingleChildScrollView(
+          child: Column(
+            children: [
+              // title for sounds
+              const ListTile(
+                title: Text(
+                  "لرزش",
+                ),
+                dense: true,
               ),
-              dense: true,
-            ),
-            // chat sound with switch
-            ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text("صدای چت"),
-              trailing: Switch(
-                value: false,
-                onChanged: (value) {},
+              ListTile(
+                onTap: () {
+                  controller.toggleVibration(!controller.vibration.value);
+                },
+                leading: const Icon(Icons.vibration),
+                title: const Text("لرزش گوشی"),
+                trailing: Switch(
+                  value: controller.vibration.value,
+                  onChanged: (value) {
+                    controller.toggleVibration(value);
+                  },
+                ),
               ),
-            ),
-            const Divider(),
-            // title for notifications
-            const ListTile(
-              title: Text(
-                "اعلانات",
+              const ListTile(
+                title: Text(
+                  "صدا",
+                ),
+                dense: true,
               ),
-              dense: true,
-            ),
-            // reaction notification with switch
-            ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text("اعلان های جزئیات"),
-              trailing: Switch(
-                value: false,
-                onChanged: (value) {},
+              // chat sound with switch
+              ListTile(
+                onTap: () {
+                  controller.toggleSoundChat(!controller.soundChat.value);
+                },
+                leading: const Icon(Icons.forum),
+                title: const Text("صدای چت"),
+                trailing: Switch(
+                  value: controller.soundChat.value,
+                  onChanged: (value) {
+                    controller.toggleSoundChat(value);
+                  },
+                ),
               ),
-            ),
-            // chat notification with switch
-            ListTile(
-              leading: const Icon(Icons.chat),
-              title: const Text("اعلان های چت"),
-              trailing: Switch(
-                value: false,
-                onChanged: (value) {},
+              ListTile(
+                onTap: () {
+                  controller.toggleSoundCall(!controller.soundCall.value);
+                },
+                leading: const Icon(Icons.ring_volume),
+                title: const Text("صدای تماس"),
+                trailing: Switch(
+                  value: controller.soundCall.value,
+                  onChanged: (value) {
+                    controller.toggleSoundCall(value);
+                  },
+                ),
               ),
-            ),
-            // voice call notification with switch
-            ListTile(
-              leading: const Icon(Icons.call),
-              title: const Text("اعلان های تماس صوتی"),
-              trailing: Switch(
-                value: false,
-                onChanged: (value) {},
+              const Divider(),
+              // title for notifications
+              const ListTile(
+                title: Text(
+                  "اعلانات",
+                ),
+                dense: true,
               ),
-            ),
-            // video call notification with switch
-            ListTile(
-              leading: const Icon(Icons.video_call),
-              title: const Text("اعلان های تماس تصویری"),
-              trailing: Switch(
-                value: false,
-                onChanged: (value) {},
+              // reaction notification with switch
+              ListTile(
+                onTap: () {
+                  var value = controller.profile.profile.value.permission
+                          ?.notificationReaction ??
+                      false;
+
+                  controller.profile.profile.value.permission!
+                      .notificationReaction = !value;
+                  controller.submit();
+                },
+                leading: const Icon(Icons.feedback),
+                title: const Text("اعلان های جزئیات"),
+                trailing: Switch(
+                  value: controller.profile.profile.value.permission
+                          ?.notificationReaction ??
+                      false,
+                  onChanged: (value) {
+                    controller.profile.profile.value.permission!
+                        .notificationReaction = value;
+                    controller.submit();
+                  },
+                ),
               ),
-            ),
-          ],
+              // chat notification with switch
+              ListTile(
+                onTap: () {
+                  var value = controller
+                          .profile.profile.value.permission?.notificationChat ??
+                      false;
+
+                  controller.profile.profile.value.permission!
+                      .notificationChat = !value;
+                  controller.submit();
+                },
+                leading: const Icon(Icons.chat),
+                title: const Text("اعلان های چت"),
+                trailing: Switch(
+                  value: controller
+                          .profile.profile.value.permission?.notificationChat ??
+                      false,
+                  onChanged: (value) {
+                    controller.profile.profile.value.permission!
+                        .notificationChat = value;
+                    controller.submit();
+                  },
+                ),
+              ),
+              // voice call notification with switch
+              ListTile(
+                onTap: () {
+                  var value = controller.profile.profile.value.permission
+                          ?.notificationVoiceCall ??
+                      false;
+
+                  controller.profile.profile.value.permission!
+                      .notificationVoiceCall = !value;
+                  controller.submit();
+                },
+                leading: const Icon(Icons.call),
+                title: const Text("اعلان های تماس صوتی"),
+                trailing: Switch(
+                  value: controller.profile.profile.value.permission
+                          ?.notificationVoiceCall ??
+                      false,
+                  onChanged: (value) {
+                    controller.profile.profile.value.permission!
+                        .notificationVoiceCall = value;
+                    controller.submit();
+                  },
+                ),
+              ),
+              // video call notification with switch
+              ListTile(
+                onTap: () {
+                  var value = controller.profile.profile.value.permission
+                          ?.notificationVideoCall ??
+                      false;
+
+                  controller.profile.profile.value.permission!
+                      .notificationVideoCall = !value;
+                  controller.submit();
+                },
+                leading: const Icon(Icons.videocam),
+                title: const Text("اعلان های تماس تصویری"),
+                trailing: Switch(
+                  value: controller.profile.profile.value.permission
+                          ?.notificationVideoCall ??
+                      false,
+                  onChanged: (value) {
+                    controller.profile.profile.value.permission!
+                        .notificationVideoCall = value;
+                    controller.submit();
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
