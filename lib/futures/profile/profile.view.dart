@@ -316,70 +316,113 @@ class ProfileView extends GetView<ProfileController> {
         ),
         // menu button
         if (controller.showOptions.value)
-          PopupMenuButton(
-            child: const IconButton(
-              onPressed: null,
-              icon: Icon(
-                Icons.more_vert_rounded,
-                color: Colors.black,
-              ),
-            ),
-            itemBuilder: (context) {
-              return [
-                controller.profile.value.relation?.favorited == true
-                    ? const PopupMenuItem(
-                        value: "disfavorite",
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              "حذف از علاقه مندی ها",
-                            ),
-                          ],
-                        ),
-                      )
-                    : const PopupMenuItem(
-                        value: "favorite",
-                        child: Row(
-                          children: [
-                            Icon(Icons.favorite),
-                            SizedBox(width: 10),
-                            Text(
-                              "افزودن به علاقه مندی ها",
-                            ),
-                          ],
-                        ),
-                      ),
-                const PopupMenuItem(
-                  value: "block",
-                  child: Row(
-                    children: [
-                      Icon(Icons.block),
-                      SizedBox(width: 10),
-                      Text(
-                        "بلاک کردن",
-                      ),
-                    ],
+          GetBuilder<ProfileController>(
+            builder: (context) {
+              return PopupMenuButton(
+                child: const IconButton(
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.more_vert_rounded,
+                    color: Colors.black,
                   ),
                 ),
-                // report
-                const PopupMenuItem(
-                  value: "report",
-                  child: Row(
-                    children: [
-                      Icon(Icons.report),
-                      SizedBox(width: 10),
-                      Text(
-                        "گزارش تخلف",
+                onSelected: (value) {
+                  switch (value) {
+                    case "favorite":
+                      controller.favorite();
+                      break;
+                    case "disfavorite":
+                      controller.disfavorite();
+                      break;
+                    case "block":
+                      controller.block();
+                      break;
+                    case "unblock":
+                      controller.unblock();
+                      break;
+                    case "report":
+                      Get.toNamed(
+                        '/app/report',
+                        arguments: {},
+                      );
+                      break;
+                    default:
+                  }
+                },
+                itemBuilder: (context) {
+                  return [
+                    controller.relation.value.favorited == true
+                        ? const PopupMenuItem(
+                            value: "disfavorite",
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  "حذف از علاقه مندی ها",
+                                ),
+                              ],
+                            ),
+                          )
+                        : const PopupMenuItem(
+                            value: "favorite",
+                            child: Row(
+                              children: [
+                                Icon(Icons.favorite),
+                                SizedBox(width: 10),
+                                Text(
+                                  "افزودن به علاقه مندی ها",
+                                ),
+                              ],
+                            ),
+                          ),
+                    controller.relation.value.blocked == false
+                        ? const PopupMenuItem(
+                            value: "block",
+                            child: Row(
+                              children: [
+                                Icon(Icons.block),
+                                SizedBox(width: 10),
+                                Text(
+                                  "بلاک کردن",
+                                ),
+                              ],
+                            ),
+                          )
+                        : const PopupMenuItem(
+                            value: "unblock",
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.block,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  "آنبلاک کردن",
+                                ),
+                              ],
+                            ),
+                          ),
+                    // report
+                    const PopupMenuItem(
+                      value: "report",
+                      child: Row(
+                        children: [
+                          Icon(Icons.report),
+                          SizedBox(width: 10),
+                          Text(
+                            "گزارش تخلف",
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ];
+                    ),
+                  ];
+                },
+              );
             },
           ),
       ],

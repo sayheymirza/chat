@@ -38,4 +38,11 @@ abstract class ApiUserAbstract extends GetxService {
   Future<ApiUserChangeResponseModel> changePhone({required String phone});
 
   Future<bool> changeSettings(ApiUserChangeSettingsRequestModel request);
+
+  Future<bool> react({required int user, required RELATION_ACTION action});
+
+  Future<ApiUserSearchResponseModel> reacts({
+    required int page,
+    required RELATION_ACTION action,
+  });
 }

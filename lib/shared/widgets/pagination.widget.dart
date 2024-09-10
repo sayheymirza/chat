@@ -79,7 +79,9 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                         ),
                         elevation: const WidgetStatePropertyAll(0),
                         backgroundColor: WidgetStatePropertyAll(
-                          Get.theme.colorScheme.secondaryContainer,
+                          widget.color == null
+                              ? Get.theme.colorScheme.secondaryContainer
+                              : widget.color!.withOpacity(0.3),
                         ),
                       ),
                       child: Text(
@@ -91,7 +93,7 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                         ),
                       ),
                     ),
-                    const Gap(6),
+                    if (widget.page < widget.last) const Gap(6),
                     if (widget.page < widget.last)
                       ElevatedButton(
                         onPressed: () {
@@ -109,7 +111,9 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                           elevation: const WidgetStatePropertyAll(0),
                           backgroundColor: WidgetStatePropertyAll(
                             widget.page < widget.last
-                                ? Get.theme.colorScheme.secondaryContainer
+                                ? widget.color == null
+                                    ? Get.theme.colorScheme.secondaryContainer
+                                    : widget.color!.withOpacity(0.3)
                                 : Colors.transparent,
                           ),
                         ),
@@ -138,7 +142,7 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                         ),
                         elevation: const WidgetStatePropertyAll(0),
                         backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).primaryColor,
+                          widget.color ?? Get.theme.primaryColor,
                         ),
                       ),
                       child: Text(
@@ -168,7 +172,9 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                           elevation: const WidgetStatePropertyAll(0),
                           backgroundColor: WidgetStatePropertyAll(
                             widget.page > 1
-                                ? Get.theme.colorScheme.secondaryContainer
+                                ? widget.color == null
+                                    ? Get.theme.colorScheme.secondaryContainer
+                                    : widget.color!.withOpacity(0.3)
                                 : Colors.transparent,
                           ),
                         ),
@@ -197,7 +203,9 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                         ),
                         elevation: const WidgetStatePropertyAll(0),
                         backgroundColor: WidgetStatePropertyAll(
-                          Get.theme.colorScheme.secondaryContainer,
+                          widget.color == null
+                              ? Get.theme.colorScheme.secondaryContainer
+                              : widget.color!.withOpacity(0.3),
                         ),
                       ),
                       child: const Text(
@@ -229,8 +237,11 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                       onPressed: () {
                         widget.onChange(int.parse(controller.text));
                       },
-                      style: const ButtonStyle(
-                        minimumSize: WidgetStatePropertyAll(Size(46, 46)),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          widget.color ?? Get.theme.primaryColor,
+                        ),
+                        minimumSize: const WidgetStatePropertyAll(Size(46, 46)),
                       ),
                       child: const Text(
                         'برو',

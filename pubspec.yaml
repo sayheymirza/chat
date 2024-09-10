@@ -47,6 +47,7 @@ flutter:
   # assets
   assets:
     - lib/app/app.env
+    - lib/assets/images/empty.png
     - lib/app/assets/images/splash_logo.png
     - lib/app/assets/images/auth_logo.png
     - lib/app/assets/images/auth_hero.png

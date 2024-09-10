@@ -1,5 +1,4 @@
 import 'package:chat/futures/search/search.controller.dart';
-import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
@@ -38,7 +37,7 @@ class SearchView extends GetView<SearchViewController> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var item in controller.profiles) profile(item),
+                  for (var item in controller.profiles) UserWidget(item: item),
                   if (controller.profiles.isNotEmpty)
                     PaginationWidget(
                       last: controller.lastPage.value,
@@ -63,9 +62,5 @@ class SearchView extends GetView<SearchViewController> {
         ),
       ),
     );
-  }
-
-  Widget profile(ProfileSearchModel item) {
-    return UserWidget(item: item);
   }
 }

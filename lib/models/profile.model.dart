@@ -294,6 +294,17 @@ class Permission {
   }
 }
 
+enum RELATION_ACTION {
+  BLOCK,
+  BLOCKED,
+  UNBLOCK,
+  FAVORITE,
+  DISFAVORITE,
+  FAVORITED,
+  VISIT,
+  VISITED
+}
+
 class Relation {
   bool? blocked;
   bool? blockedMe;
@@ -310,6 +321,19 @@ class Relation {
       blocked: json['blocked'],
       blockedMe: json['blockedMe'],
       favorited: json['favorited'],
+    );
+  }
+
+  static Relation get empty {
+    return Relation(blocked: false, favorited: false, blockedMe: false);
+  }
+
+  // copyWith
+  copyWith(Map<String, dynamic> value) {
+    return Relation(
+      blocked: value['blocked'] ?? blocked,
+      blockedMe: value['blockedMe'] ?? blockedMe,
+      favorited: value['favorited'] ?? favorited,
     );
   }
 

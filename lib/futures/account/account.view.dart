@@ -94,21 +94,21 @@ class AccountView extends GetView<AccountController> {
                   title: 'علاقه مندی ها',
                   icon: Icons.favorite,
                   color: Colors.pink,
-                  page: "/app/account/favorites",
+                  page: "/app/favorites",
                 ),
                 // blocked users (red)
                 item(
                   title: 'بلاکی ها',
                   icon: Icons.block,
                   color: Colors.red,
-                  page: "/app/account/blocked",
+                  page: "/app/blocks",
                 ),
                 // transactions (green)
                 item(
                   title: 'تراکنش ها',
                   icon: Icons.receipt,
                   color: Colors.green,
-                  page: "/app/account/transactions",
+                  page: "/app/transactions",
                 ),
                 item(
                   title: 'کسب درآمد میلیونی با دعوت از دوستان',

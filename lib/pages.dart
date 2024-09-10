@@ -8,11 +8,14 @@ import 'package:chat/futures/auth/auth.view.dart';
 import 'package:chat/futures/auth_forgot/auth_forgot.view.dart';
 import 'package:chat/futures/auth_login/auth_login.view.dart';
 import 'package:chat/futures/auth_reigster/auth_register.view.dart';
+import 'package:chat/futures/blocks/blocks.view.dart';
 import 'package:chat/futures/cropper/cropper.view.dart';
+import 'package:chat/futures/favorites/favorites.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
 import 'package:chat/futures/profile_edit/profile_edit.view.dart';
 import 'package:chat/futures/search_filter/search_filter.view.dart';
 import 'package:chat/futures/splash/splash.view.dart';
+import 'package:chat/futures/transactions/transactions.view.dart';
 import 'package:get/get.dart';
 
 List<GetPage> pages = [
@@ -27,6 +30,9 @@ List<GetPage> pages = [
   GetPage(name: '/app/search/filter', page: () => const SearchFilterView()),
   GetPage(name: '/app/profile', page: () => const ProfileEditView()),
   GetPage(name: '/app/cropper', page: () => const CropperView()),
+  GetPage(name: '/app/blocks', page: () => const BlocksView()),
+  GetPage(name: '/app/favorites', page: () => const FavoritesView()),
+  GetPage(name: '/app/transactions', page: () => const TransactionsView()),
   GetPage(
     name: '/app/notification',
     page: () => const AccountNotificationView(),

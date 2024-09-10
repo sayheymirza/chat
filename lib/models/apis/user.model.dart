@@ -126,7 +126,7 @@ class ApiUserSearchResponseModel {
     required this.lastPage,
   });
 
-  static get empty {
+  static ApiUserSearchResponseModel get empty {
     return ApiUserSearchResponseModel(
       profiles: [],
       lastPage: 0,
