@@ -4,6 +4,7 @@ import 'package:chat/app/apis/api.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AccountController extends GetxController {
@@ -56,5 +57,48 @@ class AccountController extends GetxController {
     } else {
       showSnackbar(message: 'خطا در حذف تصویر پروفایل رخ داد');
     }
+  }
+
+  void deleteOrLeaveAccount() {
+    Get.bottomSheet(
+      Container(
+        height: Get.bottomBarHeight + 120,
+        padding: EdgeInsets.only(bottom: Get.bottomBarHeight),
+        clipBehavior: Clip.hardEdge,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: Column(
+          children: [
+            ListTile(
+              leading: const Icon(
+                Icons.delete_rounded,
+                color: Colors.red,
+              ),
+              title: const Text('حذف حساب کاربری'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/app/account_delete_leave/delete');
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.handshake_rounded,
+                color: Colors.amber,
+              ),
+              title: const Text('غیر فعال سازی حساب کاربری'),
+              onTap: () {
+                Get.back();
+                Get.toNamed('/app/account_delete_leave/leave');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

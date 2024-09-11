@@ -163,11 +163,12 @@ class AccountView extends GetView<AccountController> {
                 ),
                 // disable or delete account (red)
                 item(
-                  title: 'غیر فعال سازی و حذف',
-                  icon: Icons.delete,
-                  color: Colors.red,
-                  page: '/app/account/delete-disable',
-                ),
+                    title: 'غیر فعال سازی و حذف',
+                    icon: Icons.delete,
+                    color: Colors.red,
+                    onTap: () {
+                      controller.deleteOrLeaveAccount();
+                    }),
               ],
             ),
           ),

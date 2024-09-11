@@ -45,4 +45,6 @@ abstract class ApiUserAbstract extends GetxService {
     required int page,
     required RELATION_ACTION action,
   });
+
+  Future<bool> disable({required String type, required String description});
 }

@@ -1,5 +1,6 @@
 import 'package:chat/app/pages.dart' as app;
 import 'package:chat/futures/500/500.view.dart';
+import 'package:chat/futures/account_delete_leave/account_delete_leave.view.dart';
 import 'package:chat/futures/account_notification/account_notification.view.dart';
 import 'package:chat/futures/account_security/account_security.view.dart';
 import 'package:chat/futures/account_verify_phone/account_verify_phone.view.dart';
@@ -51,6 +52,10 @@ List<GetPage> pages = [
   GetPage(
     name: '/app/account_verify_phone',
     page: () => const AccountVerifyPhoneView(),
+  ),
+  GetPage(
+    name: '/app/account_delete_leave/:type',
+    page: () => const AccountDeleteLeaveView(),
   ),
   GetPage(name: '/profile/:id', page: () => const ProfileView()),
 ];
