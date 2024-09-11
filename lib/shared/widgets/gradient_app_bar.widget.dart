@@ -33,11 +33,12 @@ class GradientAppBarWidget extends StatelessWidget
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: colors ??
-                [
-                  Get.theme.primaryColor.withOpacity(0.7),
-                  Get.theme.primaryColor,
-                ],
+            colors: colors == null || colors!.isEmpty
+                ? [
+                    Get.theme.primaryColor.withOpacity(0.7),
+                    Get.theme.primaryColor,
+                  ]
+                : colors!,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -61,7 +62,7 @@ class GradientAppBarWidget extends StatelessWidget
                   title!,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

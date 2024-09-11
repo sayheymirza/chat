@@ -14,22 +14,24 @@ class AppView extends GetView<AppController> {
     Get.put(AppController());
 
     return Scaffold(
-      bottomNavigationBar: bottomNavigationBar(),
+      bottomNavigationBar: bottomNavigationBar(context),
       body: Obx(
         () => [
           HomeView(),
           ChatsView(),
-          SearchView(),
+          SearchView(
+            type: 'search',
+          ),
           AccountView(),
         ][controller.view.value],
       ),
     );
   }
 
-  Widget bottomNavigationBar() {
+  Widget bottomNavigationBar(BuildContext context) {
     return Obx(
       () => SizedBox(
-        height: Get.mediaQuery.padding.bottom + 80,
+        height: MediaQuery.of(context).padding.bottom + 80,
         child: BottomNavigationBar(
           currentIndex: controller.view.value,
           onTap: (int value) {

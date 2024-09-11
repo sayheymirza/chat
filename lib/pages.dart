@@ -13,6 +13,7 @@ import 'package:chat/futures/cropper/cropper.view.dart';
 import 'package:chat/futures/favorites/favorites.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
 import 'package:chat/futures/profile_edit/profile_edit.view.dart';
+import 'package:chat/futures/search/search.view.dart';
 import 'package:chat/futures/search_filter/search_filter.view.dart';
 import 'package:chat/futures/splash/splash.view.dart';
 import 'package:chat/futures/transactions/transactions.view.dart';
@@ -27,6 +28,12 @@ List<GetPage> pages = [
   GetPage(name: '/auth/forgot', page: () => const AuthForgotView()),
   GetPage(name: '/auth/register', page: () => const AuthRegisterView()),
   GetPage(name: '/app', page: () => const AppView()),
+  GetPage(
+    name: '/app/search/:type',
+    page: () => SearchView(
+      type: Get.parameters['type'],
+    ),
+  ),
   GetPage(name: '/app/search/filter', page: () => const SearchFilterView()),
   GetPage(name: '/app/profile', page: () => const ProfileEditView()),
   GetPage(name: '/app/cropper', page: () => const CropperView()),
