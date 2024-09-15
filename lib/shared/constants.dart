@@ -10,6 +10,11 @@ class CONSTANTS {
   static String STORAGE_SETTINGS_SOUND_CALL = "settings:sound_call";
   static String STORAGE_SETTINGS_VIBRATION = "settings:vibration";
 
+  static String STORAGE_CARD_BANK = "card:bank";
+  static String STORAGE_CARD_NUMBER = "card:number";
+  static String STORAGE_CARD_NAME = "card:name";
+  static String STORAGE_CARD_COLOR = "card:color";
+
   static Future<void> Load() async {
     await dotenv.load(fileName: "lib/app/app.env");
 
