@@ -3,6 +3,7 @@ analyzer:
   errors:
     camel_case_types: ignore
     constant_identifier_names: ignore
+    invalid_use_of_protected_member: ignore
     library_prefixes: ignore
     non_constant_identifier_names: ignore
     prefer_final_fields: ignore

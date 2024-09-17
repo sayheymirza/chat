@@ -14,6 +14,7 @@ import 'package:chat/futures/cropper/cropper.view.dart';
 import 'package:chat/futures/favorites/favorites.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
 import 'package:chat/futures/profile_edit/profile_edit.view.dart';
+import 'package:chat/futures/purchase/one-step.view.dart';
 import 'package:chat/futures/search/search.view.dart';
 import 'package:chat/futures/search_filter/search_filter.view.dart';
 import 'package:chat/futures/splash/splash.view.dart';
@@ -56,6 +57,10 @@ List<GetPage> pages = [
   GetPage(
     name: '/app/account_delete_leave/:type',
     page: () => const AccountDeleteLeaveView(),
+  ),
+  GetPage(
+    name: '/app/purchase/one-step',
+    page: () => const PurchaseOneStepView(),
   ),
   GetPage(name: '/profile/:id', page: () => const ProfileView()),
 ];

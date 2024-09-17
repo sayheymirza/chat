@@ -13,6 +13,8 @@ class SplashController extends GetxController {
   void onInit() async {
     super.onInit();
 
+    await handshake();
+
     await fetchAndSaveDropdowns();
 
     await move();
@@ -24,10 +26,19 @@ class SplashController extends GetxController {
 
     if (accessToken != null) {
       // move to /app
-      Get.offAllNamed('/app');
+      Get.offNamed('/app');
     } else {
       // move to /auth
-      Get.offAllNamed('/auth');
+      Get.offNamed('/auth');
+    }
+  }
+
+  Future<void> handshake() async {
+    try {
+      status.value = 'در حال دریافت اطلاعات اپلیکیشن';
+      await Services.app.handshake();
+    } catch (error) {
+      status.value = 'خطا در دریافت اطلاعات اپلیکیشن';
     }
   }
 

@@ -180,7 +180,7 @@ class AccountView extends GetView<AccountController> {
   Widget buy() {
     return GestureDetector(
       onTap: () {
-        Get.toNamed('/app/plan');
+        Get.toNamed('/app/purchase/one-step');
       },
       child: Container(
         margin: const EdgeInsets.symmetric(

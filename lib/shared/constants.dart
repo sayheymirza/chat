@@ -15,6 +15,8 @@ class CONSTANTS {
   static String STORAGE_CARD_NAME = "card:name";
   static String STORAGE_CARD_COLOR = "card:color";
 
+  static String STROAGE_PLANS = 'app:plans';
+
   static Future<void> Load() async {
     await dotenv.load(fileName: "lib/app/app.env");
 

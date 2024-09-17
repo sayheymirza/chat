@@ -22,18 +22,36 @@ class PlanModel {
     required this.usable_count,
     required this.usable_days,
   });
-}
 
-/**
- * "id": 4,
-        "title": "بسته عضویت ویژه ۱۸۰ روزه",
-        "description": "ارسال نامحدود پیام خصوصی به مدت ۱۸۰ روز",
-        "sku": "VIP_180_DAY",
-        "currency": "IRT",
-        "category": "vip",
-        "usable_days": 180,
-        "price": 359000,
-        "final_price": 359000,
-        "discount": 0,
-        "usable_count": 0
- */
+  factory PlanModel.fromJson(Map<String, dynamic> json) {
+    return PlanModel(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      sku: json['sku'],
+      category: json['category'],
+      discount: json['discount'],
+      price: json['price'],
+      finalPrice: json['finalPrice'],
+      usable_count: json['usable_count'],
+      usable_days: json['usable_days'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    var json = <String, dynamic>{};
+
+    json['id'] = id;
+    json['title'] = title;
+    json['description'] = description;
+    json['sku'] = sku;
+    json['category'] = category;
+    json['discount'] = discount;
+    json['price'] = price;
+    json['finalPrice'] = finalPrice;
+    json['usable_count'] = usable_count;
+    json['usable_days'] = usable_days;
+
+    return json;
+  }
+}
