@@ -1,5 +1,5 @@
 import 'package:chat/futures/purchase/futures/card-by-card.view.dart';
-import 'package:chat/futures/purchase/futures/factor.step.view.dart';
+import 'package:chat/futures/purchase/futures/invoice.step.view.dart';
 import 'package:chat/futures/purchase/futures/list-plans.widget.dart';
 import 'package:chat/futures/purchase/futures/support-card.widget.dart';
 import 'package:chat/futures/purchase/one-step.controller.dart';
@@ -22,26 +22,36 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
     controller.loadPlans();
 
     return Obx(
-      () => Scaffold(
-        appBar: GradientAppBarWidget(
-          back: true,
-          title: controller.title.value,
-          onBack: () {
-            if (controller.index.value == 0) {
-              Get.back();
-            } else {
-              controller.back();
-            }
-          },
-        ),
-        bottomNavigationBar: footer(),
-        body: IndexedStack(
-          index: controller.index.value,
-          children: [
-            plans(),
-            PurchaseFactorView(),
-            PurchaseCardByCardView(),
-          ],
+      () => PopScope(
+        canPop: controller.index.value == 0,
+        onPopInvokedWithResult: (_, __) {
+          if (controller.index.value == 0) {
+            Get.back();
+          } else {
+            controller.back();
+          }
+        },
+        child: Scaffold(
+          appBar: GradientAppBarWidget(
+            back: true,
+            title: controller.title.value,
+            onBack: () {
+              if (controller.index.value == 0) {
+                Get.back();
+              } else {
+                controller.back();
+              }
+            },
+          ),
+          bottomNavigationBar: footer(),
+          body: IndexedStack(
+            index: controller.index.value,
+            children: [
+              plans(),
+              PurchaseInvoiceView(),
+              PurchaseCardByCardView(),
+            ],
+          ),
         ),
       ),
     );
@@ -150,21 +160,21 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
   Widget footer() {
     return Obx(
       () => AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 300),
         height: controller.finalSelectedPlansPrice.value == 0
             ? 0
-            : Get.bottomBarHeight + Get.mediaQuery.padding.bottom,
+            : 72 + Get.mediaQuery.padding.bottom,
         child: Stack(
           children: [
             AnimatedPositioned(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300),
               left: 0,
               right: 0,
               bottom: controller.finalSelectedPlansPrice.value == 0
-                  ? Get.bottomBarHeight * -1
+                  ? (72 + Get.mediaQuery.padding.bottom) * -1
                   : 0,
               child: AnimatedContainer(
-                height: Get.bottomBarHeight + Get.mediaQuery.padding.bottom,
+                height: 72 + Get.mediaQuery.padding.bottom,
                 padding: EdgeInsets.only(
                   top: 10,
                   left: 10,
@@ -174,7 +184,7 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade50,
                 ),
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 300),
                 child: Row(
                   children: [
                     Expanded(

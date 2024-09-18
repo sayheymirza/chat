@@ -17,5 +17,6 @@ void showSnackbar({required String message}) {
     barBlur: 0,
     borderRadius: 10,
     backgroundColor: Colors.grey.shade800,
+    margin: const EdgeInsets.all(16),
   );
 }

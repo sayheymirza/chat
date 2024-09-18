@@ -1,3 +1,13 @@
+class InvoicePlanModel {
+  final String title;
+  final int price;
+
+  InvoicePlanModel({
+    required this.title,
+    required this.price,
+  });
+}
+
 class PlanModel {
   final int id;
   final String title;
@@ -7,8 +17,8 @@ class PlanModel {
   final int discount;
   final int price;
   final int finalPrice;
-  final int usable_days;
-  final int usable_count;
+  final int usableDays;
+  final int usableCount;
 
   PlanModel({
     required this.id,
@@ -19,8 +29,8 @@ class PlanModel {
     required this.discount,
     required this.price,
     required this.finalPrice,
-    required this.usable_count,
-    required this.usable_days,
+    required this.usableCount,
+    required this.usableDays,
   });
 
   factory PlanModel.fromJson(Map<String, dynamic> json) {
@@ -33,8 +43,8 @@ class PlanModel {
       discount: json['discount'],
       price: json['price'],
       finalPrice: json['finalPrice'],
-      usable_count: json['usable_count'],
-      usable_days: json['usable_days'],
+      usableCount: json['usableCount'],
+      usableDays: json['usableDays'],
     );
   }
 
@@ -49,8 +59,8 @@ class PlanModel {
     json['discount'] = discount;
     json['price'] = price;
     json['finalPrice'] = finalPrice;
-    json['usable_count'] = usable_count;
-    json['usable_days'] = usable_days;
+    json['usableCount'] = usableCount;
+    json['usableDays'] = usableDays;
 
     return json;
   }

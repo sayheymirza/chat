@@ -43,8 +43,8 @@ class PurchaseListPlans extends StatelessWidget {
   }) {
     String? badge;
 
-    if (item.usable_days > 0) {
-      badge = '${item.usable_days} روزه';
+    if (item.usableDays > 0) {
+      badge = '${item.usableDays} روزه';
     }
 
     return AnimatedContainer(
@@ -156,6 +156,7 @@ class PurchaseListPlans extends StatelessWidget {
                   const Gap(4),
                   if (item.discount != 0)
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           '${formatPrice(item.finalPrice)} تومان',

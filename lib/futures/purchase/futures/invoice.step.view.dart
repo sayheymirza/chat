@@ -2,23 +2,28 @@ import 'package:chat/futures/purchase/purchase.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class PurchaseFactorView extends GetView<PurchaseController> {
-  const PurchaseFactorView({super.key});
+class PurchaseInvoiceView extends GetView<PurchaseController> {
+  const PurchaseInvoiceView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => SingleChildScrollView(
         child: Column(
-          children: [
-            method(
-              id: "CARD_BY_CARD",
-              text: "کارت به کارت",
-              icon: Icons.payments,
-              selected:
-                  controller.selectedPaymentMethod.value == "CARD_BY_CARD",
-            ),
-          ],
+          children: controller.invoicing.value
+              ? [
+                  CircularProgressIndicator(),
+                  Text('در حال ایجاد فاکتور'),
+                ]
+              : [
+                  method(
+                    id: "CARD_BY_CARD",
+                    text: "کارت به کارت",
+                    icon: Icons.payments,
+                    selected: controller.selectedPaymentMethod.value ==
+                        "CARD_BY_CARD",
+                  ),
+                ],
         ),
       ),
     );
