@@ -83,23 +83,6 @@ class ApiUserOTPVerifyResponseModel {
   }
 }
 
-class ApiUserChangeAvatarResponseModel {
-  final bool success;
-  final String? url;
-
-  ApiUserChangeAvatarResponseModel({
-    required this.success,
-    required this.url,
-  });
-
-  static get unhandledError {
-    return ApiUserChangeAvatarResponseModel(
-      success: false,
-      url: null,
-    );
-  }
-}
-
 class ApiUserUpdateResponseModel {
   final bool success;
   final String message;

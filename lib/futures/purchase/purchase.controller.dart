@@ -1,16 +1,20 @@
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/apis/purchase.model.dart';
 import 'package:chat/models/invoice.model.dart';
 import 'package:chat/models/plan.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
 
 class PurchaseController extends GetxController {
   RxInt index = 0.obs;
   RxString title = 'خرید بسته'.obs;
+  RxString button = 'مرحله بعد و پرداخت'.obs;
 
   RxList<PlanModel> plans = RxList.empty(growable: true);
   RxList<int> selectedPlans = RxList.empty(growable: true); // selected plans id
@@ -18,7 +22,9 @@ class PurchaseController extends GetxController {
   RxString selectedPaymentMethod = ''.obs;
 
   Rx<InvoiceModel> invoice = InvoiceModel.empty.obs;
-  RxBool invoicing = false.obs;
+  RxBool disabled = false.obs;
+
+  GlobalKey<FormBuilderState> cardByCardFormKey = GlobalKey<FormBuilderState>();
 
   void loadPlans() {
     var value = Services.configs.get<List<Map<String, dynamic>>>(
@@ -54,21 +60,76 @@ class PurchaseController extends GetxController {
     finalSelectedPlansPrice.value = value;
   }
 
-  Future<void> createInvoice() async {
+  Future<InvoiceModel?> createInvoice() async {
     try {
-      invoicing.value = true;
+      disabled.value = true;
       var result = await ApiService.purchase.createInvoice(
         plans: selectedPlans,
       );
-      invoicing.value = false;
+      disabled.value = false;
 
       if (result.invoice != null) {
         invoice.value = result.invoice!;
       }
 
-      showSnackbar(message: result.message);
+      if (result.status == false) {
+        showSnackbar(message: result.message);
+      }
+
+      return result.invoice;
     } catch (e) {
-      //
+      disabled.value = false;
+
+      return null;
+    }
+  }
+
+  Future<bool> submitCardByCard() async {
+    try {
+      if (cardByCardFormKey.currentState!.saveAndValidate()) {
+        disabled.value = true;
+
+        var value = cardByCardFormKey.currentState!.value;
+
+        var [year, month, day] = value['date']
+            .toString()
+            .split('/')
+            .map((e) => int.parse(e))
+            .toList();
+
+        var result = await ApiService.purchase.payInvoiceByCardByCard(
+          params: ApiPurchasePayByCardByCardParamsModel(
+            invoiceId: invoice.value.id,
+            year: year,
+            month: month,
+            day: day,
+            hour: int.parse(value['hour'].toString()),
+            minute: int.parse(value['minute'].toString()),
+            tracking: value['tracking'].toString(),
+            card: value['card'].toString(),
+            description: value['description'],
+            image: value['image'],
+          ),
+        );
+
+        if (result.status) {
+          Get.back(canPop: true);
+        }
+
+        showSnackbar(message: result.message);
+
+        return result.status;
+      }
+
+      disabled.value = false;
+
+      return false;
+    } catch (e) {
+      disabled.value = false;
+
+      print(e);
+
+      return false;
     }
   }
 }

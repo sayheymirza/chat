@@ -10,3 +10,44 @@ class ApiPurchaseCreateInvoiceResponseModel extends ApiSimpleResponseModel {
     this.invoice,
   });
 }
+
+class ApiPurchasePayByCardByCardParamsModel {
+  int invoiceId;
+  int year;
+  int month;
+  int day;
+  int hour;
+  int minute;
+  String tracking;
+  String card;
+  String description;
+  String image;
+
+  ApiPurchasePayByCardByCardParamsModel({
+    required this.invoiceId,
+    required this.year,
+    required this.month,
+    required this.day,
+    required this.hour,
+    required this.minute,
+    required this.tracking,
+    required this.card,
+    required this.description,
+    required this.image,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['invoice_id'] = invoiceId;
+    data['year'] = year;
+    data['month'] = month;
+    data['day'] = day;
+    data['hour'] = hour;
+    data['minute'] = minute;
+    data['tracking'] = tracking;
+    data['card'] = card;
+    data['description'] = description;
+    data['image'] = image;
+    return data;
+  }
+}

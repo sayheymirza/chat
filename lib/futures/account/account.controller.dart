@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
@@ -20,6 +21,24 @@ class AccountController extends GetxController {
     } catch (e) {
       //
     }
+  }
+
+  void chooseAvatar() {
+    Get.bottomSheet(
+      DialogPickImageView(
+        deletable: profile.profile.value.defaultAvatar == false,
+      ),
+    ).then((value) {
+      if (value == null) return;
+
+      if (value['action'] == 'file') {
+        changeAvatar(value['data']);
+      }
+
+      if (value['action'] == 'delete') {
+        deleteAvatar();
+      }
+    });
   }
 
   Future<void> changeAvatar(String path) async {

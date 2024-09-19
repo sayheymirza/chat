@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:chat/models/apis/api.model.dart';
 import 'package:chat/models/apis/data.model.dart';
 import 'package:chat/models/dropdown.model.dart';
 import 'package:chat/models/home.model.dart';
 import 'package:chat/shared/services/http.service.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 abstract class ApiDataAbstract extends GetxService {
@@ -12,4 +16,10 @@ abstract class ApiDataAbstract extends GetxService {
   Future<List<HomeComponentModel>> home();
 
   Future<ApiDataHandshakeResponseModel?> handshake();
+
+  Future<ApiUploadResponseModel> upload({
+    required File file,
+    required Function(int precent) callback,
+    CancelToken? cancelToken,
+  });
 }

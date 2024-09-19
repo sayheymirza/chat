@@ -48,8 +48,16 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
             index: controller.index.value,
             children: [
               plans(),
-              PurchaseInvoiceView(),
-              PurchaseCardByCardView(),
+              PurchaseInvoiceView(
+                invoice: controller.invoice.value,
+                selectedPaymentMethod: controller.selectedPaymentMethod.value,
+                onSelectPaymentMethod: (String id) {
+                  controller.selectPaymentMethod(id);
+                },
+              ),
+              PurchaseCardByCardView(
+                formKey: controller.cardByCardFormKey,
+              ),
             ],
           ),
         ),
@@ -186,6 +194,7 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                 ),
                 duration: const Duration(milliseconds: 300),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
@@ -201,7 +210,8 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                           const Gap(2),
                           Text(
                             '${formatPrice(controller.finalSelectedPlansPrice.value)} تومان',
-                            style: const TextStyle(
+                            style: TextStyle(
+                              color: Get.theme.primaryColor,
                               fontWeight: FontWeight.bold,
                             ),
                           )
@@ -209,18 +219,35 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        controller.next();
-                      },
-                      style: const ButtonStyle(
-                        elevation: WidgetStatePropertyAll(0),
-                      ),
-                      child: const Text(
-                        'مرحله بعد و پرداخت',
-                        style: TextStyle(
-                          color: Colors.white,
+                      onPressed: controller.disabled.value
+                          ? null
+                          : () {
+                              controller.next();
+                            },
+                      style: ButtonStyle(
+                        elevation: const WidgetStatePropertyAll(0),
+                        minimumSize: const WidgetStatePropertyAll(
+                          Size(160, 48),
                         ),
+                        backgroundColor: controller.disabled.value
+                            ? const WidgetStatePropertyAll(Colors.transparent)
+                            : WidgetStatePropertyAll(Get.theme.primaryColor),
                       ),
+                      child: controller.disabled.value
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : Text(
+                              controller.button.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ],
                 ),

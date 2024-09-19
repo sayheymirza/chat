@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat/futures/purchase/purchase.controller.dart';
+import 'package:chat/shared/snackbar.dart';
 import 'package:get/get.dart';
 
 class PurchaseOneStepController extends PurchaseController {
@@ -16,21 +17,38 @@ class PurchaseOneStepController extends PurchaseController {
     if (index.value == 1) {
       index.value = 0;
       title.value = 'خرید بسته';
+      button.value = "مرحله بعد پرداخت";
+    }
+    if (index.value == 2) {
+      index.value = 1;
+      title.value = "فاکتور شما";
+      button.value = "مرحله بعد پرداخت";
+      cardByCardFormKey.currentState!.reset();
     }
 
     log('[purchase/one-step.controller.dart] back to $index');
   }
 
-  void next() {
-    print(selectedPaymentMethod.value);
+  void next() async {
     if (index.value == 0) {
-      index.value = 1;
-      title.value = 'فاکتور شما';
+      var value = await createInvoice();
+
+      if (value != null) {
+        index.value = 1;
+        title.value = 'فاکتور شما';
+        button.value = "مرحله بعد پرداخت";
+      }
     } else if (index.value == 1) {
-      if (selectedPaymentMethod.value == "CARD_BY_CARD") {
+      if (selectedPaymentMethod.value == "psp") {
+        showSnackbar(message: "پرداخت آنلاین پیاده سازی نشده است");
+      }
+      if (selectedPaymentMethod.value == "card-by-card") {
         index.value = 2;
         title.value = 'کارت به کارت';
+        button.value = "تایید و ارسال";
       }
+    } else if (index.value == 2) {
+      await submitCardByCard();
     }
 
     log('[purchase/one-step.controller.dart] next to $index');

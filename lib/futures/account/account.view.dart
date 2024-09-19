@@ -1,6 +1,5 @@
 import 'package:chat/futures/account/account.controller.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
-import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -381,23 +380,7 @@ class AccountView extends GetView<AccountController> {
                 onPressed: controller.avatarDisabled.value
                     ? null
                     : () {
-                        Get.bottomSheet(
-                          DialogPickImageView(
-                            deletable: controller
-                                    .profile.profile.value.defaultAvatar ==
-                                false,
-                          ),
-                        ).then((value) {
-                          if (value == null) return;
-
-                          if (value['action'] == 'file') {
-                            controller.changeAvatar(value['data']);
-                          }
-
-                          if (value['action'] == 'delete') {
-                            controller.deleteAvatar();
-                          }
-                        });
+                        controller.chooseAvatar();
                       },
                 icon: Icon(
                   Icons.add_a_photo_rounded,

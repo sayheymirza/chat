@@ -1,30 +1,59 @@
-import 'package:chat/futures/purchase/purchase.controller.dart';
+import 'package:chat/futures/purchase/futures/invoice-card.widget.dart';
+import 'package:chat/models/invoice.model.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class PurchaseInvoiceView extends GetView<PurchaseController> {
-  const PurchaseInvoiceView({super.key});
+class PurchaseInvoiceView extends StatelessWidget {
+  final InvoiceModel invoice;
+  final String selectedPaymentMethod;
+  final Function(String id) onSelectPaymentMethod;
+
+  const PurchaseInvoiceView({
+    super.key,
+    required this.invoice,
+    required this.selectedPaymentMethod,
+    required this.onSelectPaymentMethod,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => SingleChildScrollView(
-        child: Column(
-          children: controller.invoicing.value
-              ? [
-                  CircularProgressIndicator(),
-                  Text('در حال ایجاد فاکتور'),
-                ]
-              : [
-                  method(
-                    id: "CARD_BY_CARD",
-                    text: "کارت به کارت",
-                    icon: Icons.payments,
-                    selected: controller.selectedPaymentMethod.value ==
-                        "CARD_BY_CARD",
-                  ),
-                ],
-        ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(
+        horizontal: 12,
+      ),
+      child: Column(
+        children: [
+          const Gap(20),
+          InvoiceCardWidget(
+            item: invoice,
+          ),
+          const Gap(20),
+          ListTile(
+            dense: true,
+            title: Text(
+              'روش پرداخت را انتخاب کنید',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade700,
+              ),
+            ),
+          ),
+          if (invoice.paymentMethods.contains('psp'))
+            method(
+              id: "psp",
+              text: "پرداخت آنلاین",
+              icon: Icons.language,
+              selected: selectedPaymentMethod == "psp",
+            ),
+          if (invoice.paymentMethods.contains('card-by-card'))
+            method(
+              id: "card-by-card",
+              text: "کارت به کارت",
+              icon: Icons.payments,
+              selected: selectedPaymentMethod == "card-by-card",
+            ),
+        ],
       ),
     );
   }
@@ -37,14 +66,13 @@ class PurchaseInvoiceView extends GetView<PurchaseController> {
   }) {
     return GestureDetector(
       onTap: () {
-        controller.selectedPaymentMethod(id);
+        onSelectPaymentMethod(id);
       },
       child: AnimatedContainer(
         duration: const Duration(
           milliseconds: 100,
         ),
         margin: const EdgeInsets.symmetric(
-          horizontal: 10,
           vertical: 4,
         ),
         padding: const EdgeInsets.symmetric(
@@ -53,7 +81,7 @@ class PurchaseInvoiceView extends GetView<PurchaseController> {
         ),
         decoration: BoxDecoration(
           border: Border.all(
-            color: selected ? Get.theme.primaryColor : Colors.grey.shade200,
+            color: selected ? Get.theme.primaryColor : Colors.grey.shade400,
           ),
           borderRadius: BorderRadius.circular(10),
         ),

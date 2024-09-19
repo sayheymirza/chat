@@ -5,10 +5,12 @@ import 'package:image_picker/image_picker.dart';
 
 class DialogPickImageView extends GetView<DialogPickImageController> {
   final bool deletable;
+  final bool editable;
 
   const DialogPickImageView({
     super.key,
     this.deletable = false,
+    this.editable = true,
   });
 
   @override
@@ -33,7 +35,10 @@ class DialogPickImageView extends GetView<DialogPickImageController> {
             leading: const Icon(Icons.photo),
             title: const Text("انتخاب از گالری"),
             onTap: () {
-              controller.image(source: ImageSource.gallery);
+              controller.image(
+                source: ImageSource.gallery,
+                editable: editable,
+              );
             },
           ),
           // pick from camera
@@ -41,7 +46,10 @@ class DialogPickImageView extends GetView<DialogPickImageController> {
             leading: const Icon(Icons.camera_alt),
             title: const Text("گرفتن عکس"),
             onTap: () {
-              controller.image(source: ImageSource.camera);
+              controller.image(
+                source: ImageSource.camera,
+                editable: editable,
+              );
             },
           ),
           if (deletable) const Divider(),
