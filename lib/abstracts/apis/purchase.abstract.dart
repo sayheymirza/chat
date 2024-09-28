@@ -13,4 +13,9 @@ abstract class ApiPurchaseAbstract extends GetxService {
   Future<ApiSimpleResponseModel> payInvoiceByCardByCard({
     required ApiPurchasePayByCardByCardParamsModel params,
   });
+
+  Future<String?> payInvoiceWithPSP({
+    required int invoiceId,
+    required String callback,
+  });
 }

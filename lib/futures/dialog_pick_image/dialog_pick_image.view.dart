@@ -18,7 +18,7 @@ class DialogPickImageView extends GetView<DialogPickImageController> {
     Get.put(DialogPickImageController());
 
     return Container(
-      height: Get.bottomBarHeight + (deletable ? 160 : 100),
+      height: Get.mediaQuery.padding.bottom + (deletable ? 160 : 100) + 32,
       width: Get.width,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(

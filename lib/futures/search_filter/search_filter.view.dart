@@ -1,4 +1,5 @@
 import 'package:chat/futures/search_filter/search_filter.controller.dart';
+import 'package:chat/models/apis/user.model.dart';
 import 'package:chat/shared/widgets/dropdowns/dropdowns.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -6,19 +7,24 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class SearchFilterView extends GetView<SearchFilterController> {
-  const SearchFilterView({super.key});
+  final ApiUserSearchFilterRequestModel value;
+
+  const SearchFilterView({super.key, required this.value});
 
   @override
   Widget build(BuildContext context) {
     Get.put(SearchFilterController());
 
-    controller.loadDropdowns().then((value) {
-      controller.patchValue(Get.arguments);
+    controller.loadDropdowns().then((_) {
+      controller.patchValue(value);
     });
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('فیلتر ها'),
+        title: const Text(
+          'فیلتر ها',
+          style: TextStyle(fontSize: 16),
+        ),
         actions: [
           IconButton(
             onPressed: () {

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:chat/flavors/direct/service.dart';
 import 'package:chat/run.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +12,8 @@ void main() {
   log('[flavors/direct/main.dart] put flavor Get service');
 
   Get.lazyPut(() => FlavorDirectService(), tag: 'flavor');
+
+  CONSTANTS.FLAVOR = 'direct';
 
   run();
 }

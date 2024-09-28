@@ -26,7 +26,7 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
         canPop: controller.index.value == 0,
         onPopInvokedWithResult: (_, __) {
           if (controller.index.value == 0) {
-            Get.back();
+            Get.back(canPop: true);
           } else {
             controller.back();
           }
@@ -37,11 +37,22 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
             title: controller.title.value,
             onBack: () {
               if (controller.index.value == 0) {
-                Get.back();
+                Get.back(canPop: true);
               } else {
                 controller.back();
               }
             },
+            left: TextButton(
+              onPressed: () {
+                Get.toNamed('/page/plans');
+              },
+              child: const Text(
+                'راهنمای بسته ها',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
           bottomNavigationBar: footer(),
           body: IndexedStack(
@@ -116,6 +127,7 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                 ),
               ],
             ),
+            Gap(Get.bottomBarHeight + 32),
           ],
         ),
       ),

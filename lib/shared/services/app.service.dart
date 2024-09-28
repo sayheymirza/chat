@@ -1,7 +1,9 @@
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AppService extends GetxService {
   Future<void> handshake() async {
@@ -16,5 +18,15 @@ class AppService extends GetxService {
       // store each config
       Services.configs.setFromMap(result.configs);
     }
+  }
+
+  Future<void> copy(String value) async {
+    await Clipboard.setData(
+      ClipboardData(text: value),
+    );
+  }
+
+  Future<void> share(String value) async {
+    await Share.share(value);
   }
 }

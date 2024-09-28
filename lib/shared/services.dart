@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat/shared/services/access.service.dart';
 import 'package:chat/shared/services/app.service.dart';
 import 'package:chat/shared/services/chrome.service.dart';
 import 'package:chat/shared/services/configs.service.dart';
@@ -19,6 +20,7 @@ class Services {
   static EventService get event => Get.find(tag: 'event');
   static AppService get app => Get.find(tag: 'app');
   static QueueService get queue => Get.find(tag: 'queue');
+  static AccessService get access => Get.find(tag: 'access');
 
   static put() async {
     log('[services.dart] start put Get services');
@@ -30,6 +32,7 @@ class Services {
     Get.lazyPut(() => ConfigsService(), tag: 'configs');
     Get.lazyPut(() => EventService(), tag: 'event');
     Get.lazyPut(() => AppService(), tag: 'app');
+    Get.lazyPut(() => AccessService(), tag: 'access');
     log('[services.dart] end put Get services');
   }
 }

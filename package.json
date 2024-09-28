@@ -8,6 +8,7 @@
   "scripts": {
     "run:direct": "flutter run --flavor direct --target lib/flavors/direct/main.dart",
     "build:direct": "flutter build apk --flavor direct --target lib/flavors/direct/main.dart --split-per-abi",
+    "build:web": "flutter build web --target lib/flavors/direct/main.dart",
     "build:database": "dart run build_runner build"
   }
 }

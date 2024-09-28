@@ -40,7 +40,7 @@ class PurchaseSupportCardWidget extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                Get.toNamed('/contact');
+                Get.toNamed('/page/contact');
               },
               style: const ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(Colors.white),

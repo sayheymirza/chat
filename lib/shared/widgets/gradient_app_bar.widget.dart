@@ -52,8 +52,7 @@ class GradientAppBarWidget extends StatelessWidget
                   Icons.arrow_back,
                   color: Colors.white,
                 ),
-                onPressed: () =>
-                    onBack != null ? onBack!() : Navigator.of(context).pop(),
+                onPressed: () => onBack != null ? onBack!() : Get.back(),
               ),
             if (right != null) Expanded(child: right!),
             if (title != null)

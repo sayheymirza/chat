@@ -1,5 +1,6 @@
 import 'package:chat/futures/account/account.controller.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -113,7 +114,7 @@ class AccountView extends GetView<AccountController> {
                   title: 'کسب درآمد میلیونی با دعوت از دوستان',
                   icon: Icons.payments,
                   color: Colors.blue,
-                  page: "/app/account/invitation",
+                  page: "/app/earning",
                 ),
                 item(
                   title: 'به ما امتیاز بدید',
@@ -125,32 +126,36 @@ class AccountView extends GetView<AccountController> {
                   title: 'شرایط استفاده',
                   icon: Icons.gavel,
                   color: Colors.brown.shade600,
-                  page: "/terms",
+                  page: "/page/terms",
                 ),
                 item(
                   title: 'حریم خصوصی',
                   icon: Icons.privacy_tip,
                   color: Colors.blue,
-                  page: "/privacy",
+                  page: "/page/privacy",
                 ),
                 // contact us (blue)
                 item(
                   title: 'تماس با ما',
                   icon: Icons.help_outline,
                   color: Colors.blue,
-                  page: "/contact",
+                  page: "/page/contact",
                 ),
                 item(
                   title: 'وبلاگ',
                   icon: Icons.article,
                   color: Colors.purple,
-                  onTap: () async {},
+                  onTap: () async {
+                    controller.openLink(CONSTANTS.STORAGE_LINK_WEBLOG);
+                  },
                 ),
                 item(
                   title: 'ورود به وب',
                   icon: Icons.language,
                   color: Colors.green,
-                  onTap: () async {},
+                  onTap: () async {
+                    controller.openLink(CONSTANTS.STORAGE_LINK_WEBSITE);
+                  },
                 ),
                 item(
                   title: 'خروج از حساب کاربری',

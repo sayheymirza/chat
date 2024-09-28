@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:chat/futures/purchase/purchase.controller.dart';
-import 'package:chat/shared/snackbar.dart';
 import 'package:get/get.dart';
 
 class PurchaseOneStepController extends PurchaseController {
@@ -40,7 +39,7 @@ class PurchaseOneStepController extends PurchaseController {
       }
     } else if (index.value == 1) {
       if (selectedPaymentMethod.value == "psp") {
-        showSnackbar(message: "پرداخت آنلاین پیاده سازی نشده است");
+        await submitWithPSP();
       }
       if (selectedPaymentMethod.value == "card-by-card") {
         index.value = 2;

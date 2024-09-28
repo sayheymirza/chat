@@ -22,4 +22,12 @@ abstract class ApiDataAbstract extends GetxService {
     required Function(int precent) callback,
     CancelToken? cancelToken,
   });
+
+  Future<ApiSimpleResponseModel> contact({
+    required String reciver,
+    required String title,
+    required String description,
+    String? email,
+    String? file,
+  });
 }

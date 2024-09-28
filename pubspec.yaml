@@ -29,6 +29,15 @@ dependencies:
   vibration: ^2.0.0
   flutter_linear_datepicker: ^2.0.6
   shamsi_date: ^1.0.4
+  path: ^1.9.0
+  device_info_plus: ^10.1.2
+  share_plus: ^10.0.2
+
+dependency_overrides:
+  flutter_inappwebview:
+    git:
+      url: https://github.com/rshrc/flutter_inappwebview
+      ref: master
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +59,7 @@ flutter:
   assets:
     - lib/app/app.env
     - lib/assets/images/empty.png
+    - lib/assets/images/confetti.png
     - lib/app/assets/images/splash_logo.png
     - lib/app/assets/images/auth_logo.png
     - lib/app/assets/images/auth_hero.png

@@ -15,7 +15,37 @@ class CONSTANTS {
   static String STORAGE_CARD_NAME = "card:name";
   static String STORAGE_CARD_COLOR = "card:color";
 
+  static String STORAGE_PAGE_TERMS = 'page:terms';
+  static String STORAGE_PAGE_PRIVACY = 'page:privacy';
+  static String STORAGE_PAGE_PLANS_HELP = 'page:plans';
+
+  static String STORAGE_CONTACT_US_FORM = 'contact_us:form';
+  static String STORAGE_CONTACT_US_TIME = 'contact_us:response_time';
+  static String STORAGE_CONTACT_US_PHONE = 'contact_us:phone';
+  static String STORAGE_CONTACT_US_EMAIL = 'contact_us:email';
+  static String STORAGE_CONTACT_US_ADDRESS = 'contact_us:address';
+  static String STORAGE_CONTACT_US_PHONE_DESCRIPTION =
+      'contact_us:phone_description';
+  static String STORAGE_CONTACT_US_PHONE_PLATFORMS =
+      'contact_us:phone_plafroms';
+  static String STORAGE_CONTACT_US_EMAIL_DESCRIPTION =
+      'contact_us:email_description';
+  static String STORAGE_CONTACT_US_ADDRESS_DESCRIPTION =
+      'contact_us:address_description';
+  static String STORAGE_CONTACT_US_CHANNELS = 'contact_us:channels';
+
   static String STROAGE_PLANS = 'app:plans';
+
+  static String STORAGE_LINK_WEBSITE = 'link:website';
+  static String STORAGE_LINK_WEBLOG = 'link:weblog';
+
+  static String STORAGE_TEXT_EARNING_INCOME = 'text:earning_income';
+
+  static String STORAGE_LATEST_VERSION = 'version:latest';
+  static String STORAGE_DEPRECATED_VERION = 'version:deprecated';
+
+  static String PAYMENT_CALLBACK = '';
+  static String FLAVOR = '';
 
   static Future<void> Load() async {
     await dotenv.load(fileName: "lib/app/app.env");

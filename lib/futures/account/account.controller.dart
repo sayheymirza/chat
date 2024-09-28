@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
@@ -17,6 +18,7 @@ class AccountController extends GetxController {
   Future<void> onRefresh() async {
     try {
       await profile.fetchMyProfile();
+      await Services.app.handshake();
       vibrate();
     } catch (e) {
       //
@@ -119,5 +121,12 @@ class AccountController extends GetxController {
         ),
       ),
     );
+  }
+
+  void openLink(String key) {
+    var link = Services.configs.get(key: key);
+    if (link != null) {
+      Services.launch.launch(link);
+    }
   }
 }

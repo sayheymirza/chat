@@ -1,4 +1,5 @@
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/futures/search_filter/search_filter.view.dart';
 import 'package:chat/models/apis/user.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,12 @@ class SearchViewController extends GetxController {
   ApiUserSearchFilterRequestModel filters =
       ApiUserSearchFilterRequestModel.empty;
 
+  String? type;
+
   void init({
     required String? type,
   }) {
+    this.type = type;
     switch (type) {
       case 'newest':
         title.value = 'جدید ترین کاربران';
@@ -61,9 +65,10 @@ class SearchViewController extends GetxController {
   }
 
   void reset() {
+    profiles.value = List<ProfileSearchModel>.empty();
+
     Future.delayed(const Duration(milliseconds: 100), () {
       page.value = 1;
-      profiles.value = List<ProfileSearchModel>.empty();
       lastPage.value = 0;
       filters = ApiUserSearchFilterRequestModel.empty;
       submit();
@@ -80,7 +85,7 @@ class SearchViewController extends GetxController {
     if (loading.value == true) return;
     try {
       loading.value = true;
-      var type = Get.parameters['type'] ?? 'newest';
+      var type = this.type ?? 'newest';
 
       if (type == 'search') {
         type = 'newest';
@@ -102,11 +107,12 @@ class SearchViewController extends GetxController {
   }
 
   void openFilters() {
-    Get.toNamed(
-      '/app/search/filter',
-      arguments: filters,
-    )!
-        .then((values) {
+    Get.dialog(
+      SearchFilterView(
+        value: filters,
+      ),
+      useSafeArea: false,
+    ).then((values) {
       if (values != null) {
         filters = values;
         page.value = 1;

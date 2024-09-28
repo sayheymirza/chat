@@ -84,6 +84,34 @@ class PurchaseController extends GetxController {
     }
   }
 
+  Future<void> submitWithPSP() async {
+    try {
+      disabled.value = true;
+
+      var callback = CONSTANTS.PAYMENT_CALLBACK;
+
+      if (callback.isEmpty) {
+        var package = await Services.access.generatePackageInfo();
+
+        callback = 'app://${package.packageName}/payment';
+      }
+
+      var result = await ApiService.purchase.payInvoiceWithPSP(
+        invoiceId: invoice.value.id,
+        callback: callback,
+      );
+
+      disabled.value = false;
+
+      if (result != null) {
+        print(result);
+        Services.launch.launch(result, mode: "external");
+      }
+    } catch (e) {
+      disabled.value = false;
+    }
+  }
+
   Future<bool> submitCardByCard() async {
     try {
       if (cardByCardFormKey.currentState!.saveAndValidate()) {
@@ -107,7 +135,7 @@ class PurchaseController extends GetxController {
             minute: int.parse(value['minute'].toString()),
             tracking: value['tracking'].toString(),
             card: value['card'].toString(),
-            description: value['description'],
+            description: value['description'] ?? '',
             image: value['image'],
           ),
         );
