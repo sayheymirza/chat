@@ -49,7 +49,7 @@ module.exports = {
             process.chdir(__dirname);
 
             console.log(`> Changing application logo`);
-            await execSync(`dart run flutter_launcher_icons:generate -f ./apps/${app}/flutter_launcher_icons.yaml`);
+            await execSync(`flutter pub run flutter_launcher_icons -f ./scripts/cli/apps/${app}/flutter_launcher_icons.yaml`);
         } catch (error) {
             console.error(error);
             process.exit(1);
