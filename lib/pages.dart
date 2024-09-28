@@ -15,6 +15,7 @@ import 'package:chat/futures/cropper/cropper.view.dart';
 import 'package:chat/futures/earning_income/earning_income.view.dart';
 import 'package:chat/futures/favorites/favorites.view.dart';
 import 'package:chat/futures/page/page.view.dart';
+import 'package:chat/futures/payment/payment.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
 import 'package:chat/futures/profile_edit/profile_edit.view.dart';
 import 'package:chat/futures/purchase/one-step.view.dart';
@@ -89,5 +90,12 @@ List<GetPage> pages = [
       page: 'privacy',
     ),
   ),
-  GetPage(name: '/page/contact', page: () => const ContactView()),
+  GetPage(
+    name: '/page/contact',
+    page: () => const ContactView(),
+  ),
+  GetPage(
+    name: '/payment',
+    page: () => const PaymentView(),
+  ),
 ];

@@ -6,9 +6,15 @@
   "author": "Mirza <sayheymirza@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "cli": "node scripts/cli/index.js",
     "run:direct": "flutter run --flavor direct --target lib/flavors/direct/main.dart",
     "build:direct": "flutter build apk --flavor direct --target lib/flavors/direct/main.dart --split-per-abi",
     "build:web": "flutter build web --target lib/flavors/direct/main.dart",
     "build:database": "dart run build_runner build"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^5.3.4",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0"
   }
 }

@@ -1,4 +1,4 @@
-package com.sayheymirza.chat
+package com.mahasal.app
 
 import io.flutter.embedding.android.FlutterActivity
 

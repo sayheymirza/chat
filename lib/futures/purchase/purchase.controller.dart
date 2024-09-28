@@ -91,9 +91,7 @@ class PurchaseController extends GetxController {
       var callback = CONSTANTS.PAYMENT_CALLBACK;
 
       if (callback.isEmpty) {
-        var package = await Services.access.generatePackageInfo();
-
-        callback = 'app://${package.packageName}/payment';
+        callback = 'app://chat.deep.link/payment';
       }
 
       var result = await ApiService.purchase.payInvoiceWithPSP(
