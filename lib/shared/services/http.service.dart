@@ -51,7 +51,7 @@ class HttpService extends GetxService {
 
     var start = DateTime.now();
 
-    log('[http.service.dart#$i] $method $path');
+    log('[http.service.dart#$i] $method $url');
 
     var response = await _client.request(
       url,

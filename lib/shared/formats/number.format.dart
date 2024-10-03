@@ -19,3 +19,11 @@ final currency = NumberFormat.currency(
 String formatPrice(int price) {
   return currency.format(price).replaceAll('IRR', '');
 }
+
+int formatVersion(String version) {
+  List<int> v = version.split('.').map((e) => int.parse(e)).toList();
+
+  var r = v.reduce((value, element) => value + element);
+
+  return r;
+}

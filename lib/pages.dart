@@ -21,6 +21,7 @@ import 'package:chat/futures/profile_edit/profile_edit.view.dart';
 import 'package:chat/futures/purchase/one-step.view.dart';
 import 'package:chat/futures/search/search.view.dart';
 import 'package:chat/futures/splash/splash.view.dart';
+import 'package:chat/futures/transacrion/transaction.view.dart';
 import 'package:chat/futures/transactions/transactions.view.dart';
 import 'package:get/get.dart';
 
@@ -44,6 +45,7 @@ List<GetPage> pages = [
   GetPage(name: '/app/blocks', page: () => const BlocksView()),
   GetPage(name: '/app/favorites', page: () => const FavoritesView()),
   GetPage(name: '/app/transactions', page: () => const TransactionsView()),
+  GetPage(name: '/app/transactions/:id', page: () => const TransactionView()),
   GetPage(
     name: '/app/notification',
     page: () => const AccountNotificationView(),

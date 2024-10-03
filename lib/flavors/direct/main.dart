@@ -4,16 +4,14 @@ import 'package:chat/flavors/direct/service.dart';
 import 'package:chat/run.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  log('[flavors/direct/main.dart] put flavor Get service');
+  log('[flavors/direct/main.dart] direct flavor is listening');
+  FlavorDirect().listen();
 
-  Get.lazyPut(() => FlavorDirectService(), tag: 'flavor');
-
-  CONSTANTS.FLAVOR = 'direct';
+  CONSTANTS.FLAVOR = "direct";
 
   run();
 }

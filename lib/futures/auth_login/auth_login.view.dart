@@ -58,6 +58,9 @@ class AuthLoginView extends GetView<AuthLoginController> {
                           FormBuilderValidators.required(),
                           FormBuilderValidators.minLength(11),
                           FormBuilderValidators.maxLength(11),
+                          CustomValidator.justPhoneNumber(
+                            errorText: 'فرمت شماره موبایل اشتباه است',
+                          ),
                         ],
                       ),
                     ),

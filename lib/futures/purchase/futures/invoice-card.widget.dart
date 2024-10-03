@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class InvoiceCardWidget extends StatelessWidget {
-  final InvoiceModel item;
+  final PurchaseInvoiceModel item;
 
   const InvoiceCardWidget({super.key, required this.item});
 

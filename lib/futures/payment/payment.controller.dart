@@ -13,7 +13,11 @@ class PaymentController extends GetxController {
       statusBarIconBrightness: Brightness.dark,
     );
 
-    status.value = Get.parameters['status'].toString().toLowerCase();
+    var result = Get.parameters['status'].toString().toLowerCase();
+
+    var map = {'true': 'ok', 'false': 'nok', 'ok': 'ok', 'nok': 'nok'};
+
+    status.value = map[result] ?? 'nok';
 
     if (status.value == 'ok') {
       Services.profile.fetchMyProfile();

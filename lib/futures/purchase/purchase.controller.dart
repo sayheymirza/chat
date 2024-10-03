@@ -21,7 +21,7 @@ class PurchaseController extends GetxController {
   RxInt finalSelectedPlansPrice = 0.obs;
   RxString selectedPaymentMethod = ''.obs;
 
-  Rx<InvoiceModel> invoice = InvoiceModel.empty.obs;
+  Rx<PurchaseInvoiceModel> invoice = PurchaseInvoiceModel.empty.obs;
   RxBool disabled = false.obs;
 
   GlobalKey<FormBuilderState> cardByCardFormKey = GlobalKey<FormBuilderState>();
@@ -60,7 +60,7 @@ class PurchaseController extends GetxController {
     finalSelectedPlansPrice.value = value;
   }
 
-  Future<InvoiceModel?> createInvoice() async {
+  Future<PurchaseInvoiceModel?> createInvoice() async {
     try {
       disabled.value = true;
       var result = await ApiService.purchase.createInvoice(
@@ -91,7 +91,8 @@ class PurchaseController extends GetxController {
       var callback = CONSTANTS.PAYMENT_CALLBACK;
 
       if (callback.isEmpty) {
-        callback = 'app://chat.deep.link/payment';
+        var package = await Services.access.generatePackageInfo();
+        callback = 'app://${package.packageName}/payment';
       }
 
       var result = await ApiService.purchase.payInvoiceWithPSP(
@@ -102,7 +103,6 @@ class PurchaseController extends GetxController {
       disabled.value = false;
 
       if (result != null) {
-        print(result);
         Services.launch.launch(result, mode: "external");
       }
     } catch (e) {

@@ -2,7 +2,7 @@ import 'package:chat/models/apis/api.model.dart';
 import 'package:chat/models/invoice.model.dart';
 
 class ApiPurchaseCreateInvoiceResponseModel extends ApiSimpleResponseModel {
-  final InvoiceModel? invoice;
+  final PurchaseInvoiceModel? invoice;
 
   ApiPurchaseCreateInvoiceResponseModel({
     required super.status,
@@ -49,5 +49,28 @@ class ApiPurchasePayByCardByCardParamsModel {
     data['description'] = description;
     data['image'] = image;
     return data;
+  }
+}
+
+class ApiPurchaseInvoicesResponseModel {
+  final List<SlimInvoiceModel> invoices;
+  final int page;
+  final int limit;
+  final int lastPage;
+
+  ApiPurchaseInvoicesResponseModel({
+    required this.invoices,
+    required this.page,
+    required this.limit,
+    required this.lastPage,
+  });
+
+  static ApiPurchaseInvoicesResponseModel get unhandledError {
+    return ApiPurchaseInvoicesResponseModel(
+      invoices: [],
+      page: 0,
+      limit: 0,
+      lastPage: 0,
+    );
   }
 }

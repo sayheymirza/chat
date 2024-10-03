@@ -1,11 +1,12 @@
 import 'package:chat/futures/purchase/futures/invoice-card.widget.dart';
 import 'package:chat/models/invoice.model.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class PurchaseInvoiceView extends StatelessWidget {
-  final InvoiceModel invoice;
+  final PurchaseInvoiceModel invoice;
   final String selectedPaymentMethod;
   final Function(String id) onSelectPaymentMethod;
 
@@ -19,7 +20,7 @@ class PurchaseInvoiceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 12,
       ),
       child: Column(
@@ -39,20 +40,16 @@ class PurchaseInvoiceView extends StatelessWidget {
               ),
             ),
           ),
-          if (invoice.paymentMethods.contains('psp'))
-            method(
-              id: "psp",
-              text: "پرداخت آنلاین",
-              icon: Icons.language,
-              selected: selectedPaymentMethod == "psp",
-            ),
-          if (invoice.paymentMethods.contains('card-by-card'))
-            method(
-              id: "card-by-card",
-              text: "کارت به کارت",
-              icon: Icons.payments,
-              selected: selectedPaymentMethod == "card-by-card",
-            ),
+          ...CONSTANTS.PAYMENT_METHODS.where((e) {
+            return invoice.paymentMethods.contains(e['key']);
+          }).map((e) {
+            return method(
+              id: e['key'],
+              text: e['text'],
+              icon: e['icon'],
+              selected: selectedPaymentMethod == e['key'],
+            );
+          }),
         ],
       ),
     );

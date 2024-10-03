@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CONSTANTS {
@@ -38,6 +39,7 @@ class CONSTANTS {
 
   static String STORAGE_LINK_WEBSITE = 'link:website';
   static String STORAGE_LINK_WEBLOG = 'link:weblog';
+  static String STORAGE_LINK_DOWNLOAD = 'link:download';
 
   static String STORAGE_TEXT_EARNING_INCOME = 'text:earning_income';
 
@@ -47,9 +49,32 @@ class CONSTANTS {
   static String PAYMENT_CALLBACK = '';
   static String FLAVOR = '';
 
+  static List<Map<String, dynamic>> PAYMENT_METHODS = [
+    {
+      'key': 'psp',
+      'text': 'پرداخت آنلاین',
+      'icon': Icons.language,
+    },
+    {
+      'key': 'card-by-card',
+      'text': 'کارت به کارت',
+      'icon': Icons.payments,
+    },
+  ];
+
   static Future<void> Load() async {
     await dotenv.load(fileName: "lib/app/app.env");
 
     CONSTANTS.DEFAULT_ENDPOINT_API = dotenv.env['DEFAULT_ENDPOINT_API']!;
+  }
+
+  static Map<String, String> get PAYMENT_METHODS_MAP {
+    Map<String, String> output = {};
+
+    for (var element in PAYMENT_METHODS) {
+      output[element['key']] = element['text'];
+    }
+
+    return output;
   }
 }

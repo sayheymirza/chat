@@ -65,3 +65,29 @@ class PlanModel {
     return json;
   }
 }
+
+class PlanInvoiceModel {
+  final int id;
+  final String title;
+  final String description;
+  final String category;
+  final int discount;
+  final int price;
+  final int discountPrice;
+  final int finalPrice;
+  final String startAt;
+  final String endAt;
+
+  PlanInvoiceModel({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.discount,
+    required this.price,
+    required this.discountPrice,
+    required this.finalPrice,
+    required this.startAt,
+    required this.endAt,
+  });
+}

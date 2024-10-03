@@ -3,6 +3,7 @@ typedef FormFieldValidator<T> = String? Function(T? value);
 RegExp english = RegExp(r'^[a-zA-Z]+$');
 RegExp persian = RegExp(r'/^[\u0600-\u06FF\s\.\-\?\!\,]+$/');
 RegExp number = RegExp(r'[0-9]');
+RegExp phoneRegex = RegExp(r'^(09[0-9]{9})$');
 
 List<String> persianNumbers = [
   '۰',
@@ -98,6 +99,21 @@ class CustomValidator {
         if (justEnglishNumber(value) == false) {
           return errorText;
         }
+      }
+
+      return null;
+    };
+  }
+
+  static FormFieldValidator<T> justPhoneNumber<T>({
+    required String errorText,
+  }) {
+    return (T? value) {
+      var phone = convertPN2EN(value.toString());
+
+      // check phone regex
+      if (!phoneRegex.hasMatch(phone)) {
+        return errorText;
       }
 
       return null;

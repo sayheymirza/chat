@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/formats/number.format.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/snackbar.dart';
@@ -15,10 +18,21 @@ class AccountController extends GetxController {
   RxInt avatarUploadPercent = 0.obs;
   RxBool avatarDisabled = false.obs;
 
+  RxString version = ''.obs;
+  RxBool updatable = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    versioning();
+  }
+
   Future<void> onRefresh() async {
     try {
       await profile.fetchMyProfile();
       await Services.app.handshake();
+      versioning();
       vibrate();
     } catch (e) {
       //
@@ -123,10 +137,33 @@ class AccountController extends GetxController {
     );
   }
 
+  void versioning() {
+    Services.access.generatePackageInfo().then((value) {
+      version.value = value.version;
+
+      var latestVersion =
+          Services.configs.get<String>(key: CONSTANTS.STORAGE_LATEST_VERSION);
+
+      if (formatVersion(latestVersion ?? '0') > formatVersion(value.version)) {
+        updatable.value = true;
+      } else {
+        updatable.value = false;
+      }
+    });
+  }
+
   void openLink(String key) {
     var link = Services.configs.get(key: key);
     if (link != null) {
       Services.launch.launch(link);
     }
+  }
+
+  void fireUpdateEvent() {
+    Services.event.fire(event: EVENTS.UPDATE);
+  }
+
+  void fireFeedbackEvent() {
+    Services.event.fire(event: EVENTS.FEEDBACK);
   }
 }

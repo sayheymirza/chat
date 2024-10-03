@@ -30,4 +30,9 @@ abstract class ApiDataAbstract extends GetxService {
     String? email,
     String? file,
   });
+
+  Future<ApiSimpleResponseModel> feedback({
+    required int score,
+    required String description,
+  });
 }

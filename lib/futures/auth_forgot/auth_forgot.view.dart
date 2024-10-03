@@ -1,4 +1,5 @@
 import 'package:chat/futures/auth_forgot/auth_forgot.controller.dart';
+import 'package:chat/shared/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -56,6 +57,9 @@ class AuthForgotView extends GetView<AuthForgotController> {
                           FormBuilderValidators.required(),
                           FormBuilderValidators.minLength(11),
                           FormBuilderValidators.maxLength(11),
+                          CustomValidator.justPhoneNumber(
+                            errorText: 'فرمت شماره موبایل اشتباه است',
+                          ),
                         ],
                       ),
                     ),

@@ -635,8 +635,11 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               validator: FormBuilderValidators.compose(
                 [
                   FormBuilderValidators.required(),
-                  FormBuilderValidators.maxLength(11,
-                      errorText: 'نباید بیشتر از 11 حرف وارد کنید'),
+                  FormBuilderValidators.minLength(11),
+                  FormBuilderValidators.maxLength(11),
+                  CustomValidator.justPhoneNumber(
+                    errorText: 'فرمت شماره موبایل اشتباه است',
+                  ),
                 ],
               ),
             ),

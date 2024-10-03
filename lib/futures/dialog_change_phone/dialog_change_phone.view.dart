@@ -1,4 +1,5 @@
 import 'package:chat/futures/dialog_change_phone/dialog_change_phone.controller.dart';
+import 'package:chat/shared/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -51,6 +52,9 @@ class DialogChangePhoneView extends GetView<DialogChangePhoneController> {
                             FormBuilderValidators.required(),
                             FormBuilderValidators.minLength(11),
                             FormBuilderValidators.maxLength(11),
+                            CustomValidator.justPhoneNumber(
+                              errorText: 'فرمت شماره موبایل اشتباه است',
+                            ),
                           ],
                         ),
                         onSubmitted: (_) {

@@ -1,5 +1,6 @@
 import 'package:chat/models/apis/api.model.dart';
 import 'package:chat/models/apis/purchase.model.dart';
+import 'package:chat/models/invoice.model.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:get/get.dart';
 
@@ -18,4 +19,10 @@ abstract class ApiPurchaseAbstract extends GetxService {
     required int invoiceId,
     required String callback,
   });
+
+  Future<ApiPurchaseInvoicesResponseModel> invoices({
+    required int page,
+  });
+
+  Future<InvoiceModel?> invoice({required int id});
 }

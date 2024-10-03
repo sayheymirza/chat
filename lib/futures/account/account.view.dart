@@ -120,7 +120,9 @@ class AccountView extends GetView<AccountController> {
                   title: 'به ما امتیاز بدید',
                   icon: Icons.star_rounded,
                   color: Colors.yellow.shade600,
-                  onTap: () {},
+                  onTap: () {
+                    controller.fireFeedbackEvent();
+                  },
                 ),
                 item(
                   title: 'شرایط استفاده',
@@ -167,15 +169,72 @@ class AccountView extends GetView<AccountController> {
                 ),
                 // disable or delete account (red)
                 item(
-                    title: 'غیر فعال سازی و حذف',
-                    icon: Icons.delete,
-                    color: Colors.red,
-                    onTap: () {
-                      controller.deleteOrLeaveAccount();
-                    }),
+                  title: 'غیر فعال سازی و حذف',
+                  icon: Icons.delete,
+                  color: Colors.red,
+                  onTap: () {
+                    controller.deleteOrLeaveAccount();
+                  },
+                ),
+                version(),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget version() {
+    return Obx(
+      () => Container(
+        width: double.infinity,
+        height: 48,
+        padding: const EdgeInsets.symmetric(
+          vertical: 4,
+          horizontal: 12,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'نسخه برنامه',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              controller.version.value,
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            if (controller.updatable.value)
+              GestureDetector(
+                onTap: () {
+                  controller.fireUpdateEvent();
+                },
+                child: Container(
+                  height: 32,
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Get.theme.colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'نیاز به بروزرسانی',
+                      style: TextStyle(
+                        color: Get.theme.colorScheme.onErrorContainer,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

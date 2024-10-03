@@ -1,8 +1,10 @@
-const { checkbox, input, select } = require('@inquirer/prompts');
+const { select } = require('@inquirer/prompts');
 const fs = require('fs');
 const path = require('path');
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
+
+const functions = require('./functions');
 
 const execSync = (command = '') => {
     return exec(command);
@@ -40,6 +42,9 @@ module.exports = {
             console.log(`> Changing application id to ${config['id']}`);
             await execSync(`dart run change_app_package_name:main ${config['id']}`);
 
+            console.log(`> Changing application deep link to ${config['id']}`);
+            await functions.changeDeepLink(config['id']);
+
             console.log(`> Changing application name to ${config['name']}`);
             await execSync(`dart run rename_app:main all="${config['name']}"`);
 
@@ -50,6 +55,10 @@ module.exports = {
 
             console.log(`> Changing application logo`);
             await execSync(`flutter pub run flutter_launcher_icons -f ./scripts/cli/apps/${app}/flutter_launcher_icons.yaml`);
+            fs.rmSync(path.join(__dirname, `../../android/app/src/main/res/mipmap-anydpi-v26`), {
+                recursive: true,
+                force: true
+            });
         } catch (error) {
             console.error(error);
             process.exit(1);
