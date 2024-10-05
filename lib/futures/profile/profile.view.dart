@@ -1,4 +1,5 @@
 import 'package:chat/futures/profile/profile.controller.dart';
+import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/title.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -430,16 +431,14 @@ class ProfileView extends GetView<ProfileController> {
   }
 
   Widget avatar() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          alignment: Alignment.topCenter,
-          image: NetworkImage(controller.profile.value.avatar!),
-        ),
+      child: CachedImageWidget(
+        url: controller.profile.value.avatar!,
+        category: "avatar",
+        fit: BoxFit.cover,
+        alignment: Alignment.topCenter,
       ),
     );
   }

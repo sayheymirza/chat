@@ -17,12 +17,12 @@ class AppView extends GetView<AppController> {
       bottomNavigationBar: bottomNavigationBar(context),
       body: Obx(
         () => [
-          HomeView(),
-          ChatsView(),
-          SearchView(
+          const HomeView(),
+          const ChatsView(),
+          const SearchView(
             type: 'search',
           ),
-          AccountView(),
+          const AccountView(),
         ][controller.view.value],
       ),
     );

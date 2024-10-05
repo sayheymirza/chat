@@ -1,6 +1,7 @@
 import 'package:chat/futures/account/account.controller.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -87,7 +88,7 @@ class AccountView extends GetView<AccountController> {
                   title: 'فضای ذخیره سازی',
                   icon: Icons.folder_copy,
                   color: Colors.blueGrey.shade600,
-                  page: "/app/account/storage",
+                  page: "/app/storage",
                 ),
                 // favorites (pink)
                 item(
@@ -392,8 +393,9 @@ class AccountView extends GetView<AccountController> {
                   ),
                   child: controller.profile.profile.value.avatar == null
                       ? const Icon(Icons.person)
-                      : Image.network(
-                          controller.profile.profile.value.avatar!,
+                      : CachedImageWidget(
+                          url: controller.profile.profile.value.avatar!,
+                          category: "avatar",
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                         ),

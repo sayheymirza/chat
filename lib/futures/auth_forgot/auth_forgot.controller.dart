@@ -25,8 +25,6 @@ class AuthForgotController extends GetxController {
         Get.offAndToNamed('/auth/login');
       }
     } catch (e) {
-      print(e);
-
       disabled.value = false;
     }
   }

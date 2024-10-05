@@ -1,10 +1,11 @@
+import 'package:chat/shared/database/cache.database.dart';
 import 'package:chat/shared/database/dropdown.database.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [DropdownTable])
+@DriftDatabase(tables: [DropdownTable, CacheTable])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.
@@ -17,7 +18,7 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     // `driftDatabase` from `package:drift_flutter` stores the database in
     // `getApplicationDocumentsDirectory()`.
-    return driftDatabase(name: 'my_database');
+    return driftDatabase(name: 'database');
   }
 }
 

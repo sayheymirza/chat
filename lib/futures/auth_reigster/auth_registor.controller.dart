@@ -157,8 +157,6 @@ class AuthRegisterController extends GetxController {
 
       disabled.value = false;
     } catch (e) {
-      print(e);
-
       disabled.value = false;
     }
   }
@@ -200,7 +198,6 @@ class AuthRegisterController extends GetxController {
 
       return output;
     } catch (e) {
-      print(e);
       return {};
     }
   }

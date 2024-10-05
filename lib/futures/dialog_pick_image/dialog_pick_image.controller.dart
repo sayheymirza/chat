@@ -30,7 +30,7 @@ class DialogPickImageController extends GetxController {
         );
       }
     } catch (e) {
-      print(e);
+      //
     }
   }
 }

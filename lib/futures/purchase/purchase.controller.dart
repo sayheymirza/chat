@@ -153,8 +153,6 @@ class PurchaseController extends GetxController {
     } catch (e) {
       disabled.value = false;
 
-      print(e);
-
       return false;
     }
   }

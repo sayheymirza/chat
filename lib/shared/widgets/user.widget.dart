@@ -42,7 +42,10 @@ class _UserWidgetState extends State<UserWidget> {
         child: Row(
           children: [
             // avatar
-            AvatarWidget(url: widget.item.avatar!, seen: widget.item.seen!),
+            AvatarWidget(
+              url: widget.item.avatar!,
+              seen: widget.item.seen!,
+            ),
             const SizedBox(
               width: 10,
             ),
@@ -100,9 +103,9 @@ class _UserWidgetState extends State<UserWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Opacity(
+                        const Opacity(
                           opacity: 0,
-                          child: const Icon(
+                          child: Icon(
                             Icons.visibility,
                             color: Colors.green,
                             size: 20,

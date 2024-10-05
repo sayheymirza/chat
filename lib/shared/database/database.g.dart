@@ -352,15 +352,308 @@ class DropdownTableCompanion extends UpdateCompanion<DropdownTableData> {
   }
 }
 
+class $CacheTableTable extends CacheTable
+    with TableInfo<$CacheTableTable, CacheTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CacheTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+      'url', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _fileMeta = const VerificationMeta('file');
+  @override
+  late final GeneratedColumn<String> file = GeneratedColumn<String>(
+      'file', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _sizeMeta = const VerificationMeta('size');
+  @override
+  late final GeneratedColumn<int> size = GeneratedColumn<int>(
+      'size', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, url, file, size, category];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cache_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<CacheTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+          _urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
+    } else if (isInserting) {
+      context.missing(_urlMeta);
+    }
+    if (data.containsKey('file')) {
+      context.handle(
+          _fileMeta, file.isAcceptableOrUnknown(data['file']!, _fileMeta));
+    } else if (isInserting) {
+      context.missing(_fileMeta);
+    }
+    if (data.containsKey('size')) {
+      context.handle(
+          _sizeMeta, size.isAcceptableOrUnknown(data['size']!, _sizeMeta));
+    } else if (isInserting) {
+      context.missing(_sizeMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CacheTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CacheTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      url: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
+      file: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}file'])!,
+      size: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}size'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+    );
+  }
+
+  @override
+  $CacheTableTable createAlias(String alias) {
+    return $CacheTableTable(attachedDatabase, alias);
+  }
+}
+
+class CacheTableData extends DataClass implements Insertable<CacheTableData> {
+  final int id;
+  final String url;
+  final String file;
+  final int size;
+  final String category;
+  const CacheTableData(
+      {required this.id,
+      required this.url,
+      required this.file,
+      required this.size,
+      required this.category});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['url'] = Variable<String>(url);
+    map['file'] = Variable<String>(file);
+    map['size'] = Variable<int>(size);
+    map['category'] = Variable<String>(category);
+    return map;
+  }
+
+  CacheTableCompanion toCompanion(bool nullToAbsent) {
+    return CacheTableCompanion(
+      id: Value(id),
+      url: Value(url),
+      file: Value(file),
+      size: Value(size),
+      category: Value(category),
+    );
+  }
+
+  factory CacheTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CacheTableData(
+      id: serializer.fromJson<int>(json['id']),
+      url: serializer.fromJson<String>(json['url']),
+      file: serializer.fromJson<String>(json['file']),
+      size: serializer.fromJson<int>(json['size']),
+      category: serializer.fromJson<String>(json['category']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'url': serializer.toJson<String>(url),
+      'file': serializer.toJson<String>(file),
+      'size': serializer.toJson<int>(size),
+      'category': serializer.toJson<String>(category),
+    };
+  }
+
+  CacheTableData copyWith(
+          {int? id, String? url, String? file, int? size, String? category}) =>
+      CacheTableData(
+        id: id ?? this.id,
+        url: url ?? this.url,
+        file: file ?? this.file,
+        size: size ?? this.size,
+        category: category ?? this.category,
+      );
+  CacheTableData copyWithCompanion(CacheTableCompanion data) {
+    return CacheTableData(
+      id: data.id.present ? data.id.value : this.id,
+      url: data.url.present ? data.url.value : this.url,
+      file: data.file.present ? data.file.value : this.file,
+      size: data.size.present ? data.size.value : this.size,
+      category: data.category.present ? data.category.value : this.category,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CacheTableData(')
+          ..write('id: $id, ')
+          ..write('url: $url, ')
+          ..write('file: $file, ')
+          ..write('size: $size, ')
+          ..write('category: $category')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, url, file, size, category);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CacheTableData &&
+          other.id == this.id &&
+          other.url == this.url &&
+          other.file == this.file &&
+          other.size == this.size &&
+          other.category == this.category);
+}
+
+class CacheTableCompanion extends UpdateCompanion<CacheTableData> {
+  final Value<int> id;
+  final Value<String> url;
+  final Value<String> file;
+  final Value<int> size;
+  final Value<String> category;
+  const CacheTableCompanion({
+    this.id = const Value.absent(),
+    this.url = const Value.absent(),
+    this.file = const Value.absent(),
+    this.size = const Value.absent(),
+    this.category = const Value.absent(),
+  });
+  CacheTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String url,
+    required String file,
+    required int size,
+    required String category,
+  })  : url = Value(url),
+        file = Value(file),
+        size = Value(size),
+        category = Value(category);
+  static Insertable<CacheTableData> custom({
+    Expression<int>? id,
+    Expression<String>? url,
+    Expression<String>? file,
+    Expression<int>? size,
+    Expression<String>? category,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (url != null) 'url': url,
+      if (file != null) 'file': file,
+      if (size != null) 'size': size,
+      if (category != null) 'category': category,
+    });
+  }
+
+  CacheTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? url,
+      Value<String>? file,
+      Value<int>? size,
+      Value<String>? category}) {
+    return CacheTableCompanion(
+      id: id ?? this.id,
+      url: url ?? this.url,
+      file: file ?? this.file,
+      size: size ?? this.size,
+      category: category ?? this.category,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (file.present) {
+      map['file'] = Variable<String>(file.value);
+    }
+    if (size.present) {
+      map['size'] = Variable<int>(size.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CacheTableCompanion(')
+          ..write('id: $id, ')
+          ..write('url: $url, ')
+          ..write('file: $file, ')
+          ..write('size: $size, ')
+          ..write('category: $category')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $DropdownTableTable dropdownTable = $DropdownTableTable(this);
+  late final $CacheTableTable cacheTable = $CacheTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [dropdownTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [dropdownTable, cacheTable];
 }
 
 typedef $$DropdownTableTableCreateCompanionBuilder = DropdownTableCompanion
@@ -531,10 +824,156 @@ typedef $$DropdownTableTableProcessedTableManager = ProcessedTableManager<
     ),
     DropdownTableData,
     PrefetchHooks Function()>;
+typedef $$CacheTableTableCreateCompanionBuilder = CacheTableCompanion Function({
+  Value<int> id,
+  required String url,
+  required String file,
+  required int size,
+  required String category,
+});
+typedef $$CacheTableTableUpdateCompanionBuilder = CacheTableCompanion Function({
+  Value<int> id,
+  Value<String> url,
+  Value<String> file,
+  Value<int> size,
+  Value<String> category,
+});
+
+class $$CacheTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $CacheTableTable> {
+  $$CacheTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get url => $state.composableBuilder(
+      column: $state.table.url,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get file => $state.composableBuilder(
+      column: $state.table.file,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get size => $state.composableBuilder(
+      column: $state.table.size,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$CacheTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $CacheTableTable> {
+  $$CacheTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get url => $state.composableBuilder(
+      column: $state.table.url,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get file => $state.composableBuilder(
+      column: $state.table.file,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get size => $state.composableBuilder(
+      column: $state.table.size,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $$CacheTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CacheTableTable,
+    CacheTableData,
+    $$CacheTableTableFilterComposer,
+    $$CacheTableTableOrderingComposer,
+    $$CacheTableTableCreateCompanionBuilder,
+    $$CacheTableTableUpdateCompanionBuilder,
+    (
+      CacheTableData,
+      BaseReferences<_$AppDatabase, $CacheTableTable, CacheTableData>
+    ),
+    CacheTableData,
+    PrefetchHooks Function()> {
+  $$CacheTableTableTableManager(_$AppDatabase db, $CacheTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$CacheTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$CacheTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> url = const Value.absent(),
+            Value<String> file = const Value.absent(),
+            Value<int> size = const Value.absent(),
+            Value<String> category = const Value.absent(),
+          }) =>
+              CacheTableCompanion(
+            id: id,
+            url: url,
+            file: file,
+            size: size,
+            category: category,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String url,
+            required String file,
+            required int size,
+            required String category,
+          }) =>
+              CacheTableCompanion.insert(
+            id: id,
+            url: url,
+            file: file,
+            size: size,
+            category: category,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$CacheTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $CacheTableTable,
+    CacheTableData,
+    $$CacheTableTableFilterComposer,
+    $$CacheTableTableOrderingComposer,
+    $$CacheTableTableCreateCompanionBuilder,
+    $$CacheTableTableUpdateCompanionBuilder,
+    (
+      CacheTableData,
+      BaseReferences<_$AppDatabase, $CacheTableTable, CacheTableData>
+    ),
+    CacheTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$DropdownTableTableTableManager get dropdownTable =>
       $$DropdownTableTableTableManager(_db, _db.dropdownTable);
+  $$CacheTableTableTableManager get cacheTable =>
+      $$CacheTableTableTableManager(_db, _db.cacheTable);
 }

@@ -10,6 +10,7 @@ import 'package:chat/futures/auth_forgot/auth_forgot.view.dart';
 import 'package:chat/futures/auth_login/auth_login.view.dart';
 import 'package:chat/futures/auth_reigster/auth_register.view.dart';
 import 'package:chat/futures/blocks/blocks.view.dart';
+import 'package:chat/futures/cache_manager/cache_manager.view.dart';
 import 'package:chat/futures/contact/contact.view.dart';
 import 'package:chat/futures/cropper/cropper.view.dart';
 import 'package:chat/futures/earning_income/earning_income.view.dart';
@@ -46,6 +47,7 @@ List<GetPage> pages = [
   GetPage(name: '/app/favorites', page: () => const FavoritesView()),
   GetPage(name: '/app/transactions', page: () => const TransactionsView()),
   GetPage(name: '/app/transactions/:id', page: () => const TransactionView()),
+  GetPage(name: '/app/storage', page: () => const CacheManagerView()),
   GetPage(
     name: '/app/notification',
     page: () => const AccountNotificationView(),

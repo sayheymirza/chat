@@ -39,8 +39,6 @@ class AuthLoginController extends GetxController {
 
       disabled.value = false;
     } catch (e) {
-      print(e);
-
       disabled.value = false;
     }
   }

@@ -41,7 +41,7 @@ class DropdownsWidgetController extends GetxController {
 
       items.value = output;
     } catch (e) {
-      print(e);
+      //
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:flutter/material.dart';
 
 class AvatarWidget extends StatelessWidget {
@@ -24,7 +25,10 @@ class AvatarWidget extends StatelessWidget {
           strokeAlign: BorderSide.strokeAlignOutside,
         ),
       ),
-      child: Image.network(url),
+      child: CachedImageWidget(
+        url: url,
+        category: "avatar",
+      ),
     );
   }
 

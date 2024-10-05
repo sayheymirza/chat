@@ -70,6 +70,46 @@ class HttpService extends GetxService {
     return response.data;
   }
 
+  Future<File?> download({
+    required String url,
+    required String directory,
+    Function(int precent)? onPercent,
+    Function(dynamic info)? onInfo,
+    Dio.CancelToken? cancelToken,
+  }) async {
+    try {
+      var path = "$directory/${basename(url)}";
+
+      if (onInfo != null) {
+        onInfo({
+          "filename": basename(url),
+          'path': path,
+        });
+      }
+
+      await _client.download(
+        url,
+        path,
+        cancelToken: cancelToken,
+        onReceiveProgress: (int sent, int total) {
+          var progress = ((100 * sent) / total).ceil();
+
+          if (onPercent != null) {
+            onPercent(progress);
+          }
+        },
+      );
+
+      if (onPercent != null) {
+        onPercent(100);
+      }
+
+      return File(path);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<dynamic> upload({
     required String path,
     required File file,
