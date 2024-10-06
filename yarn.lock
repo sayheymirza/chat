@@ -322,6 +322,11 @@ xml-js@^1.6.11:
   dependencies:
     sax "^1.2.4"
 
+yaml@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.npmjs.org/yaml/-/yaml-2.5.1.tgz"
+  integrity sha512-bLQOjaX/ADgQ20isPJRvF0iRUHIxVhYvr53Of7wGcWlO2jvtUlH5m87DsmulFVxRpNLOnI4tB6p/oh8D7kpn9Q==
+
 yoctocolors-cjs@^2.1.2:
   version "2.1.2"
   resolved "https://registry.npmjs.org/yoctocolors-cjs/-/yoctocolors-cjs-2.1.2.tgz"

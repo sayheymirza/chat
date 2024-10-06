@@ -20,6 +20,14 @@ module.exports = {
                     value: 'change-application-info'
                 },
                 {
+                    name: 'Change flavor',
+                    value: 'change-flavor',
+                },
+                {
+                    name: 'Build',
+                    value: 'build'
+                },
+                {
                     name: 'Exit',
                     value: 'exit'
                 }
@@ -63,5 +71,70 @@ module.exports = {
             console.error(error);
             process.exit(1);
         }
-    }
+    },
+    async build() {
+        const flavor = await select({
+            message: 'Choose your flavor:',
+            choices: [
+                {
+                    name: 'Cafebazaar AAB',
+                    value: 'cafebazaar-aab'
+                },
+                {
+                    name: 'Cafebazaar',
+                    value: 'cafebazaar'
+                },
+                {
+                    name: 'Direct',
+                    value: 'direct'
+                },
+                {
+                    name: 'Web',
+                    value: 'web'
+                }
+            ]
+        });
+
+        switch (flavor) {
+            case 'cafebazaar-aab':
+                await exec('flutter build appbundle --flavor cafebazaar  --target lib/flavors/cafebazaar/main.dart');
+                break;
+            case 'cafebazaar':
+                await exec('flutter build apk --flavor cafebazaar --target lib/flavors/cafebazaar/main.dart --split-per-abi');
+                break;
+            case 'direct':
+                await exec('flutter build apk --flavor direct --target lib/flavors/direct/main.dart  --split-per-abi');
+                break;
+            case 'web':
+                await exec('flutter build web --target lib/flavors/web/main.dart');
+                break;
+
+            default:
+                break;
+        }
+    },
+    async flavor() {
+        const flavor = await select({
+            message: 'Choose your flavor:',
+            choices: [
+                {
+                    name: 'Cafebazaar',
+                    value: 'cafebazaar'
+                },
+                {
+                    name: 'Myket',
+                    value: 'myket'
+                },
+                {
+                    name: 'Empty',
+                    value: 'empty'
+                },
+            ],
+            default: 'empty'
+        });
+
+        await functions.changePubspec(flavor);
+        console.log('> Running flutter pub get');
+        await execSync('flutter pub get');
+    },
 }

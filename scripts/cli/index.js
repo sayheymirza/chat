@@ -9,6 +9,14 @@ const menu = async () => {
                 await commands.info();
                 break;
 
+            case 'change-flavor':
+                await commands.flavor();
+                break;
+
+            case 'build':
+                await commands.build();
+                break;
+
             case 'exit':
                 process.exit(0);
                 break;
@@ -17,7 +25,7 @@ const menu = async () => {
                 break;
         }
     } catch (error) {
-        //
+        console.error(error);
     }
 
 
