@@ -1,10 +1,10 @@
 import 'package:chat/futures/cache_manager/cache_manager.controller.dart';
 import 'package:chat/shared/formats/byte.format.dart';
-import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class CacheManagerView extends GetView<CacheManagerController> {
   const CacheManagerView({super.key});
@@ -30,22 +30,12 @@ class CacheManagerView extends GetView<CacheManagerController> {
         return loading();
       }
 
-      if (controller.total.value == 0) {
-        return empty();
-      }
-
       return data();
     });
   }
 
   Widget loading() {
     return Container();
-  }
-
-  Widget empty() {
-    return const EmptyWidget(
-      message: 'فضا ذخیره سازی خالی است',
-    );
   }
 
   Widget data() {
@@ -58,7 +48,10 @@ class CacheManagerView extends GetView<CacheManagerController> {
               PieChartData(
                 sectionsSpace: 4,
                 centerSpaceRadius: 50,
-                sections: showingSections(controller.categories),
+                sections: showingSections(
+                  controller.categories,
+                  controller.total.value,
+                ),
               ),
             ),
           ),
@@ -72,7 +65,7 @@ class CacheManagerView extends GetView<CacheManagerController> {
                 height: 16,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: e['color'],
+                  color: controller.colors[e['key']],
                 ),
               ),
               title: Text(e['label']),
@@ -91,21 +84,25 @@ class CacheManagerView extends GetView<CacheManagerController> {
             title: const Text('پاک کردن فضای ذخیره سازی'),
             trailing: Text(formatBytes(controller.total.value)),
           ),
+          Gap(Get.bottomBarHeight),
         ],
       ),
     );
   }
 
-  List<PieChartSectionData> showingSections(List<Map<String, dynamic>> data) {
+  List<PieChartSectionData> showingSections(
+    List<Map<String, dynamic>> data,
+    int total,
+  ) {
     return data.map((element) {
       return PieChartSectionData(
-        title: element['label'],
+        title: '${element['percent']}%',
         titleStyle: const TextStyle(
           fontSize: 10,
         ),
         radius: 50,
-        value: element['value'].toDouble(),
-        color: element['color'],
+        value: total == 0 ? 6 : element['value'].toDouble(),
+        color: controller.colors[element['key']],
       );
     }).toList();
   }

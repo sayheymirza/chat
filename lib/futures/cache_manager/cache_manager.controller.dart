@@ -6,18 +6,49 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CacheManagerController extends GetxController {
+  Map<String, Color> colors = {
+    'avatar': Colors.amber.shade300,
+    'image': Colors.orange.shade300,
+    'video': Colors.green.shade300,
+    'audio': Colors.purple.shade300,
+    'voice': Colors.pink.shade300,
+    'unknown': Colors.grey.shade300,
+  };
+
   RxList<Map<String, dynamic>> categories = [
     {
       'key': 'avatar',
-      'label': 'تصویر پروفایل',
-      'color': Colors.amber.shade300,
+      'label': 'عکس های پروفایل',
+      'value': 0,
+      'percent': 0,
+    },
+    {
+      'key': 'image',
+      'label': 'عکس ها',
+      'value': 0,
+      'percent': 0,
+    },
+    {
+      'key': 'video',
+      'label': 'ویدیو ها',
+      'value': 0,
+      'percent': 0,
+    },
+    {
+      'key': 'audio',
+      'label': 'موزیک ها',
+      'value': 0,
+      'percent': 0,
+    },
+    {
+      'key': 'voice',
+      'label': 'پیام های صوتی',
       'value': 0,
       'percent': 0,
     },
     {
       'key': 'unknown',
       'label': 'دیگر',
-      'color': Colors.grey.shade300,
       'value': 0,
       'percent': 0,
     }
@@ -45,7 +76,7 @@ class CacheManagerController extends GetxController {
         if (total.value != 0) {
           result[i]['percent'] = ((100 * result[i]['value']) / total.value);
         } else {
-          result[i]['percent'] = null;
+          result[i]['percent'] = 0;
         }
       }
 
@@ -83,8 +114,12 @@ class CacheManagerController extends GetxController {
   }
 
   Future<void> deleteByCategory({required String category}) async {
-    await Services.cache.deleteByCategory(category: category);
-    showSnackbar(message: 'همه فایل ها حذف شدند');
-    load();
+    var item = categories.firstWhere((e) => e['key'] == category);
+
+    if (item != null && item['value'] != 0) {
+      await Services.cache.deleteByCategory(category: category);
+      showSnackbar(message: 'همه فایل ها حذف شدند');
+      load();
+    }
   }
 }
