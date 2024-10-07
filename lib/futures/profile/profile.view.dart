@@ -534,7 +534,14 @@ class ProfileView extends GetView<ProfileController> {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(
+                      '/app/default-message',
+                      parameters: {
+                        'id': controller.profile.value.id.toString(),
+                      },
+                    );
+                  },
                   child: const Text('ارسال علاقه مندی'),
                 ),
               ),

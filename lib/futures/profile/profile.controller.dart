@@ -16,7 +16,7 @@ class ProfileController extends GetxController {
   Future<void> load() async {
     var params = Get.arguments;
 
-    var result = await (params['id'] == 0
+    var result = await (params == null || params['id'] == 0
         ? ApiService.user.me()
         : ApiService.user.one(
             id: params['id'],
@@ -28,7 +28,7 @@ class ProfileController extends GetxController {
       }
       profile.value = result;
       loading.value = false;
-      showOptions.value = params['options'] != false;
+      showOptions.value = params != null && params['options'] != false;
     } else {
       Get.back();
       showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
