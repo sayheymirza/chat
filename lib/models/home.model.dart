@@ -14,6 +14,30 @@ class HomeComponentModel<T> {
   });
 }
 
+class CardDynamicV1Model {
+  final List<String> gradientColors;
+  final String title;
+  final String titleColor;
+  final String subtitle;
+  final String subtitleColor;
+  final String? buttonText;
+  final String? buttonOnTap;
+  final bool buttonVisable;
+  final bool closeable;
+
+  CardDynamicV1Model({
+    required this.gradientColors,
+    required this.title,
+    required this.titleColor,
+    required this.subtitle,
+    required this.subtitleColor,
+    required this.buttonText,
+    required this.buttonOnTap,
+    required this.buttonVisable,
+    required this.closeable,
+  });
+}
+
 class HomeComponentListProfileV1Model {
   final String title;
   final String icon;
