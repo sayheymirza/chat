@@ -6,8 +6,10 @@ import 'package:chat/shared/services/cache.service.dart';
 import 'package:chat/shared/services/chrome.service.dart';
 import 'package:chat/shared/services/configs.service.dart';
 import 'package:chat/shared/services/event.service.dart';
+import 'package:chat/shared/services/file.service.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:chat/shared/services/launch_instance.service.dart';
+import 'package:chat/shared/services/notification.service.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/services/queue.service.dart';
 import 'package:get/get.dart';
@@ -23,6 +25,8 @@ class Services {
   static QueueService get queue => Get.find(tag: 'queue');
   static AccessService get access => Get.find(tag: 'access');
   static CacheService get cache => Get.find(tag: 'cache');
+  static NotificationService get notification => Get.find(tag: 'notification');
+  static FileService get file => Get.find(tag: 'file');
 
   static put() async {
     log('[services.dart] start put Get services');
@@ -36,6 +40,8 @@ class Services {
     Get.lazyPut(() => AppService(), tag: 'app');
     Get.lazyPut(() => AccessService(), tag: 'access');
     Get.lazyPut(() => CacheService(), tag: 'cache');
+    Get.lazyPut(() => NotificationService(), tag: 'notification');
+    Get.lazyPut(() => FileService(), tag: 'file');
     log('[services.dart] end put Get services');
   }
 }
