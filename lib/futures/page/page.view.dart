@@ -1,9 +1,10 @@
-import 'package:chat/shared/services.dart';
+import 'package:chat/futures/page/page.controller.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 
-class PageView extends StatelessWidget {
+class PageView extends GetView<PageViewController> {
   final String title;
   final String page;
 
@@ -15,22 +16,28 @@ class PageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var link = Services.configs.get(key: 'page:$page');
+    Get.put(PageViewController());
 
-    return Scaffold(
-      appBar: GradientAppBarWidget(
-        back: true,
-        title: title,
-      ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(
-          url: Uri.parse(link),
+    controller.load(page: page);
+
+    return Obx(
+      () => Scaffold(
+        appBar: GradientAppBarWidget(
+          back: true,
+          title: title,
         ),
-        initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-            transparentBackground: true,
-          ),
-        ),
+        body: controller.data.isEmpty
+            ? Container()
+            : InAppWebView(
+                initialData: InAppWebViewInitialData(
+                  data: controller.data.value,
+                ),
+                initialOptions: InAppWebViewGroupOptions(
+                  crossPlatform: InAppWebViewOptions(
+                    transparentBackground: true,
+                  ),
+                ),
+              ),
       ),
     );
   }

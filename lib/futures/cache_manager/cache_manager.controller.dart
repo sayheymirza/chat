@@ -12,6 +12,7 @@ class CacheManagerController extends GetxController {
     'video': Colors.green.shade300,
     'audio': Colors.purple.shade300,
     'voice': Colors.pink.shade300,
+    'page': Colors.blue.shade300,
     'unknown': Colors.grey.shade300,
   };
 
@@ -47,6 +48,12 @@ class CacheManagerController extends GetxController {
       'percent': 0,
     },
     {
+      'key': 'page',
+      'label': 'صفحات',
+      'value': 0,
+      'percent': 0,
+    },
+    {
       'key': 'unknown',
       'label': 'دیگر',
       'value': 0,
@@ -74,7 +81,8 @@ class CacheManagerController extends GetxController {
       // percent
       for (var i = 0; i < result.length; i++) {
         if (total.value != 0) {
-          result[i]['percent'] = ((100 * result[i]['value']) / total.value);
+          result[i]['percent'] =
+              ((100 * result[i]['value']) / total.value).toInt();
         } else {
           result[i]['percent'] = 0;
         }
