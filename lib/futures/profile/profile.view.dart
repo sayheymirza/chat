@@ -541,7 +541,9 @@ class ProfileView extends GetView<ProfileController> {
               const Gap(10),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.sendSMS();
+                  },
                   child: const Text('دعوت به گفتگو'),
                 ),
               ),
