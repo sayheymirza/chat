@@ -12,12 +12,14 @@ class FormBuilderImage extends StatefulWidget {
   final String name;
   final String? labelText;
   final String? Function(String?)? validator;
+  final bool disabled;
 
   const FormBuilderImage({
     super.key,
     required this.name,
     this.labelText,
     this.validator,
+    this.disabled = false,
   });
 
   @override
@@ -97,9 +99,11 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: field.hasError
-                        ? Get.theme.colorScheme.error
-                        : Colors.grey.shade500,
+                    color: widget.disabled
+                        ? Colors.grey.shade300
+                        : field.hasError
+                            ? Get.theme.colorScheme.error
+                            : Colors.grey.shade500,
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -201,9 +205,11 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
                           Icon(
                             Icons.image,
                             size: 46,
-                            color: field.hasError
-                                ? Get.theme.colorScheme.error
-                                : null,
+                            color: widget.disabled
+                                ? Colors.grey.shade400
+                                : field.hasError
+                                    ? Get.theme.colorScheme.error
+                                    : null,
                           ),
                           const SizedBox(
                             height: 8,
@@ -211,9 +217,11 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
                           Text(
                             widget.labelText ?? "تصویری انتخاب کنید",
                             style: TextStyle(
-                              color: field.hasError
-                                  ? Get.theme.colorScheme.error
-                                  : null,
+                              color: widget.disabled
+                                  ? Colors.grey.shade400
+                                  : field.hasError
+                                      ? Get.theme.colorScheme.error
+                                      : null,
                             ),
                           ),
                         ],

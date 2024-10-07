@@ -342,10 +342,7 @@ class ProfileView extends GetView<ProfileController> {
                       controller.unblock();
                       break;
                     case "report":
-                      Get.toNamed(
-                        '/app/report',
-                        arguments: {},
-                      );
+                      controller.report();
                       break;
                     default:
                   }

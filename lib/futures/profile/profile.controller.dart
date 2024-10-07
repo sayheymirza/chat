@@ -98,4 +98,14 @@ class ProfileController extends GetxController {
       isScrollControlled: true,
     );
   }
+
+  void report() {
+    Get.toNamed(
+      '/app/report',
+      arguments: {
+        'id': profile.value.id,
+        'fullname': profile.value.fullname,
+      },
+    );
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/dropdowns/dropdowns.widget.dart';
 import 'package:chat/shared/widgets/form_builder_image.widget.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +7,14 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 
 class ContactFormWidget extends StatelessWidget {
+  final bool showReciver;
   final bool showEmail;
   final bool disabled;
   final GlobalKey<FormBuilderState> formKey;
 
   const ContactFormWidget({
     super.key,
+    this.showReciver = true,
     this.showEmail = false,
     this.disabled = false,
     required this.formKey,
@@ -25,19 +28,20 @@ class ContactFormWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownsWidget(
-            group: 'MessageType',
-            name: 'reciver',
-            decoration: const InputDecoration(
-              labelText: 'دریافت کننده',
+          if (showReciver)
+            DropdownsWidget(
+              group: 'MessageType',
+              name: 'reciver',
+              decoration: const InputDecoration(
+                labelText: 'دریافت کننده',
+              ),
+              validator: FormBuilderValidators.compose(
+                [
+                  FormBuilderValidators.required(),
+                ],
+              ),
             ),
-            validator: FormBuilderValidators.compose(
-              [
-                FormBuilderValidators.required(),
-              ],
-            ),
-          ),
-          const Gap(20),
+          if (showReciver) const Gap(20),
           FormBuilderTextField(
             name: "title",
             decoration: const InputDecoration(
@@ -74,13 +78,17 @@ class ContactFormWidget extends StatelessWidget {
               [
                 FormBuilderValidators.required(),
                 FormBuilderValidators.minLength(10),
+                CustomValidator.justPersian(
+                  errorText: 'فقط حروف فارسی وارد کنید',
+                ),
               ],
             ),
           ),
           const Gap(20),
-          const FormBuilderImage(
+          FormBuilderImage(
             name: 'image',
             labelText: "تصویری را انتخاب کنید (اختیاری)",
+            disabled: disabled,
           )
         ],
       ),
