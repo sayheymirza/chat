@@ -84,6 +84,26 @@ class CacheManagerView extends GetView<CacheManagerController> {
             title: const Text('پاک کردن فضای ذخیره سازی'),
             trailing: Text(formatBytes(controller.total.value)),
           ),
+          ListTile(
+            onTap: () {
+              controller.deleteUsers();
+            },
+            leading: const Icon(
+              Icons.delete_rounded,
+              color: Colors.red,
+            ),
+            title: const Text('پاک کردن دیتابیس کاربران'),
+          ),
+          ListTile(
+            onTap: () {
+              controller.deleteChats();
+            },
+            leading: const Icon(
+              Icons.delete_rounded,
+              color: Colors.red,
+            ),
+            title: const Text('پاک کردن دیتابیس چت ها'),
+          ),
           Gap(Get.bottomBarHeight),
         ],
       ),

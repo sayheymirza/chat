@@ -8,6 +8,7 @@ class CachedImageWidget extends StatefulWidget {
   final String category;
   final AlignmentGeometry alignment;
   final BoxFit? fit;
+  final Color? background;
 
   const CachedImageWidget({
     super.key,
@@ -15,6 +16,7 @@ class CachedImageWidget extends StatefulWidget {
     this.alignment = Alignment.center,
     this.fit,
     this.category = 'image',
+    this.background,
   });
 
   @override
@@ -52,6 +54,12 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
     required String category,
   }) async {
     try {
+      if (!url.startsWith('http')) {
+        file = File(url);
+        setState(() {});
+        return;
+      }
+
       loading = true;
       errored = false;
       setState(() {});
@@ -87,7 +95,9 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
       return Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(
+          color: widget.background ?? Colors.grey.shade200,
+        ),
         child: Center(
           child: Icon(
             Icons.image_rounded,
@@ -101,7 +111,9 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
       return Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(
+          color: widget.background ?? Colors.grey.shade200,
+        ),
         child: Image.file(
           file!,
           alignment: widget.alignment,
@@ -114,7 +126,9 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
       return Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(color: Colors.grey.shade200),
+        decoration: BoxDecoration(
+          color: widget.background ?? Colors.grey.shade200,
+        ),
         child: Center(
           child: CircularProgressIndicator(
             value: downloading == 0 ? null : downloading.toDouble(),
@@ -126,7 +140,9 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(color: Colors.grey.shade200),
+      decoration: BoxDecoration(
+        color: widget.background ?? Colors.grey.shade200,
+      ),
       child: Center(
         child: Icon(
           Icons.image_rounded,

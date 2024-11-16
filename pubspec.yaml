@@ -35,6 +35,25 @@ dependencies:
   path_provider: ^2.1.4
   fl_chart: ^0.69.0
   awesome_notifications: ^0.9.3+1
+  timeago: ^3.7.0
+  emoji_picker_flutter: ^3.1.0
+  file_picker: ^8.1.2
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  flutter_map_cache: ^1.5.1
+  dio_cache_interceptor: ^3.5.0
+  screenshot: ^3.0.0
+  bubble: ^1.2.1
+  geolocator: ^13.0.1
+  permission_handler: ^11.3.1
+  video_player: ^2.9.2
+  flutter_audio_waveforms: ^1.2.1+8
+  waveform_extractor: ^1.0.3
+  record: ^5.1.2
+  video_player_control_panel: ^1.1.2
+  glass: ^2.0.0+1
+  socket_io_client: ^3.0.1
+  objectid: ^3.1.0
 
 dependency_overrides:
   flutter_inappwebview:
@@ -70,3 +89,4 @@ flutter:
     - lib/app/assets/images/auth_logo.png
     - lib/app/assets/images/auth_hero.png
     - lib/app/assets/images/star.png
+    - lib/app/assets/images/map_marker.png

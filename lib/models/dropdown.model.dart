@@ -4,7 +4,7 @@ class DropdownModel {
   String value;
   String groupKey;
   int orderIndex;
-  String parentId;
+  String? parentId;
 
   DropdownModel({
     required this.id,

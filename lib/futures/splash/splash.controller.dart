@@ -5,6 +5,7 @@ import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
+import 'package:drift/drift.dart' as drift;
 
 class SplashController extends GetxController {
   RxString status = 'در حال اتصال به سرور'.obs;
@@ -68,7 +69,7 @@ class SplashController extends GetxController {
                 value: e.value,
                 groupKey: e.groupKey,
                 orderIndex: e.orderIndex,
-                parentId: e.parentId,
+                parentId: drift.Value(e.parentId),
               ),
             ),
           );
@@ -82,6 +83,7 @@ class SplashController extends GetxController {
       log('[splash.controller.dart] inserted all ${dropdowns.length} dropdown items for ${end.difference(start).inMilliseconds}ms');
     } catch (e) {
       status.value = 'خطا در دریافت تنظیمات رخ داد';
+      print(e);
     }
   }
 }

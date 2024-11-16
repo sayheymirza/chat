@@ -1,5 +1,31 @@
+class ProfileChatModel {
+  late String? id;
+  late String? seen;
+  late String? avatar;
+  late String? fullname;
+  late String? last;
+
+  ProfileChatModel({
+    this.id,
+    this.seen,
+    this.avatar,
+    this.fullname,
+    this.last,
+  });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['seen'] = seen;
+    data['avatar'] = avatar;
+    data['fullname'] = fullname;
+    data['last'] = last;
+    return data;
+  }
+}
+
 class ProfileSearchModel {
-  late int? id;
+  late String? id;
   late String? seen;
   late String? avatar;
   late String? fullname;
@@ -37,14 +63,14 @@ class ProfileSearchModel {
 }
 
 class ProfileModel {
-  late int? id;
+  late String? id;
   late String? status;
   late String? avatar;
   late bool? defaultAvatar;
   late String? fullname;
   late String? last;
+  late DateTime? lastAt;
   late String? seen;
-  late String? ago;
   late int? age;
   late String? phone;
   late bool? verified;
@@ -83,8 +109,8 @@ class ProfileModel {
     this.defaultAvatar,
     this.fullname,
     this.last,
+    this.lastAt,
     this.seen,
-    this.ago,
     this.age,
     this.phone,
     this.verified,
@@ -117,6 +143,49 @@ class ProfileModel {
     this.dropdowns,
   });
 
+  factory ProfileModel.fromDatabase(Map<String, dynamic> value) {
+    return ProfileModel(
+      id: value['id'],
+      status: value['status'],
+      avatar: value['avatar'],
+      defaultAvatar: value['defaultAvatar'],
+      fullname: value['fullname'],
+      last: value['last'],
+      lastAt: DateTime.parse(value['lastAt']),
+      seen: value['seen'],
+      age: value['age'],
+      phone: value['phone'],
+      verified: value['verified'],
+      birthDate: value['birthDate'],
+      registerDate: value['registerDate'],
+      education: value['education'],
+      religion: value['religion'],
+      marriageType: value['marriageType'],
+      gender: value['gender'],
+      marital: value['marital'],
+      color: value['color'],
+      beauty: value['beauty'],
+      shape: value['shape'],
+      health: value['health'],
+      salary: value['salary'],
+      car: value['car'],
+      house: value['house'],
+      living: value['living'],
+      province: value['province'],
+      city: value['city'],
+      children: value['children'],
+      childMaxAge: value['childMaxAge'],
+      height: value['height'],
+      weight: value['weight'],
+      job: value['job'],
+      about: value['about'],
+      plan: Plan.fromJson(value['plan']),
+      permission: Permission.fromJson(value['permission']),
+      relation: Relation.fromJson(value['relation']),
+      dropdowns: value['dropdowns'],
+    );
+  }
+
   copyWith(Map<String, dynamic> value) {
     return ProfileModel(
       id: value['id'] ?? id,
@@ -125,8 +194,8 @@ class ProfileModel {
       defaultAvatar: value['defaultAvatar'] ?? defaultAvatar,
       fullname: value['fullname'] ?? fullname,
       last: value['last'] ?? last,
+      lastAt: value['lastAt'] ?? lastAt,
       seen: value['seen'] ?? seen,
-      ago: value['ago'] ?? ago,
       age: value['age'] ?? age,
       phone: value['phone'] ?? phone,
       verified: value['verified'] ?? verified,
@@ -171,8 +240,8 @@ class ProfileModel {
     data['avatar'] = avatar;
     data['fullname'] = fullname;
     data['last'] = last;
+    data['lastAt'] = lastAt.toString();
     data['seen'] = seen;
-    data['ago'] = ago;
     data['age'] = age;
     data['phone'] = phone;
     data['verified'] = verified;

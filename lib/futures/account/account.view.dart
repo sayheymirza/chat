@@ -1,4 +1,5 @@
 import 'package:chat/futures/account/account.controller.dart';
+import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
@@ -50,9 +51,8 @@ class AccountView extends GetView<AccountController> {
                     title: 'نمایش پروفایل من',
                     icon: Icons.visibility,
                     color: Colors.green,
-                    page: "/profile/0",
+                    page: "/profile/me",
                     arguments: {
-                      "id": 0,
                       "options": false,
                     },
                   ),
@@ -382,24 +382,33 @@ class AccountView extends GetView<AccountController> {
             AnimatedOpacity(
               opacity: controller.avatarDisabled.value ? 0.4 : 1,
               duration: const Duration(seconds: 1),
-              child: GestureDetector(
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[300],
-                  ),
-                  child: controller.profile.profile.value.avatar == null
-                      ? const Icon(Icons.person)
-                      : CachedImageWidget(
-                          url: controller.profile.profile.value.avatar!,
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[300],
+                ),
+                child: controller.profile.profile.value.avatar == null
+                    ? const Icon(Icons.person)
+                    : GestureDetector(
+                        onTap: () {
+                          Get.dialog(
+                            DialogImageView(
+                              url: "https://avatar.iran.liara.run/public/8",
+                            ),
+                            useSafeArea: false,
+                          );
+                        },
+                        child: CachedImageWidget(
+                          url:
+                              "https://avatar.iran.liara.run/public/8", // controller.profile.profile.value.avatar!,
                           category: "avatar",
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                         ),
-                ),
+                      ),
               ),
             ),
             Positioned(

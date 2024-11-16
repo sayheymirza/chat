@@ -11,7 +11,7 @@ abstract class ApiUserAbstract extends GetxService {
 
   Future<ProfileModel?> me();
 
-  Future<ProfileModel?> one({required int id});
+  Future<ProfileModel?> one({required String id});
 
   Future<ApiUserSearchResponseModel> search({
     int page = 1,
@@ -40,7 +40,7 @@ abstract class ApiUserAbstract extends GetxService {
 
   Future<bool> changeSettings(ApiUserChangeSettingsRequestModel request);
 
-  Future<bool> react({required int user, required RELATION_ACTION action});
+  Future<bool> react({required String user, required RELATION_ACTION action});
 
   Future<ApiUserSearchResponseModel> reacts({
     required int page,

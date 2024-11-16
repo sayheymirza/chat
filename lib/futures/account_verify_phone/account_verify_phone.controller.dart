@@ -83,7 +83,7 @@ class AccountVerifyPhoneController extends GetxController {
         time.value =
             '${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
 
-        log('[auth.controller.dart] ${time.value} remaning');
+        log('[account_verify_phone.controller.dart] ${time.value} remaning');
       }
     });
   }
@@ -95,7 +95,7 @@ class AccountVerifyPhoneController extends GetxController {
 
     showSnackbar(message: result.message);
 
-    disabled.value = true;
+    disabled.value = false;
 
     if (result.end != 0) {
       disabled.value = false;
@@ -108,6 +108,7 @@ class AccountVerifyPhoneController extends GetxController {
           'end': result.end,
         },
       );
+      update();
       startTimer();
     }
   }

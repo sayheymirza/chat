@@ -17,9 +17,9 @@ class ProfileEditController extends GetxController {
   RxBool disabled = false.obs;
   RxMap<String, List> dropdownsItems = {
     'gender': [],
-    'BirthDateYear': [],
-    'BirthDateMounth': [],
-    'BirthDateDay': [],
+    'year': [],
+    'month': [],
+    'day': [],
     'weight': [],
     'height': [],
     'children': [],

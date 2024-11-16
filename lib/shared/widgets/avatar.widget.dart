@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 class AvatarWidget extends StatelessWidget {
   final String seen;
   final String url;
+  final double size;
 
   const AvatarWidget({
     super.key,
     required this.seen,
     required this.url,
+    this.size = 60,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 60,
-      height: 60,
+      width: size,
+      height: size,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -26,7 +28,7 @@ class AvatarWidget extends StatelessWidget {
         ),
       ),
       child: CachedImageWidget(
-        url: url,
+        url: "https://avatar.iran.liara.run/public/8", // url,
         category: "avatar",
       ),
     );

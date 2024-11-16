@@ -93,7 +93,6 @@ class CacheManagerController extends GetxController {
     } catch (e) {
       loading.value = false;
       categories.value = [];
-      print(e);
     }
   }
 
@@ -129,5 +128,15 @@ class CacheManagerController extends GetxController {
       showSnackbar(message: 'همه فایل ها حذف شدند');
       load();
     }
+  }
+
+  Future<void> deleteUsers() async {
+    await Services.user.clear();
+    load();
+  }
+
+  Future<void> deleteChats() async {
+    await Services.chat.clear();
+    load();
   }
 }

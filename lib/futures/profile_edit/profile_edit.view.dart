@@ -49,6 +49,9 @@ class ProfileEditView extends GetView<ProfileEditController> {
       ),
       body: Obx(
         () => SingleChildScrollView(
+          padding: EdgeInsets.only(
+            bottom: Get.bottomBarHeight + 32,
+          ),
           child: Column(
             children: [
               FormBuilder(
@@ -91,10 +94,9 @@ class ProfileEditView extends GetView<ProfileEditController> {
                             // all fields are dropdown with empty array
                             Expanded(
                               child: DropdownsWidget(
-                                group: 'BirthDateYear',
+                                group: 'year',
                                 name: 'year',
-                                items: controller
-                                    .dropdownsItems['BirthDateYear']!
+                                items: controller.dropdownsItems['year']!
                                     .map((e) => e as DropdownMenuItem<String>)
                                     .toList(),
                                 decoration: const InputDecoration(
@@ -110,10 +112,9 @@ class ProfileEditView extends GetView<ProfileEditController> {
                             const Gap(8),
                             Expanded(
                               child: DropdownsWidget(
-                                group: 'BirthDateMounth',
+                                group: 'month',
                                 name: 'month',
-                                items: controller
-                                    .dropdownsItems['BirthDateMounth']!
+                                items: controller.dropdownsItems['month']!
                                     .map((e) => e as DropdownMenuItem<String>)
                                     .toList(),
                                 decoration: const InputDecoration(
@@ -129,10 +130,9 @@ class ProfileEditView extends GetView<ProfileEditController> {
                             const Gap(8),
                             Expanded(
                               child: DropdownsWidget(
-                                group: 'BirthDateDay',
+                                group: 'day',
                                 name: 'day',
-                                items: controller
-                                    .dropdownsItems['BirthDateDay']!
+                                items: controller.dropdownsItems['day']!
                                     .map((e) => e as DropdownMenuItem<String>)
                                     .toList(),
                                 decoration: const InputDecoration(

@@ -87,7 +87,7 @@ class CropperView extends GetView<CropperController> {
           top: MediaQuery.of(context).padding.top + 10,
         ),
         padding: const EdgeInsets.symmetric(
-          horizontal: 20,
+          horizontal: 16,
         ),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(

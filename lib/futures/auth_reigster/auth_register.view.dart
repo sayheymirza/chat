@@ -144,9 +144,9 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
                 // all fields are dropdown with empty array
                 Expanded(
                   child: DropdownsWidget(
-                    group: 'BirthDateYear',
+                    group: 'year',
                     name: 'year',
-                    items: controller.dropdownsItems['BirthDateYear']!
+                    items: controller.dropdownsItems['year']!
                         .map((e) => e as DropdownMenuItem<String>)
                         .toList(),
                     decoration: const InputDecoration(
@@ -162,9 +162,9 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
                 const Gap(8),
                 Expanded(
                   child: DropdownsWidget(
-                    group: 'BirthDateMounth',
+                    group: 'month',
                     name: 'month',
-                    items: controller.dropdownsItems['BirthDateMounth']!
+                    items: controller.dropdownsItems['month']!
                         .map((e) => e as DropdownMenuItem<String>)
                         .toList(),
                     decoration: const InputDecoration(
@@ -180,9 +180,9 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
                 const Gap(8),
                 Expanded(
                   child: DropdownsWidget(
-                    group: 'BirthDateDay',
+                    group: 'day',
                     name: 'day',
-                    items: controller.dropdownsItems['BirthDateDay']!
+                    items: controller.dropdownsItems['day']!
                         .map((e) => e as DropdownMenuItem<String>)
                         .toList(),
                     decoration: const InputDecoration(

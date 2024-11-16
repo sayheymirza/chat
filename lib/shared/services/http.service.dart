@@ -73,7 +73,7 @@ class HttpService extends GetxService {
   Future<File?> download({
     required String url,
     required String directory,
-    Function(int precent)? onPercent,
+    Function(int percent)? onPercent,
     Function(dynamic info)? onInfo,
     Dio.CancelToken? cancelToken,
   }) async {
@@ -113,7 +113,11 @@ class HttpService extends GetxService {
   Future<dynamic> upload({
     required String path,
     required File file,
-    required Function(int precent) callback,
+    required Function({
+      required int percent,
+      required int total,
+      required int sent,
+    }) callback,
     String? endpoint,
     Dio.CancelToken? cancelToken,
   }) async {
@@ -164,7 +168,11 @@ class HttpService extends GetxService {
       onSendProgress: (int sent, int total) {
         var progress = Math.min(((100 * sent) / total).ceil(), 100);
 
-        callback(progress);
+        callback(
+          percent: progress,
+          sent: sent,
+          total: total,
+        );
       },
     );
 

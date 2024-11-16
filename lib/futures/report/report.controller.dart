@@ -54,7 +54,7 @@ class ReportController extends GetxController {
         showSnackbar(message: result.message);
       } catch (e) {
         disabled.value = false;
-        print(e);
+        //
       }
     }
   }

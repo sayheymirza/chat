@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:chat/shared/services/access.service.dart';
 import 'package:chat/shared/services/app.service.dart';
 import 'package:chat/shared/services/cache.service.dart';
+import 'package:chat/shared/services/call.service.dart';
+import 'package:chat/shared/services/chat.service.dart';
 import 'package:chat/shared/services/chrome.service.dart';
 import 'package:chat/shared/services/configs.service.dart';
 import 'package:chat/shared/services/event.service.dart';
@@ -10,8 +12,11 @@ import 'package:chat/shared/services/file.service.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:chat/shared/services/launch_instance.service.dart';
 import 'package:chat/shared/services/notification.service.dart';
+import 'package:chat/shared/services/permission.service.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/services/queue.service.dart';
+import 'package:chat/shared/services/user.service.dart';
+import 'package:chat/shared/services/waveframe.service.dart';
 import 'package:get/get.dart';
 
 class Services {
@@ -27,6 +32,11 @@ class Services {
   static CacheService get cache => Get.find(tag: 'cache');
   static NotificationService get notification => Get.find(tag: 'notification');
   static FileService get file => Get.find(tag: 'file');
+  static ChatService get chat => Get.find(tag: 'chat');
+  static PermissionService get permission => Get.find(tag: 'permission');
+  static WaveframeService get waveframe => Get.find(tag: 'waveframe');
+  static CallService get call => Get.find(tag: 'call');
+  static UserService get user => Get.find(tag: 'user');
 
   static put() async {
     log('[services.dart] start put Get services');
@@ -42,6 +52,11 @@ class Services {
     Get.lazyPut(() => CacheService(), tag: 'cache');
     Get.lazyPut(() => NotificationService(), tag: 'notification');
     Get.lazyPut(() => FileService(), tag: 'file');
+    Get.lazyPut(() => ChatService(), tag: 'chat');
+    Get.lazyPut(() => PermissionService(), tag: 'permission');
+    Get.lazyPut(() => WaveframeService(), tag: 'waveframe');
+    Get.lazyPut(() => CallService(), tag: 'call');
+    Get.lazyPut(() => UserService(), tag: 'user');
     log('[services.dart] end put Get services');
   }
 }

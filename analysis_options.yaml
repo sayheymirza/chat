@@ -1,8 +1,10 @@
 include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
+    avoid_print: ignore
     camel_case_types: ignore
     constant_identifier_names: ignore
+    depend_on_referenced_packages: ignore
     invalid_use_of_protected_member: ignore
     library_prefixes: ignore
     non_constant_identifier_names: ignore

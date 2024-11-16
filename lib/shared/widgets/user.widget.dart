@@ -4,25 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class UserWidget extends StatefulWidget {
+class UserWidget extends StatelessWidget {
   final ProfileSearchModel item;
 
   const UserWidget({super.key, required this.item});
 
   @override
-  State<UserWidget> createState() => _UserWidgetState();
-}
-
-class _UserWidgetState extends State<UserWidget> {
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // showSnackbar(message: 'باز شدن صفحه پروفایل');
         Get.toNamed(
-          '/profile/${widget.item.id}',
+          '/profile/${item.id}',
           arguments: {
-            'id': widget.item.id,
+            'id': item.id,
             'options': true,
           },
         );
@@ -43,12 +37,10 @@ class _UserWidgetState extends State<UserWidget> {
           children: [
             // avatar
             AvatarWidget(
-              url: widget.item.avatar!,
-              seen: widget.item.seen!,
+              url: item.avatar!,
+              seen: item.seen!,
             ),
-            const SizedBox(
-              width: 10,
-            ),
+            const Gap(10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,13 +48,13 @@ class _UserWidgetState extends State<UserWidget> {
                   Row(
                     children: [
                       Text(
-                        widget.item.fullname!,
+                        item.fullname!,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const Gap(6),
-                      if (widget.item.verified == true)
+                      if (item.verified == true)
                         const Icon(
                           Icons.verified_rounded,
                           color: Colors.blue,
@@ -71,7 +63,7 @@ class _UserWidgetState extends State<UserWidget> {
                     ],
                   ),
                   const Gap(10),
-                  Text('${widget.item.age} ساله'),
+                  Text('${item.age} ساله'),
                 ],
               ),
             ),
@@ -93,7 +85,7 @@ class _UserWidgetState extends State<UserWidget> {
                         size: 18,
                       ),
                       const Gap(5),
-                      Text(widget.item.city!),
+                      Text(item.city!),
                     ],
                   ),
                 ),
@@ -115,7 +107,7 @@ class _UserWidgetState extends State<UserWidget> {
                           width: 4,
                         ),
                         Opacity(
-                          opacity: widget.item.ad == true ? 1.0 : 0.0,
+                          opacity: item.ad == true ? 1.0 : 0.0,
                           child: const Icon(
                             Icons.star,
                             color: Colors.yellow,
@@ -126,7 +118,7 @@ class _UserWidgetState extends State<UserWidget> {
                           width: 4,
                         ),
                         Opacity(
-                          opacity: widget.item.special == true ? 1.0 : 0.0,
+                          opacity: item.special == true ? 1.0 : 0.0,
                           child: const Icon(
                             Icons.star,
                             color: Colors.yellow,

@@ -35,7 +35,6 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
           ),
           const Gap(32),
           TextFormField(
-            enabled: !controller.disabled.value,
             controller: controller.codeController,
             decoration: const InputDecoration(
               label: Text('کد تایید'),

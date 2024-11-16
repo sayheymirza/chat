@@ -54,16 +54,17 @@ class HomeComponentListProfileV1Model {
   });
 }
 
-class ProfileModel {
+class HomeProfileModel {
+  final int id;
   final String name;
   final String avatar;
   final String status;
 
-  ProfileModel({
+  HomeProfileModel({
     required this.name,
     required this.avatar,
     required this.status,
-    required id,
+    required this.id,
   });
 }
 

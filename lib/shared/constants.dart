@@ -3,8 +3,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CONSTANTS {
   static String DEFAULT_ENDPOINT_API = "";
+  static String DEFAULT_ENDPOINT_SOCKET = "";
+
+  static String CURRENT_CHAT = "chat:id";
 
   static String STORAGE_ENDPOINT_API = "endpoint:api";
+  static String STORAGE_ENDPOINT_SOCKET = "endpoint:socket";
   static String STORAGE_ACCESS_TOKEN = "app:access_token";
 
   static String STORAGE_SETTINGS_SOUND_CHAT = "settings:sound_chat";

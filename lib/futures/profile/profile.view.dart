@@ -1,3 +1,4 @@
+import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/futures/profile/profile.controller.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/title.widget.dart';
@@ -12,299 +13,347 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     Get.put(ProfileController());
 
-    controller.load();
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: controller.loading.value
-                ? [
-                    SizedBox(
-                      width: Get.width,
-                      height: Get.height,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ]
-                : [
-                    header(),
-                    if (controller.showOptions.value) buttons(),
-                    if (controller.showOptions.value) const Divider(),
-                    Row(
-                      children: [
-                        item(
-                          title: "شهر",
-                          value: controller.profile.value.city!,
-                          icon: const Icon(
-                            Icons.location_on,
-                            color: Colors.blue,
-                            size: 20,
-                          ),
-                        ),
-                        item(
-                          title: 'نوع رابطه',
-                          value: controller.profile.value.marriageType!,
-                          icon: const Icon(
-                            Icons.favorite,
-                            color: Colors.pink,
-                            size: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    const TitleWidget(text: "وضعیت حساب کاربری"),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 10,
-                        ),
-                        child: Row(
-                          children: [
-                            badge(
-                              text: controller.profile.value.verified == true
-                                  ? "تایید شده"
-                                  : "تایید نشده",
-                              icon: controller.profile.value.verified == true
-                                  ? Icons.done_all
-                                  : Icons.close,
-                              iconColor:
-                                  controller.profile.value.verified == true
-                                      ? Colors.blue
-                                      : Colors.red,
-                            ),
-                            const SizedBox(
-                              width: 6,
-                            ),
-                            // has an active ad
-                            badge(
-                                text: 'account_ad_title'.tr,
-                                icon: controller.profile.value.plan?.ad == true
-                                    ? null
-                                    : Icons.close,
-                                iconColor:
-                                    controller.profile.value.plan?.ad == true
-                                        ? Colors.yellow
-                                        : Colors.red,
-                                image: controller.profile.value.plan?.ad == true
-                                    ? Image.asset(
-                                        'lib/app/assets/images/star.png')
-                                    : null),
-                            const SizedBox(
-                              width: 6,
-                            ),
-                            badge(
-                              text: "عضویت ویژه",
-                              icon:
-                                  controller.profile.value.plan?.special == true
-                                      ? Icons.star_rate
-                                      : Icons.close,
-                              iconColor:
-                                  controller.profile.value.plan?.special == true
-                                      ? Colors.yellow
-                                      : Colors.red,
-                            ),
-                          ],
+      body: StreamBuilder(
+        stream: controller.profile.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+
+            return Container(
+              padding: EdgeInsets.all(16),
+              child: Text("خطایی رخ داد"),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.data == null ||
+              snapshot.data!.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          var data = snapshot.data!.last;
+
+          return RefreshIndicator(
+            onRefresh: controller.load,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  header(
+                    fullname: data.fullname!,
+                    verified: data.verified!,
+                    age: data.age!.toString(),
+                    id: data.id!,
+                    last: data.last!,
+                    avatar: data.avatar!,
+                  ),
+                  if (controller.showOptions.value) buttons(id: data.id!),
+                  if (controller.showOptions.value) const Divider(),
+                  Row(
+                    children: [
+                      item(
+                        title: "شهر",
+                        value: data.city!,
+                        icon: const Icon(
+                          Icons.location_on,
+                          color: Colors.blue,
+                          size: 20,
                         ),
                       ),
+                      item(
+                        title: 'نوع رابطه',
+                        value: data.marriageType!,
+                        icon: const Icon(
+                          Icons.favorite,
+                          color: Colors.pink,
+                          size: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  const TitleWidget(text: "وضعیت حساب کاربری"),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          badge(
+                            text: data.verified == true
+                                ? "تایید شده"
+                                : "تایید نشده",
+                            icon: data.verified == true
+                                ? Icons.done_all
+                                : Icons.close,
+                            iconColor: data.verified == true
+                                ? Colors.blue
+                                : Colors.red,
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          // has an active ad
+                          badge(
+                              text: 'account_ad_title'.tr,
+                              icon: data.plan?.ad == true ? null : Icons.close,
+                              iconColor: data.plan?.ad == true
+                                  ? Colors.yellow
+                                  : Colors.red,
+                              image: data.plan?.ad == true
+                                  ? Image.asset(
+                                      'lib/app/assets/images/star.png')
+                                  : null),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          badge(
+                            text: "عضویت ویژه",
+                            icon: data.plan?.special == true
+                                ? Icons.star_rate
+                                : Icons.close,
+                            iconColor: data.plan?.special == true
+                                ? Colors.yellow
+                                : Colors.red,
+                          ),
+                        ],
+                      ),
                     ),
-                    br(
-                      text: "ویژگی های ظاهری",
-                    ),
-                    Row(
-                      children: [
-                        item(
-                          title: "جنسیت",
-                          value: controller.profile.value.gender ?? "",
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "قد",
-                          value: controller.profile.value.height != null
-                              ? '${controller.profile.value.height} سانتی متر'
-                              : '',
-                        ),
-                        // weight
-                        item(
-                            title: "وزن",
-                            value:
-                                '${controller.profile.value.weight} کیلو گرم'),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "رنگ پوست",
-                          value: controller.profile.value.color ?? '',
-                        ),
-                        // weight
-                        item(
-                          title: "وضعیت سلامتی",
-                          value: controller.profile.value.health ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "امتیاز زیبایی (1 کمترین)",
-                          value: controller.profile.value.beauty ?? '',
-                        ),
-                        // weight
-                        item(
-                          title: "امتیاز خوشتیپی (1 کمترین)",
-                          value: controller.profile.value.shape ?? '',
-                        ),
-                      ],
-                    ),
-                    br(
-                      text: "اطلاعات تکمیلی",
-                    ),
-                    // birthday
-                    Row(
-                      children: [
-                        item(
-                          title: "تاریخ تولد",
-                          value: controller.profile.value.birthDate ?? '',
-                        ),
-                        item(
-                          title: "تاریخ عضویت",
-                          value: controller.profile.value.registerDate ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // وضعیت تاهل
-                        item(
-                          title: "وضعیت تاهل",
-                          value: controller.profile.value.marital ?? '',
-                        ),
-                        // میزان تحصیلات
-                        item(
-                          title: "میزان تحصیلات",
-                          value: controller.profile.value.education ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "تعداد فرزندان",
-                          value: controller.profile.value.children ?? '',
-                        ),
-                        // weight
-                        item(
-                          title: "سن بزرگترین فرزند",
-                          value: controller.profile.value.childMaxAge ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "شغل",
-                          value: controller.profile.value.job ?? '',
-                        ),
-                        // weight
-                        item(
-                          title: "سبک زندگی",
-                          value: controller.profile.value.living ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "میزان حقوق دریافتی",
-                          value: controller.profile.value.salary ?? '',
-                        ),
-                        // weight
-                        item(
-                          title: "میزان مذهبی بودن",
-                          value: controller.profile.value.religion ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        // height
-                        item(
-                          title: "وضعیت اتومبیل",
-                          value: controller.profile.value.car ?? '',
-                        ),
-                        // weight
-                        item(
-                          title: "وضعیت مسکن",
-                          value: controller.profile.value.house ?? '',
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Row(
-                      children: [
-                        item(
-                          title: 'درباره من',
-                          value: controller.profile.value.about ?? '',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                  ],
-          ),
-        ),
+                  ),
+                  br(
+                    text: "ویژگی های ظاهری",
+                  ),
+                  Row(
+                    children: [
+                      item(
+                        title: "جنسیت",
+                        value: data.gender ?? "",
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "قد",
+                        value: data.height != null
+                            ? '${data.height} سانتی متر'
+                            : '',
+                      ),
+                      // weight
+                      item(title: "وزن", value: '${data.weight} کیلو گرم'),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "رنگ پوست",
+                        value: data.color ?? '',
+                      ),
+                      // weight
+                      item(
+                        title: "وضعیت سلامتی",
+                        value: data.health ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "امتیاز زیبایی (1 کمترین)",
+                        value: data.beauty ?? '',
+                      ),
+                      // weight
+                      item(
+                        title: "امتیاز خوشتیپی (1 کمترین)",
+                        value: data.shape ?? '',
+                      ),
+                    ],
+                  ),
+                  br(
+                    text: "اطلاعات تکمیلی",
+                  ),
+                  // birthday
+                  Row(
+                    children: [
+                      item(
+                        title: "تاریخ تولد",
+                        value: data.birthDate ?? '',
+                      ),
+                      item(
+                        title: "تاریخ عضویت",
+                        value: data.registerDate ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // وضعیت تاهل
+                      item(
+                        title: "وضعیت تاهل",
+                        value: data.marital ?? '',
+                      ),
+                      // میزان تحصیلات
+                      item(
+                        title: "میزان تحصیلات",
+                        value: data.education ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "تعداد فرزندان",
+                        value: data.children ?? '',
+                      ),
+                      // weight
+                      item(
+                        title: "سن بزرگترین فرزند",
+                        value: data.childMaxAge ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "شغل",
+                        value: data.job ?? '',
+                      ),
+                      // weight
+                      item(
+                        title: "سبک زندگی",
+                        value: data.living ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "میزان حقوق دریافتی",
+                        value: data.salary ?? '',
+                      ),
+                      // weight
+                      item(
+                        title: "میزان مذهبی بودن",
+                        value: data.religion ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      // height
+                      item(
+                        title: "وضعیت اتومبیل",
+                        value: data.car ?? '',
+                      ),
+                      // weight
+                      item(
+                        title: "وضعیت مسکن",
+                        value: data.house ?? '',
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Row(
+                    children: [
+                      item(
+                        title: 'درباره من',
+                        value: data.about ?? '',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget header() {
+  Widget header({
+    required String fullname,
+    required bool verified,
+    required String age,
+    required String id,
+    required String last,
+    required String avatar,
+  }) {
     return SizedBox(
       height: 460,
       child: Stack(
         children: [
-          avatar(),
+          GestureDetector(
+            onTap: () {
+              Get.dialog(
+                DialogImageView(
+                  url: "https://avatar.iran.liara.run/public/8",
+                ),
+                useSafeArea: false,
+              );
+            },
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: CachedImageWidget(
+                url: "https://avatar.iran.liara.run/public/8", //data.avatar!,
+                category: "avatar",
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+              ),
+            ),
+          ),
           Positioned(
             top: Get.mediaQuery.padding.top,
             left: 0,
             right: 0,
-            child: appBar(),
+            child: appBar(
+              id: id,
+              fullname: fullname,
+            ),
           ),
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: info(),
+            child: info(
+              id: id,
+              fullname: fullname,
+              verified: verified,
+              last: last,
+              age: age,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget appBar() {
+  Widget appBar({
+    required String id,
+    required String fullname,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -330,19 +379,19 @@ class ProfileView extends GetView<ProfileController> {
                 onSelected: (value) {
                   switch (value) {
                     case "favorite":
-                      controller.favorite();
+                      controller.favorite(id: id);
                       break;
                     case "disfavorite":
-                      controller.disfavorite();
+                      controller.disfavorite(id: id);
                       break;
                     case "block":
-                      controller.block();
+                      controller.block(id: id);
                       break;
                     case "unblock":
-                      controller.unblock();
+                      controller.unblock(id: id);
                       break;
                     case "report":
-                      controller.report();
+                      controller.report(id: id, fullname: fullname);
                       break;
                     default:
                   }
@@ -427,20 +476,13 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget avatar() {
-    return SizedBox(
-      width: double.infinity,
-      height: double.infinity,
-      child: CachedImageWidget(
-        url: controller.profile.value.avatar!,
-        category: "avatar",
-        fit: BoxFit.cover,
-        alignment: Alignment.topCenter,
-      ),
-    );
-  }
-
-  Widget info() {
+  Widget info({
+    required String fullname,
+    required bool verified,
+    required String age,
+    required String id,
+    required String last,
+  }) {
     return Container(
       width: double.infinity,
       height: 100,
@@ -464,14 +506,14 @@ class ProfileView extends GetView<ProfileController> {
           Row(
             children: [
               Text(
-                controller.profile.value.fullname!,
+                fullname,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-              if (controller.profile.value.verified == true)
+              if (verified)
                 const Padding(
                   padding: EdgeInsets.only(right: 10),
                   child: Icon(
@@ -481,7 +523,7 @@ class ProfileView extends GetView<ProfileController> {
                 ),
               const Gap(10),
               Text(
-                '${controller.profile.value.age} ساله',
+                '$age ساله',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -490,7 +532,7 @@ class ProfileView extends GetView<ProfileController> {
               ),
               const Spacer(),
               Text(
-                'کد کاربر: ${controller.profile.value.id}',
+                'کد کاربر: $id',
                 style: const TextStyle(
                   color: Colors.white,
                 ),
@@ -499,7 +541,7 @@ class ProfileView extends GetView<ProfileController> {
           ),
           const Gap(10),
           Text(
-            'آخرین بازدید ${controller.profile.value.last}',
+            'آخرین بازدید $last',
             style: const TextStyle(
               color: Colors.white,
             ),
@@ -509,7 +551,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget buttons() {
+  Widget buttons({required String id}) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -517,7 +559,11 @@ class ProfileView extends GetView<ProfileController> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.openingChat.value
+                  ? null
+                  : () {
+                      controller.startChat(id: id);
+                    },
               child: const Text(
                 'ارسال پیام',
                 style: TextStyle(
@@ -532,12 +578,7 @@ class ProfileView extends GetView<ProfileController> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    Get.toNamed(
-                      '/app/default-message',
-                      parameters: {
-                        'id': controller.profile.value.id.toString(),
-                      },
-                    );
+                    controller.sendDefaultMessage(id: id);
                   },
                   child: const Text('ارسال علاقه مندی'),
                 ),
@@ -546,7 +587,7 @@ class ProfileView extends GetView<ProfileController> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    controller.sendSMS();
+                    controller.sendSMS(id: id);
                   },
                   child: const Text('دعوت به گفتگو'),
                 ),

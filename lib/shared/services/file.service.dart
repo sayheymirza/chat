@@ -18,9 +18,14 @@ class FileService extends GetxService {
   RxMap<int, DUModel> uploads = <int, DUModel>{}.obs;
   RxMap<int, DUModel> downloads = <int, DUModel>{}.obs;
 
-  Future<void> upload({
+  Future<DUModel?> upload({
     required File file,
-    required String category,
+    String category = "file",
+    Function({
+      required int percent,
+      required int total,
+      required int sent,
+    })? onUploading,
   }) async {
     try {
       var id = uuid();
@@ -33,7 +38,8 @@ class FileService extends GetxService {
         category: category,
         filename: filename,
         percent: 0,
-        size: file.statSync().size,
+        total: file.statSync().size,
+        sentOrRecived: 0,
         cancelToken: cancelToken,
       );
 
@@ -54,7 +60,15 @@ class FileService extends GetxService {
 
       var result = await ApiService.data.upload(
         file: file,
-        callback: (int percent) {
+        callback: ({
+          int percent = 0,
+          int total = 0,
+          int sent = 0,
+        }) {
+          if (onUploading != null) {
+            onUploading(percent: percent, total: total, sent: sent);
+          }
+
           uploads[id]!.percent = percent;
           Services.notification.progress(
             id: id,
@@ -75,11 +89,25 @@ class FileService extends GetxService {
 
       Services.notification.dismiss(id: id);
 
-      uploads[id]!.percent = 100;
-      uploads[id]!.done = result.success;
-      uploads[id]!.url = result.url;
+      var output = DUModel(
+        done: result.success,
+        id: id,
+        category: category,
+        filename: filename,
+        percent: 100,
+        total: file.statSync().size,
+        sentOrRecived: file.statSync().size,
+        cancelToken: cancelToken,
+        url: result.url,
+        fileId: result.fileId,
+        file: file,
+      );
+
+      uploads[id] = output;
+
+      return output;
     } catch (e) {
-      //
+      return null;
     }
   }
 
@@ -88,8 +116,19 @@ class FileService extends GetxService {
     required String category,
   }) async {
     try {
-      var id = uuid();
       var filename = basename(url);
+      var directory = Directory(
+        '${(await getApplicationCacheDirectory()).path}/downloads/$category',
+      );
+
+      if (!url.startsWith('http')) {
+        // cp file
+        var file = File(url);
+        file.copySync('${directory.path}/$filename');
+        return;
+      }
+
+      var id = uuid();
       var cancelToken = CancelToken();
 
       downloads[id] = DUModel(
@@ -97,7 +136,8 @@ class FileService extends GetxService {
         category: category,
         filename: filename,
         percent: 0,
-        size: 0,
+        total: 0,
+        sentOrRecived: 0,
         cancelToken: cancelToken,
         url: url,
       );
@@ -108,10 +148,6 @@ class FileService extends GetxService {
         title: "دانلود $filename",
         progress: 0,
         channel: 'download_channel',
-      );
-
-      var directory = Directory(
-        '${(await getApplicationCacheDirectory()).path}/downloads/$category',
       );
 
       cancelToken.whenCancel.whenComplete(() {
@@ -142,7 +178,8 @@ class FileService extends GetxService {
       downloads[id]!.percent = 100;
       if (result != null) {
         downloads[id]!.file = result;
-        downloads[id]!.size = result.statSync().size;
+        downloads[id]!.total = result.statSync().size;
+        downloads[id]!.sentOrRecived = result.statSync().size;
       }
     } catch (e) {
       //

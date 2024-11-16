@@ -18,16 +18,19 @@ class ApiSimpleResponseModel {
 class ApiUploadResponseModel {
   final bool success;
   final String? url;
+  final String? fileId;
 
   ApiUploadResponseModel({
     required this.success,
     required this.url,
+    required this.fileId,
   });
 
   static get unhandledError {
     return ApiUploadResponseModel(
       success: false,
       url: null,
+      fileId: null,
     );
   }
 }

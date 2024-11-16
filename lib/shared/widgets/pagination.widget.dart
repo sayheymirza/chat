@@ -43,7 +43,7 @@ class _PaginationWidgetState extends State<PaginationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.hidden
+    return widget.hidden || widget.last == 0
         ? Container(
             height: 0,
           )

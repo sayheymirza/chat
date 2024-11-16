@@ -6,5 +6,5 @@ class DropdownTable extends Table {
   TextColumn get value => text()();
   TextColumn get groupKey => text()();
   IntColumn get orderIndex => integer()();
-  TextColumn get parentId => text()();
+  TextColumn get parentId => text().nullable()();
 }

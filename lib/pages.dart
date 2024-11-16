@@ -11,10 +11,12 @@ import 'package:chat/futures/auth_login/auth_login.view.dart';
 import 'package:chat/futures/auth_reigster/auth_register.view.dart';
 import 'package:chat/futures/blocks/blocks.view.dart';
 import 'package:chat/futures/cache_manager/cache_manager.view.dart';
+import 'package:chat/futures/chat/chat.view.dart';
 import 'package:chat/futures/contact/contact.view.dart';
 import 'package:chat/futures/cropper/cropper.view.dart';
 import 'package:chat/futures/earning_income/earning_income.view.dart';
 import 'package:chat/futures/favorites/favorites.view.dart';
+import 'package:chat/futures/map/map.view.dart';
 import 'package:chat/futures/page/page.view.dart';
 import 'package:chat/futures/payment/payment.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
@@ -45,11 +47,13 @@ List<GetPage> pages = [
   ),
   GetPage(name: '/app/profile', page: () => const ProfileEditView()),
   GetPage(name: '/app/cropper', page: () => const CropperView()),
+  GetPage(name: '/app/map', page: () => const MapView()),
   GetPage(name: '/app/blocks', page: () => const BlocksView()),
   GetPage(name: '/app/favorites', page: () => const FavoritesView()),
   GetPage(name: '/app/transactions', page: () => const TransactionsView()),
   GetPage(name: '/app/transactions/:id', page: () => const TransactionView()),
   GetPage(name: '/app/storage', page: () => const CacheManagerView()),
+  GetPage(name: '/app/chat/:id', page: () => const ChatView()),
   GetPage(
     name: '/app/report',
     page: () => const ReportView(),

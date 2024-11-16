@@ -48,7 +48,7 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
         var result = await ApiService.data.upload(
           file: file!,
           cancelToken: cancelToken,
-          callback: (percent) {
+          callback: ({int percent = 0, int total = 0, int sent = 0}) {
             uploadProgress = percent;
             setState(() {});
           },

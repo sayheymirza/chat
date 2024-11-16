@@ -19,7 +19,7 @@ abstract class ApiDataAbstract extends GetxService {
 
   Future<ApiUploadResponseModel> upload({
     required File file,
-    required Function(int precent) callback,
+    required Function({int percent, int total, int sent}) callback,
     CancelToken? cancelToken,
   });
 
