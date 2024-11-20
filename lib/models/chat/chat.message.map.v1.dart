@@ -12,10 +12,6 @@ class ChatMessageMapV1Model extends ChatMessageModel {
     required this.zoom,
     required this.lon,
     required this.lat,
-    super.id = "",
-    super.localId = "",
-    super.chatId = "",
-    super.senderId = "",
     super.type = 'map@v1',
   });
 

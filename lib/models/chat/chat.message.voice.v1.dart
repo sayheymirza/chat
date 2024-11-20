@@ -12,10 +12,6 @@ class ChatMessageVoiceV1Model extends ChatMessageModel {
     required this.size,
     required this.duration,
     this.waveform = const [],
-    super.id = "",
-    super.localId = "",
-    super.chatId = "",
-    super.senderId = "",
     super.type = 'voice@v1',
   });
 

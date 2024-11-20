@@ -45,7 +45,7 @@ class ChatMessagesWidget extends StatelessWidget {
             children: [
               ...children,
               ListView.builder(
-                reverse: true,
+                reverse: false,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: message.length,

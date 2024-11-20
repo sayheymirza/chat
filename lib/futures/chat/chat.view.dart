@@ -35,7 +35,7 @@ class ChatView extends GetView<ChatController> {
     return PreferredSize(
       preferredSize: Size(double.infinity, 56),
       child: StreamBuilder(
-        stream: controller.profileStream.stream,
+        stream: controller.chatStream.stream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return GradientAppBarWidget(
@@ -55,10 +55,10 @@ class ChatView extends GetView<ChatController> {
             back: true,
             right: GestureDetector(
               onTap: () {
-                if (Get.previousRoute == '/profile/${data.id}') {
+                if (Get.previousRoute == '/profile/${data.userId}') {
                   Get.back();
                 } else {
-                  Get.toNamed('/profile/${data.id}', arguments: {
+                  Get.toNamed('/profile/${data.userId}', arguments: {
                     'options': true,
                   });
                 }
@@ -66,8 +66,8 @@ class ChatView extends GetView<ChatController> {
               child: Row(
                 children: [
                   AvatarWidget(
-                    seen: data.seen!,
-                    url: data.avatar!,
+                    seen: data.user!.seen!,
+                    url: data.user!.avatar!,
                     size: 42,
                   ),
                   const Gap(14),
@@ -78,7 +78,7 @@ class ChatView extends GetView<ChatController> {
                       children: [
                         const Gap(6),
                         Text(
-                          data.fullname!,
+                          data.user!.fullname!,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class ChatView extends GetView<ChatController> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const Gap(2),
-                        if (data.status == "typing")
+                        if (data.typing == true)
                           Text(
                             "در حال نوشتن ...",
                             style: TextStyle(
@@ -96,7 +96,8 @@ class ChatView extends GetView<ChatController> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                        if (data.status == "online")
+                        if (data.typing != true &&
+                            data.user?.status == "online")
                           Text(
                             "آنلاین",
                             style: TextStyle(
@@ -105,9 +106,10 @@ class ChatView extends GetView<ChatController> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                        if (data.status != "online")
+                        if (data.typing != true &&
+                            data.user?.status != "online")
                           Text(
-                            formatAgo(data.lastAt.toString()),
+                            formatAgo(data.user!.lastAt.toString()),
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 12,
@@ -153,7 +155,7 @@ class ChatView extends GetView<ChatController> {
                         break;
                       case "report":
                         controller.report(
-                          fullname: data.fullname!,
+                          fullname: data.user!.fullname!,
                         );
                         break;
                       case "delete":

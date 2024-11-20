@@ -3,20 +3,21 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as Math;
 
+import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayerController {
-  RxBool playing = false.obs;
+  bool playing = false;
   late VideoPlayerController controller;
 
-  RxString totalTime = '00:00'.obs;
-  RxString passedTime = '00:00'.obs;
+  String totalTime = '00:00';
+  String passedTime = '00:00';
 
-  Rx<Duration> totalDuration = Duration().obs;
-  Rx<Duration> passedDuration = Duration().obs;
+  Duration totalDuration = Duration();
+  Duration passedDuration = Duration();
 
   Timer? timer;
 
@@ -24,7 +25,22 @@ class PlayerController {
     required String url,
   }) async {
     if (url.startsWith('https')) {
-      // @TODO: cache
+      var result = await Services.cache.load(url: url);
+
+      if (result == null) {
+        try {
+          controller = VideoPlayerController.networkUrl(Uri.parse(url));
+          await controller.initialize();
+
+          durationing();
+        } catch (e) {
+          log('[player.controller.dart] load failed $url');
+          debugPrint(e.toString());
+        }
+        return;
+      }
+
+      url = result.path;
     }
 
     log('[player.controller.dart] load $url');
@@ -46,7 +62,7 @@ class PlayerController {
   }
 
   void toggle() {
-    if (playing.value) {
+    if (playing) {
       pause();
     } else {
       play();
@@ -56,7 +72,7 @@ class PlayerController {
   void play() async {
     await controller.play();
 
-    playing.value = true;
+    playing = true;
 
     durationing();
     timer = Timer.periodic(Duration(milliseconds: 100), (_) {
@@ -67,7 +83,7 @@ class PlayerController {
   void pause() async {
     await controller.pause();
 
-    playing.value = false;
+    playing = false;
 
     if (timer != null) {
       timer!.cancel();
@@ -81,18 +97,18 @@ class PlayerController {
 
     // init passed
     var position = (await controller.position) ?? Duration();
-    passedTime.value = formatTime(position);
-    passedDuration.value = position;
+    passedTime = formatTime(position);
+    passedDuration = position;
     // init total
     var total = controller.value.duration;
-    totalTime.value = formatTime(total);
-    totalDuration.value = total;
+    totalTime = formatTime(total);
+    totalDuration = total;
 
     // if end
     if (controller.value.isPlaying) {
-      playing.value = true;
+      playing = true;
     } else {
-      playing.value = false;
+      playing = false;
 
       if (timer != null) {
         timer!.cancel();

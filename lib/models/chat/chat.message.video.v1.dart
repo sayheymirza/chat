@@ -12,10 +12,6 @@ class ChatMessageVideoV1Model extends ChatMessageModel {
     required this.size,
     required this.name,
     required this.duration,
-    super.id = "",
-    super.localId = "",
-    super.chatId = "",
-    super.senderId = "",
     super.type = 'video@v1',
   });
 

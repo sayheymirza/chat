@@ -8,10 +8,6 @@ class ChatMessageImageV1Model extends ChatMessageModel {
     required super.sentAt,
     required this.url,
     required this.size,
-    super.id = "",
-    super.localId = "",
-    super.chatId = "",
-    super.senderId = "",
     super.type = 'image@v1',
   });
 

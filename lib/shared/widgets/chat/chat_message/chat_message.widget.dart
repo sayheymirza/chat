@@ -2,6 +2,7 @@ import 'package:bubble/bubble.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/formats/byte.format.dart';
 import 'package:chat/shared/formats/date.format.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/chat/chat_message_dialog/chat_message_dialog.view.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -12,7 +13,6 @@ class ChatMessageWidget extends StatelessWidget {
   ChatMessageModel message;
   Widget child;
   Color? color;
-  bool me;
   bool longPress;
 
   ChatMessageWidget({
@@ -20,20 +20,21 @@ class ChatMessageWidget extends StatelessWidget {
     required this.message,
     required this.child,
     this.color,
-    this.me = true,
     this.longPress = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    bool me = message.senderId == Services.profile.profile.value.id!;
+
     BubbleNip? nip = me ? BubbleNip.rightBottom : BubbleNip.leftBottom;
     BubbleEdges? padding;
 
     color ??= me ? Get.theme.primaryColor.withAlpha(72) : Colors.grey.shade100;
 
-    if (message.type.startsWith("map") ||
-        message.type.startsWith('image') ||
-        message.type.startsWith('video')) {
+    if (message.type!.startsWith("map") ||
+        message.type!.startsWith('image') ||
+        message.type!.startsWith('video')) {
       nip = BubbleNip.no;
       padding = BubbleEdges.all(0);
     }

@@ -3,22 +3,22 @@ import 'package:get/get.dart';
 
 class ChatMessageDialogController extends GetxController {
   void deleteForMe({required String messageId}) async {
-    await Services.chat.deleteMessage(messageId: messageId);
+    Services.message.deleteByMessageId(messageId: messageId, forAll: false);
     Get.back();
   }
 
   void deleteForAll({required String messageId}) async {
-    await Services.chat.deleteMessage(messageId: messageId);
+    Services.message.deleteByMessageId(messageId: messageId, forAll: true);
     Get.back();
   }
 
   void cancelSend({required String localId}) async {
-    await Services.chat.cancelMessage(localId: localId);
+    Services.message.deleteByLocalId(localId: localId);
     Get.back();
   }
 
   void send({required String localId}) async {
-    await Services.chat.sendByLocalId(localId: localId);
+    Services.message.sendByLocalId(localId: localId);
     Get.back();
   }
 

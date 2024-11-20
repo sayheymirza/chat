@@ -18,6 +18,9 @@ class AppController extends GetxController {
 
     Services.profile.fetchMyProfile();
 
+    Services.chat.listenToEvents();
+    Services.message.listenToEvents();
+
     socket.connect();
   }
 

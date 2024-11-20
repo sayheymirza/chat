@@ -1,429 +1,200 @@
+import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/models/chat/chat.event.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
+import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/event.dart';
-import 'package:chat/shared/services.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
-import 'package:uuid/uuid.dart';
 
 class ChatService extends GetxService {
   RxInt unreadedChats = 0.obs;
-  RxInt unreadedMessages = 0.obs;
 
-  RxString selectedChat = "".obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-
-    // listen to messages
-    listen();
-
+  // listen to events
+  void listenToEvents() {
     event.on<EventModel>().listen((data) async {
       if (data.event == CHAT_EVENTS.RECIVE_MESSAGE) {
         var value = data.value as ChatMessageModel;
 
-        try {
-          MessageTableData? message;
-
-          if (value.localId != "-1") {
-            // update message with local id
-            var queryMessage = database.select(database.messageTable)
-              ..where((item) => item.local_id.equals(value.localId!));
-
-            message = await queryMessage.getSingleOrNull();
-          }
-
-          if (message != null) {
-            // update
-            log('[chat.service.dart] updating message with local id ${value.localId} and chat id ${value.chatId}');
-            database.update(database.messageTable)
-              ..where((item) => item.local_id.equals(value.localId!))
-              ..write(
-                MessageTableCompanion(
-                  id: drift.Value(value.id),
-                  local_id: drift.Value(value.localId),
-                  chat_id: drift.Value(value.chatId),
-                  status: drift.Value(value.status),
-                  sender_id: drift.Value(value.senderId),
-                  sent_at: drift.Value(value.sentAt),
-                  type: drift.Value(value.type),
-                  data: drift.Value(value.data),
-                  meta: drift.Value(value.meta),
-                ),
-              );
-          } else {
-            // create
-            log('[chat.service.dart] creating message with local id ${value.localId} and chat id ${value.chatId}');
-
-            await database.into(database.messageTable).insert(
-                  MessageTableCompanion(
-                    id: drift.Value(value.id),
-                    local_id: drift.Value(value.localId),
-                    chat_id: drift.Value(value.chatId),
-                    status: drift.Value(value.status),
-                    sender_id: drift.Value(value.senderId),
-                    sent_at: drift.Value(value.sentAt),
-                    type: drift.Value(value.type),
-                    data: drift.Value(value.data),
-                    meta: drift.Value(value.meta),
-                  ),
-                );
-
-            await database.transaction(() async {
-              // check chat id exists
-              var querySelect = database.select(database.chatTable)
-                ..where((row) => row.id.equals(value.chatId));
-
-              if (await querySelect.getSingleOrNull() == null) {
-                // create the chat
-              }
-            });
-          }
-        } catch (e) {
-          print(e);
-        }
+        onReciveMessage(message: value);
       }
     });
   }
 
-  Future<String?> openChat({required String userId}) async {
+  // create chat if not exists from recived message
+  // update last message
+  void onReciveMessage({required ChatMessageModel message}) async {
     try {
-      log('[chats.controller.dart] open chat $userId');
-      // 1. find chat from paricipents
-      var query = database.select(database.chatParticipantTable);
+      var chat = await (database.select(database.chatTable)
+            ..where((row) => row.chat_id.equals(message.chatId!)))
+          .getSingleOrNull();
 
-      query.where((row) => row.user_id.equals(userId));
-      try {
-        var resultOfChat = await query.get();
-
-        // 2. if chat exists
-        if (resultOfChat != null || resultOfChat.isNotEmpty) {
-          return resultOfChat.first.chat_id;
-        }
-      } catch (e) {
-        //
+      if (chat != null) {
+        // update last message
+        updateLastMessage(chatId: message.chatId!);
+      } else {
+        createByChatId(chatId: message.chatId!);
       }
+    } catch (e) {
+      //
+    }
+  }
 
-      // 3. create new chat
-      var resultOfCreate = await ApiService.chat.createWithUserId(
-        userId: userId,
-      );
+  // update last message
+  void updateLastMessage({required String chatId}) async {}
 
-      // 4. save new chat
-      if (resultOfCreate != null) {
-        await database.transaction(() async {
-          // create the chat
-          await database.into(database.chatTable).insert(
-                ChatTableCompanion.insert(
-                  id: resultOfCreate.chatId,
-                  permissions: resultOfCreate.permissions,
-                ),
-              );
-          // create participant with chat
-          await database.into(database.chatParticipantTable).insert(
-                ChatParticipantTableCompanion.insert(
-                  user_id: userId.toString(),
-                  chat_id: resultOfCreate.chatId,
-                ),
-              );
-        });
+  // listen to unreaded chats
+  void listenToUnreadedChats() {}
+
+  // create a chat by user id and return new chat id
+  Future<String?> createByUserId({required String userId}) async {
+    try {
+      // 1. check user exists in chat table
+      var user = await (database.select(database.chatTable)
+            ..where((row) => row.user_id.equals(userId)))
+          .getSingleOrNull();
+
+      if (user == null) {
+        // 2. create a new chat and save and return chat id
+        var resultOfCreate = await ApiService.chat.createWithUserId(
+          userId: userId,
+        );
+
+        if (resultOfCreate == null) {
+          return null;
+        }
+
+        await database.into(database.chatTable).insert(
+              ChatTableCompanion.insert(
+                chat_id: resultOfCreate.chatId,
+                user_id: userId,
+                permissions: resultOfCreate.permissions,
+              ),
+            );
 
         return resultOfCreate.chatId;
       }
 
-      return null;
+      return user.chat_id;
     } catch (e) {
-      print(e);
-
+      print(e.toString());
       return null;
     }
   }
 
-  Future<String?> getUserIdFromChatId({required String id}) async {
+  // create a chat by chat id
+  createByChatId({required String chatId}) {
+    return Exception("create by chat id not implimented");
+  }
+
+  // get chat by chat id
+  Future<Stream<ChatModel?>> stream({required String chatId}) async {
+    log('[chat.service.dart] stream chat with chat id $chatId');
+
     try {
-      var queryParticipant = database.select(database.chatParticipantTable);
-      queryParticipant.where((value) => value.chat_id.equals(id));
-      var resultParticipant = await queryParticipant.getSingleOrNull();
+      var query = database.select(database.chatTable).join([
+        drift.innerJoin(
+          database.userTable,
+          database.userTable.id.equalsExp(
+            database.chatTable.user_id,
+          ),
+        ),
+      ])
+        ..where(database.chatTable.chat_id.equals(chatId));
 
-      if (resultParticipant == null) {
-        return null;
-      }
-
-      return resultParticipant.user_id;
+      return query.map((row) {
+        return ChatModel.fromJson({
+          "chat_id": row.rawData.data['chat_table.chat_id'],
+          "user_id": row.rawData.data['chat_table.user_id'],
+          "user": row.readTable(database.userTable).data,
+          "message": jsonDecode(row.rawData.data['chat_table.message']),
+          "permissions": row.rawData.data['chat_table.permissions'],
+          "typing": row.rawData.data['chat_table.typing'] == 1,
+          "unread_count": row.rawData.data['chat_table.unread_count'],
+        });
+      }).watchSingleOrNull();
     } catch (e) {
-      return null;
+      return Stream.value(null);
     }
   }
 
-  Future<void> deleteMessage({
-    required String messageId,
-  }) async {
-    log('[chats.service.dart] delete message with id $messageId');
-
+  // delete chat
+  void delete({required String chatId}) async {
     try {
-      // remove from database
-      await database.transaction(() async {
-        var query = database.update(database.messageTable);
-        query.where((row) => row.id.equals(messageId));
-        await query.write(
-          MessageTableCompanion(status: drift.Value('deleted')),
-        );
-      });
+      // 1. delete from database
+      await (database.delete(database.chatTable)
+            ..where((row) => row.chat_id.equals(chatId)))
+          .go();
+      // 2. emit to socket
     } catch (e) {
       //
     }
   }
 
-  Future<void> cancelMessage({
-    required String localId,
-  }) async {
-    log('[chats.service.dart] cancel message with local id $localId');
-
+  // select chats (limit and sort by updated_at and join to last message)
+  Future<ChatListModel> select({int page = 1, int limit = 12}) async {
     try {
-      // remove from database
-      await database.transaction(() async {
-        var query = database.delete(database.messageTable);
-        query.where((row) => row.local_id.equals(localId));
-        query.where((row) => row.status.equals('sent').not());
-        await query.goAndReturn();
-      });
-    } catch (e) {
-      //
-    }
-  }
+      var query = database.select(database.chatTable).join([
+        drift.innerJoin(
+          database.userTable,
+          database.userTable.id.equalsExp(
+            database.chatTable.user_id,
+          ),
+        ),
+      ]);
 
-  Future<void> deleteChat({
-    required String chatId,
-  }) async {
-    log('[chats.service.dart] delete chat with id $chatId');
+      query.orderBy(
+        [
+          drift.OrderingTerm(
+              expression: database.chatTable.updated_at,
+              mode: drift.OrderingMode.asc),
+        ],
+      );
 
-    try {
-      // delete all messages, chat, participant
-      await database.transaction(() async {
-        await (database.delete(database.messageTable)
-              ..where((value) => value.chat_id.equals(chatId)))
-            .go();
-        await (database.delete(database.chatTable)
-              ..where((value) => value.id.equals(chatId)))
-            .go();
-        await (database.delete(database.chatParticipantTable)
-              ..where((value) => value.chat_id.equals(chatId)))
-            .go();
-      });
-    } catch (e) {
-      //
-    }
-  }
+      query.limit(limit, offset: (page - 1) * limit);
 
-  Future<void> save({
-    required ChatMessageModel message,
-  }) async {
-    var id = Uuid().v4().toString();
-    message.chatId = selectedChat.value.toString();
-    message.localId = id;
-    message.senderId = Services.profile.profile.value.id ?? '-1';
+      var chats = await query.map((row) {
+        return ChatModel.fromJson({
+          "chat_id": row.rawData.data['chat_table.chat_id'],
+          "user_id": row.rawData.data['chat_table.user_id'],
+          "user": row.readTable(database.userTable).data,
+          "message": jsonDecode(row.rawData.data['chat_table.message']),
+          "permissions": row.rawData.data['chat_table.permissions'],
+          "typing": row.rawData.data['chat_table.typing'] == 1,
+          "unread_count": row.rawData.data['chat_table.unread_count'],
+        });
+      }).get();
 
-    log('[chat.service.dart] save message with local id $id and chat id ${message.chatId}');
+      var count = await database.chatTable.count().getSingle();
 
-    try {
-      // save on database
-      await database.transaction(
-        () async {
-          await database.into(database.messageTable).insert(
-                MessageTableCompanion.insert(
-                  local_id: drift.Value(message.localId),
-                  chat_id: message.chatId,
-                  sender_id: message.senderId,
-                  sent_at: drift.Value(message.sentAt),
-                  type: message.type,
-                  data: message.toData(),
-                  status: message.status,
-                  meta: {},
-                ),
-              );
-        },
+      return ChatListModel(
+        chats: chats,
+        page: page,
+        limit: limit,
+        last: count ~/ page,
+        total: count,
       );
     } catch (e) {
-      //
+      print(e.toString());
+
+      return ChatListModel(
+        page: page,
+        limit: limit,
+      );
     }
   }
 
-  void send({
-    required ChatMessageModel message,
-  }) {
-    if (message.status != "sending") return;
-    log('[chat.service.dart] send message with local id ${message.localId} and chat id ${message.chatId}');
-
-    ApiService.socket.send(
-      event: CHAT_EVENTS.SEND_MESSAGE,
-      data: message,
-    );
-  }
-
-  Future<void> sendByLocalId({
-    required String localId,
-  }) async {
-    try {
-      database.update(database.messageTable)
-        ..where((item) => item.local_id.equals(localId))
-        ..write(
-          MessageTableCompanion(
-            status: drift.Value("unknown"),
-          ),
-        );
-    } catch (e) {
-      //
-    }
-  }
-
+  // clear (clear all chats)
   Future<void> clear() async {
     try {
-      var chats = await database.delete(database.chatTable).go();
-      var participants =
-          await database.delete(database.chatParticipantTable).go();
-      var messages = await database.delete(database.messageTable).go();
-
-      log('[user.service.dart] clear $chats chats and $participants participants and $messages messages');
+      var count = await database.delete(database.chatTable).go();
+      log('[chat.service.dart] clear over $count chats');
     } catch (e) {
       //
     }
-  }
-
-  void upload({
-    required String localId,
-    required File file,
-    required ChatMessageModel Function(String url, String fileId) onUploaded,
-    String category = "file",
-  }) {
-    Services.queue.add(() async {
-      try {
-        database.update(database.messageTable)
-          ..where((item) => item.local_id.equals(localId))
-          ..write(
-            MessageTableCompanion(
-              status: drift.Value("uploading"),
-              meta: drift.Value({
-                'percent': 0,
-                'total': file.statSync().size,
-                'sent': 0,
-              }),
-            ),
-          );
-
-        // start uploading
-        var result = await Services.file.upload(
-            file: file,
-            category: category,
-            onUploading: ({int percent = 0, int total = 0, int sent = 0}) {
-              database.update(database.messageTable)
-                ..where((item) => item.local_id.equals(localId))
-                ..write(
-                  MessageTableCompanion(
-                    status: drift.Value("uploading"),
-                    meta: drift.Value({
-                      'percent': percent,
-                      'total': total,
-                      'sent': sent,
-                    }),
-                  ),
-                );
-            });
-
-        if (result != null && result.done) {
-          var message = onUploaded(result.url!, result.fileId!);
-
-          // save the message
-          database.update(database.messageTable)
-            ..where((item) => item.local_id.equals(localId))
-            ..write(
-              MessageTableCompanion(
-                data: drift.Value(message.data),
-                status: drift.Value("sending"),
-                meta: drift.Value({
-                  'percent': result.percent,
-                  'total': result.total,
-                  'sent': result.sentOrRecived,
-                }),
-              ),
-            );
-        } else {
-          database.update(database.messageTable)
-            ..where((item) => item.local_id.equals(localId))
-            ..write(
-              MessageTableCompanion(
-                status: drift.Value("unuploaded"),
-              ),
-            );
-        }
-      } catch (e) {
-        log("[chat.service.dart] upload exeption:");
-        print(e);
-        print("");
-
-        database.update(database.messageTable)
-          ..where((item) => item.local_id.equals(localId))
-          ..write(
-            MessageTableCompanion(
-              status: drift.Value("unuploaded"),
-            ),
-          );
-      }
-    });
-  }
-
-  void listen() {
-    database.select(database.messageTable)
-      ..where((value) => value.status.equals('sending'))
-      ..watch().listen(
-        (value) {
-          for (var data in value) {
-            var message = ChatMessageModel.fromDatabase(data);
-
-            // sent the message
-            send(message: message);
-          }
-        },
-      );
-
-    database.select(database.messageTable)
-      ..where((value) => value.status.equals('unknown'))
-      ..watch().listen(
-        (value) {
-          for (var data in value) {
-            var message = ChatMessageModel.fromDatabase(data);
-
-            // check file is in message
-            if (message.fileUrl != null) {
-              if (!message.fileUrl!.startsWith('http')) {
-                upload(
-                  localId: message.localId!,
-                  file: message.file!,
-                  onUploaded: (String url, String fileId) {
-                    message.fileUrl = url;
-                    message.fileId = fileId;
-
-                    return message;
-                  },
-                );
-              } else if (message.fileUrl!.startsWith('http')) {
-                database.update(database.messageTable)
-                  ..where((item) => item.local_id.equals(message.localId!))
-                  ..write(
-                    MessageTableCompanion(
-                      status: drift.Value("sending"),
-                    ),
-                  );
-              }
-            }
-          }
-        },
-      );
   }
 }

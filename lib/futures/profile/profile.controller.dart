@@ -49,7 +49,6 @@ class ProfileController extends GetxController {
 
         profile.add([result]);
       } else {
-        Get.back();
         showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
       }
     } else {
@@ -139,7 +138,7 @@ class ProfileController extends GetxController {
 
   void startChat({required String id}) async {
     openingChat.value = true;
-    var chatId = await Services.chat.openChat(userId: id);
+    var chatId = await Services.chat.createByUserId(userId: id);
     openingChat.value = false;
 
     if (chatId != null) {

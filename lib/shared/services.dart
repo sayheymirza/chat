@@ -11,6 +11,7 @@ import 'package:chat/shared/services/event.service.dart';
 import 'package:chat/shared/services/file.service.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:chat/shared/services/launch_instance.service.dart';
+import 'package:chat/shared/services/message.service.dart';
 import 'package:chat/shared/services/notification.service.dart';
 import 'package:chat/shared/services/permission.service.dart';
 import 'package:chat/shared/services/profile.service.dart';
@@ -33,6 +34,7 @@ class Services {
   static NotificationService get notification => Get.find(tag: 'notification');
   static FileService get file => Get.find(tag: 'file');
   static ChatService get chat => Get.find(tag: 'chat');
+  static MessageService get message => Get.find(tag: 'message');
   static PermissionService get permission => Get.find(tag: 'permission');
   static WaveframeService get waveframe => Get.find(tag: 'waveframe');
   static CallService get call => Get.find(tag: 'call');
@@ -53,6 +55,7 @@ class Services {
     Get.lazyPut(() => NotificationService(), tag: 'notification');
     Get.lazyPut(() => FileService(), tag: 'file');
     Get.lazyPut(() => ChatService(), tag: 'chat');
+    Get.lazyPut(() => MessageService(), tag: 'message');
     Get.lazyPut(() => PermissionService(), tag: 'permission');
     Get.lazyPut(() => WaveframeService(), tag: 'waveframe');
     Get.lazyPut(() => CallService(), tag: 'call');

@@ -7,6 +7,8 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:crypto/crypto.dart';
+import 'package:convert/convert.dart';
 
 int uuid() {
   var now = DateTime.now();
@@ -17,6 +19,18 @@ int uuid() {
 class FileService extends GetxService {
   RxMap<int, DUModel> uploads = <int, DUModel>{}.obs;
   RxMap<int, DUModel> downloads = <int, DUModel>{}.obs;
+
+  Future<String?> hash({required File file}) async {
+    final output = AccumulatorSink<Digest>();
+    final input = sha256.startChunkedConversion(output);
+
+    await for (final chunk in file.openRead()) {
+      input.add(chunk);
+    }
+    input.close();
+
+    return output.events.single.toString();
+  }
 
   Future<DUModel?> upload({
     required File file,

@@ -4,12 +4,13 @@ import 'dart:developer';
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_delete_chat/dialog_delete_chat.view.dart';
 import 'package:chat/models/chat/chat.message.dart';
+import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/widgets/chat/chat_card/chat_card_verify.widget.dart';
-import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,12 +20,9 @@ class ChatController extends GetxController {
   List<Widget> children = [];
 
   Map<String, ChatMessageModel> message = {};
-  List<ChatMessageModel> get messages => message.values.toList()
-    ..sort((a, b) => b.sentAt.microsecondsSinceEpoch
-        .compareTo(a.sentAt.microsecondsSinceEpoch));
+  List<ChatMessageModel> get messages => message.values.toList();
 
-  StreamController<ProfileModel> profileStream =
-      StreamController<ProfileModel>();
+  StreamController<ChatModel> chatStream = StreamController<ChatModel>();
 
   int page = 0;
   int limit = 20;
@@ -35,51 +33,57 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
 
+    // save chat id to storage
+    Services.configs.set(
+      key: CONSTANTS.CURRENT_CHAT,
+      value: Get.parameters['id'],
+    );
+
     load();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    Services.configs.unset(key: CONSTANTS.CURRENT_CHAT);
   }
 
   Future<void> load() async {
     try {
-      var id = Get.parameters['id'];
-
-      // get user id
-      var userId = await Services.chat.getUserIdFromChatId(id: id!);
-
-      if (userId == null) {
-        Get.back();
-      }
-
-      Services.chat.selectedChat.value = id;
-
-      var result = await Services.user.stream(userId: userId!);
-
-      var sub = result.listen((data) {
-        profileStream.add(data.last);
-      });
-
-      profileStream.onCancel = () => sub.cancel();
-
-      messaging();
-
+      listenChat();
+      listenMessages();
       childing();
     } catch (e) {
       print(e);
     }
   }
 
-  void messaging() {
+  void listenChat() async {
     var id = Get.parameters['id'];
 
-    database.select(database.messageTable)
-      ..where((value) => value.chat_id.equals(id!))
-      ..limit(limit)
-      ..orderBy([
-        (m) => drift.OrderingTerm(
-              expression: m.sent_at,
-              mode: drift.OrderingMode.desc,
-            ),
-      ])
-      ..watch().listen((value) => handleMessages(value));
+    var stream = await Services.chat.stream(chatId: id!);
+
+    stream.listen((value) {
+      if (value == null) {
+        // destroy
+        Get.back();
+
+        return;
+      }
+
+      chatStream.add(value);
+    });
+  }
+
+  void listenMessages() async {
+    var id = Get.parameters['id'];
+
+    var stream = Services.message.stream(chatId: id!);
+
+    stream.listen((value) {
+      handleMessages(value);
+    });
   }
 
   void loadMessages() async {
@@ -93,29 +97,6 @@ class ChatController extends GetxController {
     if (last == null) return;
 
     log('[chat.controller.dart] load messages before ${last.sentAt.toString()}');
-
-    var value = await (database.select(database.messageTable)
-          ..where((value) =>
-              value.chat_id.equals(id!) &
-              value.sent_at.isSmallerOrEqualValue(last.sentAt))
-          ..limit(limit)
-          ..orderBy([
-            (m) => drift.OrderingTerm(
-                  expression: m.sent_at,
-                  mode: drift.OrderingMode.desc,
-                ),
-          ]))
-        .get();
-
-    loading = false;
-
-    if (value.length < limit) {
-      ended = true;
-    }
-
-    print(value.length);
-
-    handleMessages(value);
   }
 
   void handleMessages(List<MessageTableData> value) {
@@ -125,8 +106,10 @@ class ChatController extends GetxController {
 
       if (val.local_id != '-1') {
         id = val.local_id!;
-      } else if (val.id != null || val.id!.isNotEmpty) {
-        id = val.id!;
+      } else if (val.message_id != null || val.message_id!.isNotEmpty) {
+        id = val.message_id!;
+      } else {
+        id = val.id.toString();
       }
 
       if (id.isNotEmpty) {
@@ -136,7 +119,6 @@ class ChatController extends GetxController {
             message.remove(id);
           }
         } else {
-          print(val.data);
           message[id] = ChatMessageModel.fromDatabase(val);
         }
       }
@@ -241,7 +223,8 @@ class ChatController extends GetxController {
     if (result) {
       // delete all chats and delete chat
       var id = Get.parameters['id']!;
-      await Services.chat.deleteChat(chatId: id);
+      Services.chat.delete(chatId: id);
+      Services.message.deleteByChatId(chatId: id);
       Get.back();
     }
   }

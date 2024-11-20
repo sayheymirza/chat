@@ -18,9 +18,9 @@ class ChatMessageDialogView extends GetView<ChatMessageDialogController> {
 
     String? url;
 
-    if (message.type.startsWith('image') ||
-        message.type.startsWith('audio') ||
-        message.type.startsWith('video')) {
+    if (message.type!.startsWith('image') ||
+        message.type!.startsWith('audio') ||
+        message.type!.startsWith('video')) {
       url = message.data['url'];
     }
 
@@ -68,7 +68,7 @@ class ChatMessageDialogView extends GetView<ChatMessageDialogController> {
                     ),
                     title: Text('ارسال پیام'),
                   ),
-                if (message.localId != null && message.id == null)
+                if (message.localId != null && message.messageId == null)
                   ListTile(
                     onTap: () {
                       controller.cancelSend(localId: message.localId!);
@@ -79,10 +79,10 @@ class ChatMessageDialogView extends GetView<ChatMessageDialogController> {
                     ),
                     title: Text('حذف پیام برای من'),
                   ),
-                if (message.id != null)
+                if (message.messageId != null)
                   ListTile(
                     onTap: () {
-                      controller.deleteForMe(messageId: message.id!);
+                      controller.deleteForMe(messageId: message.messageId!);
                     },
                     leading: Icon(
                       Icons.delete_rounded,
@@ -90,10 +90,10 @@ class ChatMessageDialogView extends GetView<ChatMessageDialogController> {
                     ),
                     title: Text('حذف پیام برای من'),
                   ),
-                if (message.id != null)
+                if (message.messageId != null)
                   ListTile(
                     onTap: () {
-                      controller.deleteForAll(messageId: message.id!);
+                      controller.deleteForAll(messageId: message.messageId!);
                     },
                     leading: Icon(
                       Icons.delete_forever_rounded,
@@ -106,7 +106,7 @@ class ChatMessageDialogView extends GetView<ChatMessageDialogController> {
                     onTap: () {
                       controller.download(
                         url: url!,
-                        category: message.type.split('@').first,
+                        category: message.type!.split('@').first,
                       );
                     },
                     leading: Icon(

@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ChatItemWidget extends StatelessWidget {
-  final ChatItemModel item;
+  final ChatModel item;
   final Function onTap;
 
   const ChatItemWidget({
@@ -37,8 +37,8 @@ class ChatItemWidget extends StatelessWidget {
           children: [
             // avatar
             AvatarWidget(
-              url: item.avatar!,
-              seen: item.seen!,
+              url: item.user!.avatar!,
+              seen: item.user!.seen!,
             ),
             const Gap(10),
             Expanded(
@@ -48,7 +48,7 @@ class ChatItemWidget extends StatelessWidget {
                   SizedBox(
                     height: 24,
                     child: Text(
-                      item.fullname!,
+                      item.user!.fullname!,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -57,8 +57,8 @@ class ChatItemWidget extends StatelessWidget {
                   ),
                   const Gap(4),
                   message(
-                    type: item.messageType ?? 'empty',
-                    data: item.messageData ?? {},
+                    type: item.message?.type ?? 'empty',
+                    data: item.message?.data ?? {},
                   ),
                 ],
               ),
@@ -67,7 +67,8 @@ class ChatItemWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Opacity(
-                  opacity: item.count == null || item.count == 0 ? 0 : 1,
+                  opacity:
+                      item.unreadCount == null || item.unreadCount == 0 ? 0 : 1,
                   child: Container(
                     height: 24,
                     padding: EdgeInsets.symmetric(horizontal: 10),
@@ -77,7 +78,7 @@ class ChatItemWidget extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        item.count.toString(),
+                        item.unreadCount.toString(),
                         style: TextStyle(
                           fontSize: 12,
                           color: Get.theme.colorScheme.onPrimary,
@@ -87,7 +88,10 @@ class ChatItemWidget extends StatelessWidget {
                   ),
                 ),
                 const Gap(4),
-                if (item.sentAt != null) Text(formatAgoChat(item.sentAt!)),
+                if (item.updatedAt != null)
+                  Text(
+                    formatAgoChat(item.updatedAt!.toString()),
+                  ),
               ],
             ),
           ],

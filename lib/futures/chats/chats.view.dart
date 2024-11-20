@@ -29,7 +29,9 @@ class ChatsView extends GetView<ChatsController> {
                 ChatItemWidget(
                   item: item,
                   onTap: () {
-                    controller.open(id: item.id!);
+                    if (item.chatId != null) {
+                      controller.open(id: item.chatId!);
+                    }
                   },
                 ),
               if (controller.chats.isNotEmpty)

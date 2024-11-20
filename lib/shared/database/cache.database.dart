@@ -6,4 +6,6 @@ class CacheTable extends Table {
   TextColumn get file => text()();
   IntColumn get size => integer()();
   TextColumn get category => text()();
+  TextColumn get hash => text().nullable()();
+  TextColumn get file_id => text().nullable()();
 }

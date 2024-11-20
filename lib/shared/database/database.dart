@@ -14,9 +14,8 @@ part 'database.g.dart';
     DropdownTable,
     CacheTable,
     ChatTable,
-    ChatParticipantTable,
     MessageTable,
-    UserTable
+    UserTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {

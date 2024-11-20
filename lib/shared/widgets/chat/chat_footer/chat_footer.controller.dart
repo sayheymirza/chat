@@ -43,12 +43,9 @@ class ChatFooterController extends GetxController {
   void sendTextMessage() {
     if (messageText.isEmpty) return;
 
-    Services.chat
+    Services.message
         .save(
-      message: ChatMessageTextV1Model(
-        sentAt: DateTime.now(),
-        text: messageText,
-      ),
+      message: ChatMessageTextV1Model(text: messageText),
     )
         .then((_) {
       changeMessageText('');
@@ -89,7 +86,7 @@ class ChatFooterController extends GetxController {
       if (value != null) {
         switch (value['action']) {
           case 'audio':
-            Services.chat.save(
+            Services.message.save(
               message: ChatMessageAudioV1Model(
                 sentAt: DateTime.now(),
                 name: value['name'],
@@ -100,7 +97,7 @@ class ChatFooterController extends GetxController {
             );
             break;
           case 'video':
-            Services.chat.save(
+            Services.message.save(
               message: ChatMessageVideoV1Model(
                 sentAt: DateTime.now(),
                 name: value['name'],
@@ -111,7 +108,7 @@ class ChatFooterController extends GetxController {
             );
             break;
           case 'map':
-            Services.chat.save(
+            Services.message.save(
               message: ChatMessageMapV1Model(
                 sentAt: DateTime.now(),
                 lat: value['value']['lat'],
@@ -122,7 +119,7 @@ class ChatFooterController extends GetxController {
             );
             break;
           case 'image':
-            Services.chat.save(
+            Services.message.save(
               message: ChatMessageImageV1Model(
                 sentAt: DateTime.now(),
                 url: value['path'],
@@ -196,7 +193,7 @@ class ChatFooterController extends GetxController {
         // generate waveframe
         var waveframe = await Services.waveframe.process(path: path);
 
-        Services.chat.save(
+        Services.message.save(
           message: ChatMessageVoiceV1Model(
             sentAt: DateTime.now(),
             duration: controller.value.duration.inMilliseconds,

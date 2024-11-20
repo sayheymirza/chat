@@ -1,75 +1,98 @@
-import 'dart:io';
-
 import 'package:chat/shared/database/database.dart';
 
 class ChatMessageModel {
-  late String? id;
-  late String? localId;
-  late String chatId;
-  late String senderId;
-  late DateTime sentAt;
-  late String type;
-  late dynamic data;
-  late dynamic meta;
-  late String status;
-  late bool seen;
+  String? messageId;
+  String? localId;
+  String? chatId;
+  String? senderId;
+  String? status;
+  DateTime? sentAt;
+  String? type;
+  dynamic? data;
+  dynamic? meta;
+  int? seq;
+  String? replyMessageId;
+  String? reaction;
 
   ChatMessageModel({
-    required this.id,
-    required this.localId,
-    required this.chatId,
-    required this.senderId,
-    required this.sentAt,
-    required this.type,
+    this.messageId,
+    this.localId,
+    this.chatId,
+    this.senderId,
+    this.status,
+    this.sentAt,
+    this.type,
     this.data,
     this.meta,
-    this.status = "unknown",
+    this.seq,
+    this.replyMessageId,
+    this.reaction,
   });
 
-  File? get file =>
-      data['url'].toString().startsWith('http') ? null : File(data['url']);
+  toData() {}
 
-  String? get fileUrl => data['url'];
-
-  set fileUrl(String? url) {
-    data['url'] = url;
+  ChatMessageModel.fromJson(Map<String, dynamic> json) {
+    messageId = json['message_id'];
+    localId = json['local_id'];
+    chatId = json['chat_id'];
+    senderId = json['sender_id'];
+    status = json['status'];
+    sentAt = json['sent_at'];
+    type = json['type'];
+    data = json['data'];
+    meta = json['meta'];
+    seq = json['seq'];
+    replyMessageId = json['reply_message_id'];
+    reaction = json['reaction'];
   }
 
-  String? get fileId => data['file_id'];
-
-  set fileId(String? fileId) {
-    data['file_id'] = fileId;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['message_id'] = messageId;
+    data['local_id'] = localId;
+    data['chat_id'] = chatId;
+    data['sender_id'] = senderId;
+    data['status'] = status;
+    data['sent_at'] = sentAt;
+    data['type'] = type;
+    data['data'] = toData();
+    data['meta'] = meta;
+    data['seq'] = seq;
+    data['reply_message_id'] = replyMessageId;
+    data['reaction'] = reaction;
+    return data;
   }
 
-  dynamic toData() {
-    return null;
-  }
-
-  dynamic toJson() {
-    return {
-      "id": id,
-      "localId": localId,
-      "chatId": chatId,
-      "senderId": senderId,
-      "sentAt": sentAt,
-      "type": type,
-      "data": toData() ?? data,
-      "meta": meta,
-      "status": status,
-    };
+  MessageTableData toDatabase() {
+    return MessageTableData(
+      id: 0,
+      message_id: messageId!,
+      local_id: localId!,
+      chat_id: chatId!,
+      status: status ?? "unknown",
+      sender_id: senderId!,
+      sent_at: sentAt!,
+      type: type!,
+      data: data,
+      meta: meta,
+      seq: seq ?? 0,
+      reaction: reaction,
+    );
   }
 
   factory ChatMessageModel.fromDatabase(MessageTableData data) {
     return ChatMessageModel(
-      id: data.id,
+      messageId: data.message_id,
       localId: data.local_id,
       chatId: data.chat_id,
       senderId: data.sender_id,
+      status: data.status,
       sentAt: data.sent_at,
       type: data.type,
       data: data.data,
       meta: data.meta,
-      status: data.status,
+      seq: data.seq,
+      reaction: data.reaction,
     );
   }
 }
