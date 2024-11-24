@@ -24,18 +24,23 @@ RUN git clone https://github.com/flutter/flutter.git $FLUTTER_HOME && \
     git fetch && \
     git checkout $FLUTTER_VERSION
 
-# Accept Android licenses
-RUN mkdir -p /root/Android/sdk && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
-    unzip commandlinetools-linux-9477386_latest.zip -d cmdline-tools && \
-    mv cmdline-tools/cmdline-tools /root/Android/sdk/cmdline-tools/latest && \
-    rm commandlinetools-linux-9477386_latest.zip
-
+# Setup Android SDK
 ENV ANDROID_HOME=/root/Android/sdk
 ENV PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 
-RUN yes | sdkmanager --licenses && \
-    sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+# Create necessary directories
+RUN mkdir -p ${ANDROID_HOME}/cmdline-tools/latest
+
+# Download and setup Android command-line tools
+RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
+    unzip commandlinetools-linux-9477386_latest.zip && \
+    mv cmdline-tools/* ${ANDROID_HOME}/cmdline-tools/latest/ && \
+    rm -rf cmdline-tools commandlinetools-linux-9477386_latest.zip
+
+# Accept licenses and install Android SDK packages
+RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses && \
+    ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+
 
 # Set up workspace
 WORKDIR /app
