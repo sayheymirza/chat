@@ -4,6 +4,7 @@ FROM ubuntu:22.04
 # Set environment variables
 ENV FLUTTER_HOME=/opt/flutter
 ENV FLUTTER_VERSION=3.24.3
+ENV JAVA_VERSION=22.0.2
 ENV PATH=$FLUTTER_HOME/bin:$PATH
 
 # Install necessary dependencies
@@ -14,9 +15,22 @@ RUN apt-get update && apt-get install -y \
     xz-utils \
     zip \
     libglu1-mesa \
-    openjdk-11-jdk \
     wget \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Java 22.0.2
+RUN wget https://download.java.net/java/GA/jdk22.0.2/d99779343b57466fbdd69051c41acb37/7/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz && \
+    tar xvf openjdk-22.0.2_linux-x64_bin.tar.gz && \
+    mv jdk-22.0.2 /opt/jdk-22 && \
+    rm openjdk-22.0.2_linux-x64_bin.tar.gz
+
+# Set JAVA_HOME and add Java to PATH
+ENV JAVA_HOME=/opt/jdk-22
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Verify Java installation
+RUN java -version
 
 # Download and setup Flutter
 RUN git clone https://github.com/flutter/flutter.git $FLUTTER_HOME && \
@@ -41,7 +55,6 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477
 RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses && \
     ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
-
 # Set up workspace
 WORKDIR /app
 COPY . .
@@ -59,4 +72,4 @@ RUN flutter pub get
 RUN dart run build_runner build --delete-conflicting-outputs
 
 # Build APK with flavor - ARM64 only
-RUN flutter build apk --flavor direct --target lib/flavors/direct/main.dart --target-platform android-arm64
+RUN flutter build apk --flavor direct --target lib/flavors/direct/main.dart --target-platform android-arm64 --verbose
