@@ -1,3 +1,4 @@
+import 'package:bubble/bubble.dart';
 import 'package:chat/futures/send_default_message/send_default_message.controller.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
@@ -68,28 +69,22 @@ class SendDefaultMessageView extends GetView<SendDefaultMessageController> {
   }) {
     return GestureDetector(
       onTap: () => onTap(),
-      child: Container(
-        margin: const EdgeInsets.only(
-          bottom: 8,
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        decoration: BoxDecoration(
-          color: selected
-              ? Get.theme.primaryColor.withOpacity(0.15)
-              : Colors.grey.shade200,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-            bottomLeft: Radius.circular(20),
-          ),
-        ),
+      child: Bubble(
+        margin: BubbleEdges.only(bottom: 10),
+        padding: BubbleEdges.all(14),
+        alignment: Alignment.topRight,
+        nipOffset: 0.0,
+        stick: true,
+        nipRadius: 1.0,
+        nipWidth: 12,
+        nipHeight: 8,
+        nip: BubbleNip.rightBottom,
+        color: selected ? Get.theme.primaryColor : Colors.grey.shade200,
+        elevation: 0,
         child: Text(
           text,
           style: TextStyle(
-            color: selected ? Get.theme.primaryColor : Colors.black,
+            color: selected ? Get.theme.colorScheme.onPrimary : Colors.black,
           ),
         ),
       ),

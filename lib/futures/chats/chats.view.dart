@@ -1,4 +1,5 @@
 import 'package:chat/futures/chats/chats.controller.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/chat/chat_item.widget.dart';
 import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
@@ -20,29 +21,32 @@ class ChatsView extends GetView<ChatsController> {
         title: "چت ها",
       ),
       body: Obx(
-        () => SingleChildScrollView(
-          child: Column(
-            children: [
-              if (!controller.loading.value && controller.chats.isEmpty)
-                const EmptyWidget(message: 'لیست خالی است'),
-              for (var item in controller.chats)
-                ChatItemWidget(
-                  item: item,
-                  onTap: () {
-                    if (item.chatId != null) {
-                      controller.open(id: item.chatId!);
-                    }
-                  },
-                ),
-              if (controller.chats.isNotEmpty)
-                PaginationWidget(
-                  last: controller.lastPage.value,
-                  page: controller.page.value,
-                  onChange: (page) {
-                    controller.goToPage(page);
-                  },
-                ),
-            ],
+        () => RefreshIndicator(
+          onRefresh: () => Services.chat.syncAPIWithDatabase(),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                if (!controller.loading.value && controller.chats.isEmpty)
+                  const EmptyWidget(message: 'لیست خالی است'),
+                for (var item in controller.chats)
+                  ChatItemWidget(
+                    item: item,
+                    onTap: () {
+                      if (item.chatId != null) {
+                        controller.open(id: item.chatId!);
+                      }
+                    },
+                  ),
+                if (controller.chats.isNotEmpty)
+                  PaginationWidget(
+                    last: controller.lastPage.value,
+                    page: controller.page.value,
+                    onChange: (page) {
+                      controller.goToPage(page);
+                    },
+                  ),
+              ],
+            ),
           ),
         ),
       ),

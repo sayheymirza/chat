@@ -8,11 +8,117 @@ import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/event.dart';
 import 'package:chat/shared/services.dart';
+import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
 class MessageService extends GetxService {
+  Future<ChatMessageModel?> lastByChatId({required String chatId}) async {
+    try {
+      var last = await (database.select(database.messageTable)
+            ..where((row) => row.chat_id.equals(chatId))
+            ..limit(1)
+            ..orderBy([
+              (row) => drift.OrderingTerm(
+                    expression: row.sent_at,
+                    mode: drift.OrderingMode.desc,
+                  ),
+            ]))
+          .getSingleOrNull();
+
+      if (last != null) {
+        return ChatMessageModel.fromDatabase(last);
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // sync api with database
+  Future<void> syncAPIWithDatabase({
+    required String chatId,
+    CancelToken? cancelToken,
+    int limit = 100,
+  }) async {
+    try {
+      // get last message of that chatId
+      var last = await lastByChatId(chatId: chatId);
+
+      DateTime? lastSyncDate;
+      var page = 1;
+
+      if (last != null) {
+        lastSyncDate = last.sentAt;
+      }
+
+      do {
+        var result = await ApiService.chat.messages(
+          chatId: chatId,
+          page: page,
+          limit: limit,
+          syncDate: lastSyncDate,
+          cancelToken: cancelToken,
+        );
+
+        if (result.isEmpty) {
+          break;
+        }
+
+        log('[message.service.dart] syncing api with database for chat id $chatId on page $page got ${result.length} messages');
+
+        for (var message in result) {
+          var data = MessageTableCompanion(
+            message_id: drift.Value(message.messageId!),
+            local_id: drift.Value(message.localId),
+            chat_id: drift.Value(message.chatId!),
+            status: drift.Value(message.status!),
+            sender_id: drift.Value(message.senderId!),
+            sent_at: drift.Value(message.sentAt!),
+            type: drift.Value(message.type!),
+            data: drift.Value(message.data),
+            meta: drift.Value(message.meta),
+            theme: drift.Value(message.theme),
+            seq: drift.Value(message.seq!),
+          );
+
+          await database.transaction(() async {
+            // 1. find one
+            var one = await (database.select(database.messageTable)
+                  ..where((row) =>
+                      row.message_id.equals(message.messageId!) |
+                      row.local_id.equals(message.localId!)))
+                .getSingleOrNull();
+            // 2. create
+            if (one == null) {
+              var count =
+                  await database.into(database.messageTable).insert(data);
+              print('create $count');
+            }
+            // 3. update
+            else {
+              var count = await (database.update(database.messageTable)
+                    ..where((row) => row.id.equals(one.id)))
+                  .write(data);
+
+              print('update $count');
+            }
+          });
+        }
+
+        if (result.length < limit) {
+          break;
+        } else {
+          page += 1;
+        }
+      } while (true);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // listen to events
   void listenToEvents() {
     event.on<EventModel>().listen((data) async {
@@ -25,12 +131,15 @@ class MessageService extends GetxService {
   }
 
   void onReciveMessage({required ChatMessageModel message}) async {
+    print(message.toJson());
     try {
       // 1. check local id exists to update that
       if (message.localId != null && message.localId != '-1') {
         // update message with that local id
         // if it doesn't update means local id not exists
-        if (await update(message: message)) {
+        var updated = await update(message: message);
+
+        if (updated == true) {
           log('[message.service.dart] recive message and updated with local id ${message.localId} and chat id ${message.chatId}');
           return;
         }
@@ -47,13 +156,15 @@ class MessageService extends GetxService {
               sender_id: drift.Value(message.senderId!),
               sent_at: drift.Value(message.sentAt!),
               type: drift.Value(message.type!),
-              data: drift.Value(message.data),
-              meta: drift.Value(message.meta),
+              data: drift.Value(message.toData()),
+              meta: drift.Value(message.meta ?? {}),
+              theme: drift.Value(message.theme ?? {}),
               seq: drift.Value(message.seq ?? 0),
+              reaction: drift.Value(message.reaction),
             ),
           );
     } catch (e) {
-      //
+      print(e);
     }
   }
 
@@ -68,24 +179,28 @@ class MessageService extends GetxService {
 
     query.where((row) => row.chat_id.equals(chatId));
 
-    query.orderBy([
-      (row) => drift.OrderingTerm(
-            expression: row.seq,
-            mode: drift.OrderingMode.asc,
-          ),
-    ]);
-
     query.limit(limit);
 
     return query.watch();
   }
 
   // select message (sent_at and limit)
-  void select({
+  Future<List<MessageTableData>> select({
     required String chatId,
     required DateTime sentAt,
     int limit = 20,
-  }) {}
+  }) async {
+    try {
+      var messages = await (database.select(database.messageTable)
+            ..where((row) => row.sent_at.isSmallerThanValue(sentAt))
+            ..limit(limit))
+          .get();
+
+      return messages;
+    } catch (e) {
+      return [];
+    }
+  }
 
   // save message
   Future<void> save({required ChatMessageModel message}) async {
@@ -107,9 +222,11 @@ class MessageService extends GetxService {
               local_id: drift.Value(message.localId),
               chat_id: message.chatId!,
               sender_id: message.senderId!,
+              sent_at: drift.Value(message.sentAt!),
               type: message.type!,
               data: message.toData(),
               meta: message.meta ?? {},
+              theme: message.theme ?? {},
             ),
           );
     } catch (e) {
@@ -164,6 +281,8 @@ class MessageService extends GetxService {
           seq: drift.Value(message.seq ?? 0),
         ),
       );
+
+      print(result);
 
       return result != 0;
     } catch (error) {

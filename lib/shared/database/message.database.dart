@@ -14,6 +14,7 @@ class MessageTable extends Table {
   TextColumn get type => text()();
   TextColumn get data => text().map(JsonConverter())();
   TextColumn get meta => text().map(JsonConverter())();
+  TextColumn get theme => text().map(JsonConverter())();
   IntColumn get seq => integer().withDefault(Constant(0))();
   TextColumn get reply_message_id => text().nullable()();
   TextColumn get reaction => text().nullable()();

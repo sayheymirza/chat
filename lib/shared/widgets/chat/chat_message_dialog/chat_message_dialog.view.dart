@@ -54,6 +54,8 @@ class ChatMessageDialogView extends GetView<ChatMessageDialogController> {
             child: Column(
               children: [
                 if (message.status == "sending" ||
+                    message.status == "failed" ||
+                    message.status == "faild" ||
                     message.status == "unuploaded")
                   ListTile(
                     onTap: () {

@@ -564,6 +564,11 @@ class ProfileView extends GetView<ProfileController> {
                   : () {
                       controller.startChat(id: id);
                     },
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  controller.openingChat.value ? Colors.grey.shade200 : null,
+                ),
+              ),
               child: const Text(
                 'ارسال پیام',
                 style: TextStyle(

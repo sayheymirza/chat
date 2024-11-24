@@ -22,11 +22,15 @@ class ChatMessageAudioV1Widget extends StatefulWidget {
 }
 
 class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
-  var controller = ChatMessageVoiceV1Controller();
+  late PlayerController controller;
 
   @override
   void initState() {
     super.initState();
+
+    controller = PlayerController(onStateChange: () {
+      setState(() {});
+    });
 
     controller.load(url: widget.message.data['url']);
 
@@ -120,5 +124,3 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
     );
   }
 }
-
-class ChatMessageVoiceV1Controller extends PlayerController {}

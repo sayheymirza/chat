@@ -1192,15 +1192,13 @@ class $ChatTableTable extends ChatTable
   late final GeneratedColumn<String> permissions = GeneratedColumn<String>(
       'permissions', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _typingMeta = const VerificationMeta('typing');
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
-  late final GeneratedColumn<bool> typing = GeneratedColumn<bool>(
-      'typing', aliasedName, false,
-      type: DriftSqlType.bool,
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("typing" IN (0, 1))'),
-      defaultValue: Constant(false));
+      defaultValue: Constant('normal'));
   static const VerificationMeta _unread_countMeta =
       const VerificationMeta('unread_count');
   @override
@@ -1224,7 +1222,7 @@ class $ChatTableTable extends ChatTable
         user_id,
         message,
         permissions,
-        typing,
+        status,
         unread_count,
         updated_at
       ];
@@ -1262,9 +1260,9 @@ class $ChatTableTable extends ChatTable
     } else if (isInserting) {
       context.missing(_permissionsMeta);
     }
-    if (data.containsKey('typing')) {
-      context.handle(_typingMeta,
-          typing.isAcceptableOrUnknown(data['typing']!, _typingMeta));
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
     }
     if (data.containsKey('unread_count')) {
       context.handle(
@@ -1298,8 +1296,8 @@ class $ChatTableTable extends ChatTable
           .read(DriftSqlType.string, data['${effectivePrefix}message'])!),
       permissions: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}permissions'])!,
-      typing: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}typing'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
       unread_count: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}unread_count'])!,
       updated_at: attachedDatabase.typeMapping
@@ -1322,7 +1320,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
   final String user_id;
   final Map<dynamic, dynamic> message;
   final String permissions;
-  final bool typing;
+  final String status;
   final int unread_count;
   final DateTime updated_at;
   const ChatTableData(
@@ -1331,7 +1329,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
       required this.user_id,
       required this.message,
       required this.permissions,
-      required this.typing,
+      required this.status,
       required this.unread_count,
       required this.updated_at});
   @override
@@ -1345,7 +1343,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
           Variable<String>($ChatTableTable.$convertermessage.toSql(message));
     }
     map['permissions'] = Variable<String>(permissions);
-    map['typing'] = Variable<bool>(typing);
+    map['status'] = Variable<String>(status);
     map['unread_count'] = Variable<int>(unread_count);
     map['updated_at'] = Variable<DateTime>(updated_at);
     return map;
@@ -1358,7 +1356,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
       user_id: Value(user_id),
       message: Value(message),
       permissions: Value(permissions),
-      typing: Value(typing),
+      status: Value(status),
       unread_count: Value(unread_count),
       updated_at: Value(updated_at),
     );
@@ -1374,7 +1372,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
       message: $ChatTableTable.$convertermessage
           .fromJson(serializer.fromJson<String>(json['message'])),
       permissions: serializer.fromJson<String>(json['permissions']),
-      typing: serializer.fromJson<bool>(json['typing']),
+      status: serializer.fromJson<String>(json['status']),
       unread_count: serializer.fromJson<int>(json['unread_count']),
       updated_at: serializer.fromJson<DateTime>(json['updated_at']),
     );
@@ -1389,7 +1387,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
       'message': serializer
           .toJson<String>($ChatTableTable.$convertermessage.toJson(message)),
       'permissions': serializer.toJson<String>(permissions),
-      'typing': serializer.toJson<bool>(typing),
+      'status': serializer.toJson<String>(status),
       'unread_count': serializer.toJson<int>(unread_count),
       'updated_at': serializer.toJson<DateTime>(updated_at),
     };
@@ -1401,7 +1399,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
           String? user_id,
           Map<dynamic, dynamic>? message,
           String? permissions,
-          bool? typing,
+          String? status,
           int? unread_count,
           DateTime? updated_at}) =>
       ChatTableData(
@@ -1410,7 +1408,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
         user_id: user_id ?? this.user_id,
         message: message ?? this.message,
         permissions: permissions ?? this.permissions,
-        typing: typing ?? this.typing,
+        status: status ?? this.status,
         unread_count: unread_count ?? this.unread_count,
         updated_at: updated_at ?? this.updated_at,
       );
@@ -1422,7 +1420,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
       message: data.message.present ? data.message.value : this.message,
       permissions:
           data.permissions.present ? data.permissions.value : this.permissions,
-      typing: data.typing.present ? data.typing.value : this.typing,
+      status: data.status.present ? data.status.value : this.status,
       unread_count: data.unread_count.present
           ? data.unread_count.value
           : this.unread_count,
@@ -1439,7 +1437,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
           ..write('user_id: $user_id, ')
           ..write('message: $message, ')
           ..write('permissions: $permissions, ')
-          ..write('typing: $typing, ')
+          ..write('status: $status, ')
           ..write('unread_count: $unread_count, ')
           ..write('updated_at: $updated_at')
           ..write(')'))
@@ -1448,7 +1446,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
 
   @override
   int get hashCode => Object.hash(id, chat_id, user_id, message, permissions,
-      typing, unread_count, updated_at);
+      status, unread_count, updated_at);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1458,7 +1456,7 @@ class ChatTableData extends DataClass implements Insertable<ChatTableData> {
           other.user_id == this.user_id &&
           other.message == this.message &&
           other.permissions == this.permissions &&
-          other.typing == this.typing &&
+          other.status == this.status &&
           other.unread_count == this.unread_count &&
           other.updated_at == this.updated_at);
 }
@@ -1469,7 +1467,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
   final Value<String> user_id;
   final Value<Map<dynamic, dynamic>> message;
   final Value<String> permissions;
-  final Value<bool> typing;
+  final Value<String> status;
   final Value<int> unread_count;
   final Value<DateTime> updated_at;
   const ChatTableCompanion({
@@ -1478,7 +1476,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
     this.user_id = const Value.absent(),
     this.message = const Value.absent(),
     this.permissions = const Value.absent(),
-    this.typing = const Value.absent(),
+    this.status = const Value.absent(),
     this.unread_count = const Value.absent(),
     this.updated_at = const Value.absent(),
   });
@@ -1488,7 +1486,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
     required String user_id,
     this.message = const Value.absent(),
     required String permissions,
-    this.typing = const Value.absent(),
+    this.status = const Value.absent(),
     this.unread_count = const Value.absent(),
     this.updated_at = const Value.absent(),
   })  : chat_id = Value(chat_id),
@@ -1500,7 +1498,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
     Expression<String>? user_id,
     Expression<String>? message,
     Expression<String>? permissions,
-    Expression<bool>? typing,
+    Expression<String>? status,
     Expression<int>? unread_count,
     Expression<DateTime>? updated_at,
   }) {
@@ -1510,7 +1508,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
       if (user_id != null) 'user_id': user_id,
       if (message != null) 'message': message,
       if (permissions != null) 'permissions': permissions,
-      if (typing != null) 'typing': typing,
+      if (status != null) 'status': status,
       if (unread_count != null) 'unread_count': unread_count,
       if (updated_at != null) 'updated_at': updated_at,
     });
@@ -1522,7 +1520,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
       Value<String>? user_id,
       Value<Map<dynamic, dynamic>>? message,
       Value<String>? permissions,
-      Value<bool>? typing,
+      Value<String>? status,
       Value<int>? unread_count,
       Value<DateTime>? updated_at}) {
     return ChatTableCompanion(
@@ -1531,7 +1529,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
       user_id: user_id ?? this.user_id,
       message: message ?? this.message,
       permissions: permissions ?? this.permissions,
-      typing: typing ?? this.typing,
+      status: status ?? this.status,
       unread_count: unread_count ?? this.unread_count,
       updated_at: updated_at ?? this.updated_at,
     );
@@ -1556,8 +1554,8 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
     if (permissions.present) {
       map['permissions'] = Variable<String>(permissions.value);
     }
-    if (typing.present) {
-      map['typing'] = Variable<bool>(typing.value);
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
     }
     if (unread_count.present) {
       map['unread_count'] = Variable<int>(unread_count.value);
@@ -1576,7 +1574,7 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
           ..write('user_id: $user_id, ')
           ..write('message: $message, ')
           ..write('permissions: $permissions, ')
-          ..write('typing: $typing, ')
+          ..write('status: $status, ')
           ..write('unread_count: $unread_count, ')
           ..write('updated_at: $updated_at')
           ..write(')'))
@@ -1657,6 +1655,13 @@ class $MessageTableTable extends MessageTable
               type: DriftSqlType.string, requiredDuringInsert: true)
           .withConverter<Map<dynamic, dynamic>>(
               $MessageTableTable.$convertermeta);
+  static const VerificationMeta _themeMeta = const VerificationMeta('theme');
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>, String>
+      theme = GeneratedColumn<String>('theme', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<Map<dynamic, dynamic>>(
+              $MessageTableTable.$convertertheme);
   static const VerificationMeta _seqMeta = const VerificationMeta('seq');
   @override
   late final GeneratedColumn<int> seq = GeneratedColumn<int>(
@@ -1688,6 +1693,7 @@ class $MessageTableTable extends MessageTable
         type,
         data,
         meta,
+        theme,
         seq,
         reply_message_id,
         reaction
@@ -1743,6 +1749,7 @@ class $MessageTableTable extends MessageTable
     }
     context.handle(_dataMeta, const VerificationResult.success());
     context.handle(_metaMeta, const VerificationResult.success());
+    context.handle(_themeMeta, const VerificationResult.success());
     if (data.containsKey('seq')) {
       context.handle(
           _seqMeta, seq.isAcceptableOrUnknown(data['seq']!, _seqMeta));
@@ -1788,6 +1795,9 @@ class $MessageTableTable extends MessageTable
       meta: $MessageTableTable.$convertermeta.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}meta'])!),
+      theme: $MessageTableTable.$convertertheme.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}theme'])!),
       seq: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}seq'])!,
       reply_message_id: attachedDatabase.typeMapping.read(
@@ -1806,6 +1816,8 @@ class $MessageTableTable extends MessageTable
       $converterdata = JsonConverter();
   static JsonTypeConverter2<Map<dynamic, dynamic>, String, String>
       $convertermeta = JsonConverter();
+  static JsonTypeConverter2<Map<dynamic, dynamic>, String, String>
+      $convertertheme = JsonConverter();
 }
 
 class MessageTableData extends DataClass
@@ -1820,6 +1832,7 @@ class MessageTableData extends DataClass
   final String type;
   final Map<dynamic, dynamic> data;
   final Map<dynamic, dynamic> meta;
+  final Map<dynamic, dynamic> theme;
   final int seq;
   final String? reply_message_id;
   final String? reaction;
@@ -1834,6 +1847,7 @@ class MessageTableData extends DataClass
       required this.type,
       required this.data,
       required this.meta,
+      required this.theme,
       required this.seq,
       this.reply_message_id,
       this.reaction});
@@ -1859,6 +1873,10 @@ class MessageTableData extends DataClass
     {
       map['meta'] =
           Variable<String>($MessageTableTable.$convertermeta.toSql(meta));
+    }
+    {
+      map['theme'] =
+          Variable<String>($MessageTableTable.$convertertheme.toSql(theme));
     }
     map['seq'] = Variable<int>(seq);
     if (!nullToAbsent || reply_message_id != null) {
@@ -1886,6 +1904,7 @@ class MessageTableData extends DataClass
       type: Value(type),
       data: Value(data),
       meta: Value(meta),
+      theme: Value(theme),
       seq: Value(seq),
       reply_message_id: reply_message_id == null && nullToAbsent
           ? const Value.absent()
@@ -1912,6 +1931,8 @@ class MessageTableData extends DataClass
           .fromJson(serializer.fromJson<String>(json['data'])),
       meta: $MessageTableTable.$convertermeta
           .fromJson(serializer.fromJson<String>(json['meta'])),
+      theme: $MessageTableTable.$convertertheme
+          .fromJson(serializer.fromJson<String>(json['theme'])),
       seq: serializer.fromJson<int>(json['seq']),
       reply_message_id: serializer.fromJson<String?>(json['reply_message_id']),
       reaction: serializer.fromJson<String?>(json['reaction']),
@@ -1933,6 +1954,8 @@ class MessageTableData extends DataClass
           .toJson<String>($MessageTableTable.$converterdata.toJson(data)),
       'meta': serializer
           .toJson<String>($MessageTableTable.$convertermeta.toJson(meta)),
+      'theme': serializer
+          .toJson<String>($MessageTableTable.$convertertheme.toJson(theme)),
       'seq': serializer.toJson<int>(seq),
       'reply_message_id': serializer.toJson<String?>(reply_message_id),
       'reaction': serializer.toJson<String?>(reaction),
@@ -1950,6 +1973,7 @@ class MessageTableData extends DataClass
           String? type,
           Map<dynamic, dynamic>? data,
           Map<dynamic, dynamic>? meta,
+          Map<dynamic, dynamic>? theme,
           int? seq,
           Value<String?> reply_message_id = const Value.absent(),
           Value<String?> reaction = const Value.absent()}) =>
@@ -1964,6 +1988,7 @@ class MessageTableData extends DataClass
         type: type ?? this.type,
         data: data ?? this.data,
         meta: meta ?? this.meta,
+        theme: theme ?? this.theme,
         seq: seq ?? this.seq,
         reply_message_id: reply_message_id.present
             ? reply_message_id.value
@@ -1983,6 +2008,7 @@ class MessageTableData extends DataClass
       type: data.type.present ? data.type.value : this.type,
       data: data.data.present ? data.data.value : this.data,
       meta: data.meta.present ? data.meta.value : this.meta,
+      theme: data.theme.present ? data.theme.value : this.theme,
       seq: data.seq.present ? data.seq.value : this.seq,
       reply_message_id: data.reply_message_id.present
           ? data.reply_message_id.value
@@ -2004,6 +2030,7 @@ class MessageTableData extends DataClass
           ..write('type: $type, ')
           ..write('data: $data, ')
           ..write('meta: $meta, ')
+          ..write('theme: $theme, ')
           ..write('seq: $seq, ')
           ..write('reply_message_id: $reply_message_id, ')
           ..write('reaction: $reaction')
@@ -2012,8 +2039,21 @@ class MessageTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, message_id, local_id, chat_id, status,
-      sender_id, sent_at, type, data, meta, seq, reply_message_id, reaction);
+  int get hashCode => Object.hash(
+      id,
+      message_id,
+      local_id,
+      chat_id,
+      status,
+      sender_id,
+      sent_at,
+      type,
+      data,
+      meta,
+      theme,
+      seq,
+      reply_message_id,
+      reaction);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2028,6 +2068,7 @@ class MessageTableData extends DataClass
           other.type == this.type &&
           other.data == this.data &&
           other.meta == this.meta &&
+          other.theme == this.theme &&
           other.seq == this.seq &&
           other.reply_message_id == this.reply_message_id &&
           other.reaction == this.reaction);
@@ -2044,6 +2085,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
   final Value<String> type;
   final Value<Map<dynamic, dynamic>> data;
   final Value<Map<dynamic, dynamic>> meta;
+  final Value<Map<dynamic, dynamic>> theme;
   final Value<int> seq;
   final Value<String?> reply_message_id;
   final Value<String?> reaction;
@@ -2058,6 +2100,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
     this.type = const Value.absent(),
     this.data = const Value.absent(),
     this.meta = const Value.absent(),
+    this.theme = const Value.absent(),
     this.seq = const Value.absent(),
     this.reply_message_id = const Value.absent(),
     this.reaction = const Value.absent(),
@@ -2073,6 +2116,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
     required String type,
     required Map<dynamic, dynamic> data,
     required Map<dynamic, dynamic> meta,
+    required Map<dynamic, dynamic> theme,
     this.seq = const Value.absent(),
     this.reply_message_id = const Value.absent(),
     this.reaction = const Value.absent(),
@@ -2080,7 +2124,8 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
         sender_id = Value(sender_id),
         type = Value(type),
         data = Value(data),
-        meta = Value(meta);
+        meta = Value(meta),
+        theme = Value(theme);
   static Insertable<MessageTableData> custom({
     Expression<int>? id,
     Expression<String>? message_id,
@@ -2092,6 +2137,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
     Expression<String>? type,
     Expression<String>? data,
     Expression<String>? meta,
+    Expression<String>? theme,
     Expression<int>? seq,
     Expression<String>? reply_message_id,
     Expression<String>? reaction,
@@ -2107,6 +2153,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
       if (type != null) 'type': type,
       if (data != null) 'data': data,
       if (meta != null) 'meta': meta,
+      if (theme != null) 'theme': theme,
       if (seq != null) 'seq': seq,
       if (reply_message_id != null) 'reply_message_id': reply_message_id,
       if (reaction != null) 'reaction': reaction,
@@ -2124,6 +2171,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
       Value<String>? type,
       Value<Map<dynamic, dynamic>>? data,
       Value<Map<dynamic, dynamic>>? meta,
+      Value<Map<dynamic, dynamic>>? theme,
       Value<int>? seq,
       Value<String?>? reply_message_id,
       Value<String?>? reaction}) {
@@ -2138,6 +2186,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
       type: type ?? this.type,
       data: data ?? this.data,
       meta: meta ?? this.meta,
+      theme: theme ?? this.theme,
       seq: seq ?? this.seq,
       reply_message_id: reply_message_id ?? this.reply_message_id,
       reaction: reaction ?? this.reaction,
@@ -2179,6 +2228,10 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
       map['meta'] =
           Variable<String>($MessageTableTable.$convertermeta.toSql(meta.value));
     }
+    if (theme.present) {
+      map['theme'] = Variable<String>(
+          $MessageTableTable.$convertertheme.toSql(theme.value));
+    }
     if (seq.present) {
       map['seq'] = Variable<int>(seq.value);
     }
@@ -2204,6 +2257,7 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
           ..write('type: $type, ')
           ..write('data: $data, ')
           ..write('meta: $meta, ')
+          ..write('theme: $theme, ')
           ..write('seq: $seq, ')
           ..write('reply_message_id: $reply_message_id, ')
           ..write('reaction: $reaction')
@@ -2831,7 +2885,7 @@ typedef $$ChatTableTableCreateCompanionBuilder = ChatTableCompanion Function({
   required String user_id,
   Value<Map<dynamic, dynamic>> message,
   required String permissions,
-  Value<bool> typing,
+  Value<String> status,
   Value<int> unread_count,
   Value<DateTime> updated_at,
 });
@@ -2841,7 +2895,7 @@ typedef $$ChatTableTableUpdateCompanionBuilder = ChatTableCompanion Function({
   Value<String> user_id,
   Value<Map<dynamic, dynamic>> message,
   Value<String> permissions,
-  Value<bool> typing,
+  Value<String> status,
   Value<int> unread_count,
   Value<DateTime> updated_at,
 });
@@ -2890,8 +2944,8 @@ class $$ChatTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<bool> get typing => $state.composableBuilder(
-      column: $state.table.typing,
+  ColumnFilters<String> get status => $state.composableBuilder(
+      column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -2941,8 +2995,8 @@ class $$ChatTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<bool> get typing => $state.composableBuilder(
-      column: $state.table.typing,
+  ColumnOrderings<String> get status => $state.composableBuilder(
+      column: $state.table.status,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -2994,7 +3048,7 @@ class $$ChatTableTableTableManager extends RootTableManager<
             Value<String> user_id = const Value.absent(),
             Value<Map<dynamic, dynamic>> message = const Value.absent(),
             Value<String> permissions = const Value.absent(),
-            Value<bool> typing = const Value.absent(),
+            Value<String> status = const Value.absent(),
             Value<int> unread_count = const Value.absent(),
             Value<DateTime> updated_at = const Value.absent(),
           }) =>
@@ -3004,7 +3058,7 @@ class $$ChatTableTableTableManager extends RootTableManager<
             user_id: user_id,
             message: message,
             permissions: permissions,
-            typing: typing,
+            status: status,
             unread_count: unread_count,
             updated_at: updated_at,
           ),
@@ -3014,7 +3068,7 @@ class $$ChatTableTableTableManager extends RootTableManager<
             required String user_id,
             Value<Map<dynamic, dynamic>> message = const Value.absent(),
             required String permissions,
-            Value<bool> typing = const Value.absent(),
+            Value<String> status = const Value.absent(),
             Value<int> unread_count = const Value.absent(),
             Value<DateTime> updated_at = const Value.absent(),
           }) =>
@@ -3024,7 +3078,7 @@ class $$ChatTableTableTableManager extends RootTableManager<
             user_id: user_id,
             message: message,
             permissions: permissions,
-            typing: typing,
+            status: status,
             unread_count: unread_count,
             updated_at: updated_at,
           ),
@@ -3094,6 +3148,7 @@ typedef $$MessageTableTableCreateCompanionBuilder = MessageTableCompanion
   required String type,
   required Map<dynamic, dynamic> data,
   required Map<dynamic, dynamic> meta,
+  required Map<dynamic, dynamic> theme,
   Value<int> seq,
   Value<String?> reply_message_id,
   Value<String?> reaction,
@@ -3110,6 +3165,7 @@ typedef $$MessageTableTableUpdateCompanionBuilder = MessageTableCompanion
   Value<String> type,
   Value<Map<dynamic, dynamic>> data,
   Value<Map<dynamic, dynamic>> meta,
+  Value<Map<dynamic, dynamic>> theme,
   Value<int> seq,
   Value<String?> reply_message_id,
   Value<String?> reaction,
@@ -3170,6 +3226,14 @@ class $$MessageTableTableFilterComposer
           String>
       get meta => $state.composableBuilder(
           column: $state.table.meta,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>, Map<dynamic, dynamic>,
+          String>
+      get theme => $state.composableBuilder(
+          column: $state.table.theme,
           builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
               column,
               joinBuilders: joinBuilders));
@@ -3243,6 +3307,11 @@ class $$MessageTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<String> get theme => $state.composableBuilder(
+      column: $state.table.theme,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<int> get seq => $state.composableBuilder(
       column: $state.table.seq,
       builder: (column, joinBuilders) =>
@@ -3292,6 +3361,7 @@ class $$MessageTableTableTableManager extends RootTableManager<
             Value<String> type = const Value.absent(),
             Value<Map<dynamic, dynamic>> data = const Value.absent(),
             Value<Map<dynamic, dynamic>> meta = const Value.absent(),
+            Value<Map<dynamic, dynamic>> theme = const Value.absent(),
             Value<int> seq = const Value.absent(),
             Value<String?> reply_message_id = const Value.absent(),
             Value<String?> reaction = const Value.absent(),
@@ -3307,6 +3377,7 @@ class $$MessageTableTableTableManager extends RootTableManager<
             type: type,
             data: data,
             meta: meta,
+            theme: theme,
             seq: seq,
             reply_message_id: reply_message_id,
             reaction: reaction,
@@ -3322,6 +3393,7 @@ class $$MessageTableTableTableManager extends RootTableManager<
             required String type,
             required Map<dynamic, dynamic> data,
             required Map<dynamic, dynamic> meta,
+            required Map<dynamic, dynamic> theme,
             Value<int> seq = const Value.absent(),
             Value<String?> reply_message_id = const Value.absent(),
             Value<String?> reaction = const Value.absent(),
@@ -3337,6 +3409,7 @@ class $$MessageTableTableTableManager extends RootTableManager<
             type: type,
             data: data,
             meta: meta,
+            theme: theme,
             seq: seq,
             reply_message_id: reply_message_id,
             reaction: reaction,

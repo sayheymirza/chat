@@ -20,7 +20,11 @@ class ChatsController extends GetxController {
   }
 
   void load() async {
-    var result = await Services.chat.select();
+    var result = await Services.chat.select(
+      page: page.value,
+    );
+
+    print(result.total);
 
     chats.value = result.chats ?? [];
   }

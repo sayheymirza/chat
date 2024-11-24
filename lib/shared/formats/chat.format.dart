@@ -1,6 +1,6 @@
 import 'package:chat/models/chat/chat.message.dart';
-import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_audio_v1.widget.dart';
+import 'package:chat/shared/widgets/chat/chat_message/chat_message_deleted.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_image_v1.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_map_v1.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_not_support.widget.dart';
@@ -13,37 +13,24 @@ Widget formatChatMessage(
   ChatMessageModel item, {
   bool longPress = true,
 }) {
+  if (item.status == "deleted") {
+    return ChatMessageDeletedWidget(message: item);
+  }
+
   switch (item.type) {
     case "video@v1":
-      return ChatMessageVideoV1Widget(
-        message: item,
-      );
+      return ChatMessageVideoV1Widget(message: item);
     case "audio@v1":
-      return ChatMessageAudioV1Widget(
-        message: item,
-      );
+      return ChatMessageAudioV1Widget(message: item);
     case "voice@v1":
-      return ChatMessageVoiceV1Widget(
-        message: item,
-      );
+      return ChatMessageVoiceV1Widget(message: item);
     case "text@v1":
-      return ChatMessageTextV1Widget(
-        message: item,
-      );
+      return ChatMessageTextV1Widget(message: item);
     case "image@v1":
-      return ChatMessageImageV1Widget(
-        message: item,
-      );
+      return ChatMessageImageV1Widget(message: item);
     case "map@v1":
-      return ChatMessageMapV1Widget(
-        message: item,
-      );
+      return ChatMessageMapV1Widget(message: item);
     default:
-      return ChatMessageWidget(
-        message: item,
-        longPress: longPress,
-        color: Colors.red.withAlpha(64),
-        child: ChatMessageNotSupportWidget(),
-      );
+      return ChatMessageNotSupportWidget(message: item);
   }
 }

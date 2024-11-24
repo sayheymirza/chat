@@ -20,6 +20,11 @@ class PlayerController {
   Duration passedDuration = Duration();
 
   Timer? timer;
+  Function onStateChange;
+
+  PlayerController({
+    required this.onStateChange,
+  });
 
   Future<void> load({
     required String url,
@@ -67,6 +72,8 @@ class PlayerController {
     } else {
       play();
     }
+
+    onStateChange();
   }
 
   void play() async {
@@ -114,6 +121,8 @@ class PlayerController {
         timer!.cancel();
       }
     }
+
+    onStateChange();
   }
 
   Widget buttonPlay({

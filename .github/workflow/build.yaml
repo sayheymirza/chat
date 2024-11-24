@@ -1,0 +1,43 @@
+name: Flutter Build and Deploy
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'  # This will checkout all submodules recursively
+          token: ${{ secrets.GH_PAT }}  # In case you have private submodules
+      
+      # Build using Docker
+      - name: Build Docker image
+        run: docker build -t flutter-build .
+      
+      # Copy APK from container
+      - name: Copy APK
+        run: |
+          docker create --name temp flutter-build
+          docker cp temp:/app/build/app/outputs/flutter-apk/app-direct-release.apk ./
+          docker rm temp
+      
+      # Send to Telegram
+      - name: Send to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          # Send message with APK
+          curl -X POST \
+            https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument \
+            -F chat_id="${TELEGRAM_CHAT_ID}" \
+            -F document=@"app-direct-release.apk" \
+            -F caption="New ARM64 build available! 🚀
+          
+          Build Info:
+          Branch: ${GITHUB_REF#refs/heads/}
+          Commit: ${GITHUB_SHA:0:7}"

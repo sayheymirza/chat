@@ -3,10 +3,10 @@ import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class ChatMessageNotSupportWidget extends StatelessWidget {
+class ChatMessageDeletedWidget extends StatelessWidget {
   final ChatMessageModel message;
 
-  const ChatMessageNotSupportWidget({super.key, required this.message});
+  const ChatMessageDeletedWidget({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +18,12 @@ class ChatMessageNotSupportWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.error_outline_rounded,
+            Icons.delete_rounded,
             color: Colors.red,
           ),
           const Gap(8),
           Text(
-            'این نوع پیام در حال حاظر پشتیبانی نمی شود',
+            'این پیام حذف شده است',
             style: TextStyle(
               fontSize: 12,
             ),

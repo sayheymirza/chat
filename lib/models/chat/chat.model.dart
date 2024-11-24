@@ -24,7 +24,7 @@ class ChatModel {
   ProfileModel? user;
   ChatMessageModel? message;
   String? permissions;
-  bool? typing;
+  String? status;
   int? unreadCount;
   DateTime? updatedAt;
 
@@ -34,7 +34,7 @@ class ChatModel {
     this.user,
     this.message,
     this.permissions,
-    this.typing,
+    this.status,
     this.unreadCount,
     this.updatedAt,
   });
@@ -46,7 +46,7 @@ class ChatModel {
       user: user,
       message: ChatMessageModel.fromJson(data.message as Map<String, dynamic>),
       permissions: data.permissions,
-      typing: data.typing,
+      status: 'normal',
       unreadCount: data.unread_count,
       updatedAt: data.updated_at,
     );
@@ -61,7 +61,7 @@ class ChatModel {
         ? ChatMessageModel.fromJson(json['message'])
         : null;
     permissions = json['permissions'];
-    typing = json['typing'];
+    status = json['status'];
     unreadCount = json['unread_count'];
     updatedAt = json['updated_at'];
   }
@@ -77,7 +77,7 @@ class ChatModel {
       data['message'] = message!.toJson();
     }
     data['permissions'] = permissions;
-    data['typing'] = typing;
+    data['status'] = status;
     data['unread_count'] = unreadCount;
     data['updated_at'] = updatedAt;
     return data;

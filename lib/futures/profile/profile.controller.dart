@@ -27,8 +27,8 @@ class ProfileController extends GetxController {
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  void onClose() {
+    super.onClose();
 
     profile.close();
   }
@@ -59,12 +59,14 @@ class ProfileController extends GetxController {
           var result = await Services.user.stream(userId: id);
 
           var sub = result.listen((data) {
-            profile.add(data);
+            if (!profile.isClosed) {
+              profile.add(data);
+            }
           });
 
           profile.onCancel = () => sub.cancel();
         } catch (e) {
-          //
+          print(e);
         }
 
         streamed = true;
@@ -137,12 +139,22 @@ class ProfileController extends GetxController {
   }
 
   void startChat({required String id}) async {
-    openingChat.value = true;
-    var chatId = await Services.chat.createByUserId(userId: id);
-    openingChat.value = false;
+    try {
+      openingChat.value = true;
+      var chatId = await Services.chat.createByUserId(userId: id);
+      openingChat.value = false;
 
-    if (chatId != null) {
-      Get.toNamed('/app/chat/$chatId');
+      if (chatId != null) {
+        var path = '/app/chat/$chatId';
+
+        if (Get.previousRoute == path) {
+          Get.back();
+        } else {
+          Get.toNamed(path);
+        }
+      }
+    } catch (e) {
+      //
     }
   }
 

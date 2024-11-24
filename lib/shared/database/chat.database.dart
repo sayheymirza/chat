@@ -9,7 +9,7 @@ class ChatTable extends Table {
   TextColumn get message =>
       text().withDefault(Constant("{}")).map(JsonConverter())();
   TextColumn get permissions => text()();
-  BoolColumn get typing => boolean().withDefault(Constant(false))();
+  TextColumn get status => text().withDefault(Constant('normal'))();
   IntColumn get unread_count => integer().withDefault(Constant(0))();
   DateTimeColumn get updated_at =>
       dateTime().withDefault(Constant(DateTime.now()))();

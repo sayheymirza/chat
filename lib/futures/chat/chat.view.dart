@@ -18,7 +18,7 @@ class ChatView extends GetView<ChatController> {
       appBar: appBar(),
       body: GetBuilder<ChatController>(
         builder: (controller) => ChatBodyWidget(
-          messages: controller.messages,
+          messages: controller.messageStream.stream,
           children: controller.children,
           onLoadMore: () {
             controller.loadMessages();
@@ -87,7 +87,7 @@ class ChatView extends GetView<ChatController> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const Gap(2),
-                        if (data.typing == true)
+                        if (data.status == 'typing')
                           Text(
                             "در حال نوشتن ...",
                             style: TextStyle(
@@ -96,7 +96,7 @@ class ChatView extends GetView<ChatController> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                        if (data.typing != true &&
+                        if (data.status == 'normal' &&
                             data.user?.status == "online")
                           Text(
                             "آنلاین",
@@ -106,7 +106,7 @@ class ChatView extends GetView<ChatController> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                        if (data.typing != true &&
+                        if (data.status == 'normal' &&
                             data.user?.status != "online")
                           Text(
                             formatAgo(data.user!.lastAt.toString()),

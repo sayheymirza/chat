@@ -2,21 +2,104 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/apis/socket.model.dart';
 import 'package:chat/models/chat/chat.event.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/event.dart';
+import 'package:chat/shared/services.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 
 class ChatService extends GetxService {
   RxInt unreadedChats = 0.obs;
 
+  // sync api with database
+  Future<void> syncAPIWithDatabase() async {
+    try {
+      var lastSyncDate = Services.configs.get(key: CONSTANTS.SYNC_CHAT);
+
+      var page = 1;
+
+      do {
+        var result = await ApiService.chat.list(
+          page: page,
+          limit: 20,
+          syncDate: lastSyncDate == null ? null : DateTime.parse(lastSyncDate),
+        );
+
+        log('[chat.service.dart] syncing api with database on page $page got ${result.chats.length} chats');
+
+        for (var chat in result.chats) {
+          var data = ChatTableCompanion(
+            chat_id: drift.Value(chat.chatId!),
+            user_id: drift.Value(chat.userId!),
+            message: drift.Value(
+              chat.message?.toJson() ?? {},
+            ),
+            permissions: drift.Value(chat.permissions!),
+            status: drift.Value('normal'),
+            unread_count: drift.Value(chat.unreadCount!),
+            updated_at: drift.Value(chat.updatedAt!),
+          );
+
+          await database.transaction(() async {
+            // 1. find one
+            var one = await (database.select(database.chatTable)
+                  ..where((row) => row.chat_id.equals(chat.chatId!)))
+                .getSingleOrNull();
+            // 2. create
+            if (one == null) {
+              var count = await database.into(database.chatTable).insert(data);
+              print('create $count');
+            }
+            // 3. update
+            else {
+              var count = await (database.update(database.chatTable)
+                    ..where((row) => row.chat_id.equals(chat.chatId!)))
+                  .write(data);
+
+              print('update $count');
+            }
+
+            // 4. check user id exists or not
+            var user = await (database.select(database.userTable)
+                  ..where((row) => row.id.equals(chat.userId!)))
+                .getSingleOrNull();
+
+            if (user == null) {
+              await Services.user.fetch(userId: chat.userId!);
+            }
+          });
+        }
+
+        if (result.last >= page || result.last == 0) {
+          // save new last sync date
+          Services.configs.set(
+            key: CONSTANTS.SYNC_CHAT,
+            value: DateTime.now().toString(),
+          );
+
+          break;
+        } else {
+          page += 1;
+        }
+      } while (true);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // listen to events
   void listenToEvents() {
     event.on<EventModel>().listen((data) async {
+      if (data.event == SOCKET_EVENTS.CONNECTED) {
+        syncAPIWithDatabase();
+      }
+
       if (data.event == CHAT_EVENTS.RECIVE_MESSAGE) {
         var value = data.value as ChatMessageModel;
 
@@ -37,7 +120,7 @@ class ChatService extends GetxService {
         // update last message
         updateLastMessage(chatId: message.chatId!);
       } else {
-        createByChatId(chatId: message.chatId!);
+        createByChatId(chatId: message.chatId!, message: message);
       }
     } catch (e) {
       //
@@ -45,10 +128,41 @@ class ChatService extends GetxService {
   }
 
   // update last message
-  void updateLastMessage({required String chatId}) async {}
+  void updateLastMessage({required String chatId}) async {
+    try {
+      // 1. get last message that exists
+      var last = await (database.select(database.messageTable)
+            ..where((row) => row.chat_id.equals(chatId))
+            ..limit(1)
+            ..orderBy([
+              (row) => drift.OrderingTerm(
+                    expression: row.sent_at,
+                    mode: drift.OrderingMode.desc,
+                  ),
+            ]))
+          .getSingleOrNull();
+
+      if (last != null) {
+        var message = ChatMessageModel.fromDatabase(last);
+
+        await (database.update(database.chatTable)
+              ..where((row) => row.chat_id.equals(chatId)))
+            .write(ChatTableCompanion(
+          message: drift.Value(message.toJson()),
+        ));
+      }
+    } catch (e) {
+      //
+    }
+  }
 
   // listen to unreaded chats
-  void listenToUnreadedChats() {}
+  Stream<int> listenToUnreadedChats() {
+    return (database.selectOnly(database.chatTable)
+          ..addColumns([database.chatTable.unread_count.sum()]))
+        .map((row) => row.read(database.chatTable.unread_count.sum()) ?? 0)
+        .watchSingle();
+  }
 
   // create a chat by user id and return new chat id
   Future<String?> createByUserId({required String userId}) async {
@@ -63,6 +177,8 @@ class ChatService extends GetxService {
         var resultOfCreate = await ApiService.chat.createWithUserId(
           userId: userId,
         );
+
+        print(resultOfCreate);
 
         if (resultOfCreate == null) {
           return null;
@@ -87,8 +203,32 @@ class ChatService extends GetxService {
   }
 
   // create a chat by chat id
-  createByChatId({required String chatId}) {
-    return Exception("create by chat id not implimented");
+  Future<String?> createByChatId({
+    required String chatId,
+    ChatMessageModel? message,
+  }) async {
+    try {
+      var result = await ApiService.chat.createWithChatId(chatId: chatId);
+
+      if (result != null) {
+        await database.into(database.chatTable).insert(
+              ChatTableCompanion.insert(
+                chat_id: chatId,
+                user_id: result.userId,
+                permissions: result.permissions,
+                unread_count: drift.Value(result.unread_count),
+                message: drift.Value(message != null ? message.toJson() : {}),
+                updated_at: drift.Value(DateTime.now()),
+              ),
+            );
+
+        return chatId;
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 
   // get chat by chat id
@@ -123,15 +263,20 @@ class ChatService extends GetxService {
   }
 
   // delete chat
-  void delete({required String chatId}) async {
+  Future<bool> delete({required String chatId}) async {
     try {
-      // 1. delete from database
-      await (database.delete(database.chatTable)
-            ..where((row) => row.chat_id.equals(chatId)))
-          .go();
-      // 2. emit to socket
+      var result = await ApiService.chat.deleteChatWithChatId(chatId: chatId);
+
+      if (result) {
+        await (database.delete(database.chatTable)
+              ..where((row) => row.chat_id.equals(chatId)))
+            .go();
+        return true;
+      }
+
+      return false;
     } catch (e) {
-      //
+      return false;
     }
   }
 
@@ -164,7 +309,7 @@ class ChatService extends GetxService {
           "user": row.readTable(database.userTable).data,
           "message": jsonDecode(row.rawData.data['chat_table.message']),
           "permissions": row.rawData.data['chat_table.permissions'],
-          "typing": row.rawData.data['chat_table.typing'] == 1,
+          "status": row.rawData.data['chat_table.status'],
           "unread_count": row.rawData.data['chat_table.unread_count'],
         });
       }).get();

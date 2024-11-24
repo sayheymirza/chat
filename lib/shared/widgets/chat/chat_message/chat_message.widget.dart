@@ -25,7 +25,8 @@ class ChatMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool me = message.senderId == Services.profile.profile.value.id!;
+    bool me = message.senderId == Services.profile.profile.value.id! ||
+        message.senderId!.isEmpty;
 
     BubbleNip? nip = me ? BubbleNip.rightBottom : BubbleNip.leftBottom;
     BubbleEdges? padding;
@@ -118,7 +119,9 @@ class ChatMessageWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                if (message.status == "faild" || message.status == "unuploaded")
+                if (message.status == "faild" ||
+                    message.status == "failed" ||
+                    message.status == "unuploaded")
                   Row(
                     children: [
                       Icon(

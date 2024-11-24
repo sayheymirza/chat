@@ -4,7 +4,7 @@ import 'package:chat/shared/widgets/chat/chat_messages.widget.dart';
 import 'package:flutter/material.dart';
 
 class ChatBodyWidget extends StatelessWidget {
-  final List<ChatMessageModel> messages;
+  final Stream<List<ChatMessageModel>> messages;
   final List<Widget> children;
   final Function onLoadMore;
   final Function onLoadLess;
@@ -40,7 +40,7 @@ class ChatBodyWidget extends StatelessWidget {
         ChatMessagesWidget(
           onLoadMore: onLoadMore,
           onLoadLess: onLoadLess,
-          message: messages,
+          messages: messages,
           children: children,
         ),
         // footer

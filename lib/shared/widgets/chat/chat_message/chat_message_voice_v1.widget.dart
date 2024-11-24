@@ -22,12 +22,15 @@ class ChatMessageVoiceV1Widget extends StatefulWidget {
 }
 
 class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
-  var controller = ChatMessageVoiceV1Controller();
+  late PlayerController controller;
 
   @override
   void initState() {
     super.initState();
 
+    controller = PlayerController(onStateChange: () {
+      setState(() {});
+    });
     controller.load(url: widget.message.data['url']);
 
     if (widget.message.status == "unknown") {
@@ -123,5 +126,3 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
     );
   }
 }
-
-class ChatMessageVoiceV1Controller extends PlayerController {}

@@ -10,6 +10,7 @@ class ChatMessageModel {
   String? type;
   dynamic? data;
   dynamic? meta;
+  dynamic? theme;
   int? seq;
   String? replyMessageId;
   String? reaction;
@@ -24,12 +25,15 @@ class ChatMessageModel {
     this.type,
     this.data,
     this.meta,
+    this.theme,
     this.seq,
     this.replyMessageId,
     this.reaction,
   });
 
-  toData() {}
+  toData() {
+    return data;
+  }
 
   ChatMessageModel.fromJson(Map<String, dynamic> json) {
     messageId = json['message_id'];
@@ -41,6 +45,7 @@ class ChatMessageModel {
     type = json['type'];
     data = json['data'];
     meta = json['meta'];
+    theme = json['theme'];
     seq = json['seq'];
     replyMessageId = json['reply_message_id'];
     reaction = json['reaction'];
@@ -57,6 +62,7 @@ class ChatMessageModel {
     data['type'] = type;
     data['data'] = toData();
     data['meta'] = meta;
+    data['theme'] = theme;
     data['seq'] = seq;
     data['reply_message_id'] = replyMessageId;
     data['reaction'] = reaction;
@@ -75,6 +81,7 @@ class ChatMessageModel {
       type: type!,
       data: data,
       meta: meta,
+      theme: theme,
       seq: seq ?? 0,
       reaction: reaction,
     );
@@ -91,6 +98,7 @@ class ChatMessageModel {
       type: data.type,
       data: data.data,
       meta: data.meta,
+      theme: data.theme,
       seq: data.seq,
       reaction: data.reaction,
     );

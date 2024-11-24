@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 
 class ChatMessagesWidget extends StatelessWidget {
   final List<Widget> children;
-  final List<ChatMessageModel> message;
+  final Stream<List<ChatMessageModel>> messages;
   final Function onLoadMore;
   final Function onLoadLess;
 
   const ChatMessagesWidget({
     super.key,
-    required this.message,
+    required this.messages,
     required this.onLoadMore,
     required this.onLoadLess,
     this.children = const [],
@@ -44,13 +44,18 @@ class ChatMessagesWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               ...children,
-              ListView.builder(
-                reverse: false,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: message.length,
-                itemBuilder: (context, index) {
-                  return formatChatMessage(message[index]);
+              StreamBuilder(
+                stream: messages,
+                builder: (context, snapshot) {
+                  return ListView.builder(
+                    reverse: false,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return formatChatMessage(snapshot.data![index]);
+                    },
+                  );
                 },
               ),
             ],

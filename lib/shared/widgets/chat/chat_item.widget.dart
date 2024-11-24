@@ -58,7 +58,7 @@ class ChatItemWidget extends StatelessWidget {
                   const Gap(4),
                   message(
                     type: item.message?.type ?? 'empty',
-                    data: item.message?.data ?? {},
+                    data: item.message?.toData() ?? {},
                   ),
                 ],
               ),
@@ -113,6 +113,18 @@ class ChatItemWidget extends StatelessWidget {
     } else if (type.startsWith('text')) {
       icon = Icons.message_rounded;
       text = data['text'] ?? '';
+    } else if (type.startsWith('voice')) {
+      icon = Icons.mic_rounded;
+      text = 'پیام صوتی';
+    } else if (type.startsWith('audio')) {
+      icon = Icons.audiotrack_rounded;
+      text = 'موزیک';
+    } else if (type.startsWith('video')) {
+      icon = Icons.movie_rounded;
+      text = 'فیلم';
+    } else if (type.startsWith('map')) {
+      icon = Icons.location_on;
+      text = 'موقعیت مکانی';
     }
 
     return Row(

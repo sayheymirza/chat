@@ -11,6 +11,7 @@ import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/widgets/chat/chat_card/chat_card_verify.widget.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,10 +20,13 @@ class ChatController extends GetxController {
 
   List<Widget> children = [];
 
-  Map<String, ChatMessageModel> message = {};
-  List<ChatMessageModel> get messages => message.values.toList();
+  List<ChatMessageModel> messages = [];
 
+  StreamController<List<ChatMessageModel>> messageStream =
+      StreamController<List<ChatMessageModel>>();
   StreamController<ChatModel> chatStream = StreamController<ChatModel>();
+
+  CancelToken cancelToken = CancelToken();
 
   int page = 0;
   int limit = 20;
@@ -47,16 +51,28 @@ class ChatController extends GetxController {
     super.dispose();
 
     Services.configs.unset(key: CONSTANTS.CURRENT_CHAT);
+
+    cancelToken.cancel();
   }
 
   Future<void> load() async {
     try {
+      sync();
       listenChat();
       listenMessages();
       childing();
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> sync() async {
+    var id = Get.parameters['id'];
+
+    await Services.message.syncAPIWithDatabase(
+      chatId: id!,
+      cancelToken: cancelToken,
+    );
   }
 
   void listenChat() async {
@@ -79,7 +95,7 @@ class ChatController extends GetxController {
   void listenMessages() async {
     var id = Get.parameters['id'];
 
-    var stream = Services.message.stream(chatId: id!);
+    var stream = Services.message.stream(chatId: id!, limit: 50);
 
     stream.listen((value) {
       handleMessages(value);
@@ -89,51 +105,70 @@ class ChatController extends GetxController {
   void loadMessages() async {
     if (loading || ended) return;
 
-    loading = true;
-
     var id = Get.parameters['id'];
     var last = messages.last;
 
     if (last == null) return;
 
     log('[chat.controller.dart] load messages before ${last.sentAt.toString()}');
+
+    try {
+      loading = true;
+
+      var result = await Services.message.select(
+        chatId: id!,
+        sentAt: last.sentAt!,
+        limit: 100,
+      );
+
+      loading = false;
+
+      if (result.isEmpty) {
+        ended = true;
+        return;
+      }
+
+      handleMessages(result);
+    } catch (e) {
+      loading = false;
+    }
   }
 
   void handleMessages(List<MessageTableData> value) {
     for (var val in value) {
-      // check message id exists or no
-      var id = '';
+      var message = ChatMessageModel.fromDatabase(val);
 
-      if (val.local_id != '-1') {
-        id = val.local_id!;
-      } else if (val.message_id != null || val.message_id!.isNotEmpty) {
-        id = val.message_id!;
-      } else {
-        id = val.id.toString();
-      }
-
-      if (id.isNotEmpty) {
-        if (val.status == "deleted") {
-          if (message[id] != null) {
-            // delete message from map
-            message.remove(id);
+      if (messages.isNotEmpty) {
+        var index = -1;
+        for (var i = messages.length - 1; i >= 0; i--) {
+          if (messages[i].localId == val.local_id ||
+              messages[i].messageId == val.message_id) {
+            index = i;
+            break;
           }
-        } else {
-          message[id] = ChatMessageModel.fromDatabase(val);
         }
+
+        if (index == -1) {
+          // messages.insert(0, message);
+          messages.add(message);
+        } else {
+          messages[index] = message;
+        }
+      } else {
+        messages.add(message);
       }
     }
 
-    update();
+    messageStream.add(messages..sort((a, b) => a.sentAt!.compareTo(b.sentAt!)));
   }
 
   void childing() {
     children = [];
 
     // check user profile phone number is verified
-    // if (Services.profile.profile.value.verified != true) {
-    children.add(ChatCardVerifyWidget(onChange: childing));
-    // }
+    if (Services.profile.profile.value.verified != true) {
+      children.add(ChatCardVerifyWidget(onChange: childing));
+    }
 
     update();
   }
@@ -223,9 +258,14 @@ class ChatController extends GetxController {
     if (result) {
       // delete all chats and delete chat
       var id = Get.parameters['id']!;
-      Services.chat.delete(chatId: id);
-      Services.message.deleteByChatId(chatId: id);
-      Get.back();
+      var result = await Services.chat.delete(chatId: id);
+      if (result) {
+        Services.message.deleteByChatId(chatId: id);
+        Get.back();
+        showSnackbar(message: 'چت شما حذف شد');
+      } else {
+        showSnackbar(message: 'خطا در حذف چت رخ داد');
+      }
     }
   }
 }
