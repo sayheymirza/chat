@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Java 22.0.2
-RUN wget https://download.java.net/java/GA/jdk22.0.2/d99779343b57466fbdd69051c41acb37/7/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz && \
+RUN wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz && \
     tar xvf openjdk-22.0.2_linux-x64_bin.tar.gz && \
     mv jdk-22.0.2 /opt/jdk-22 && \
     rm openjdk-22.0.2_linux-x64_bin.tar.gz
