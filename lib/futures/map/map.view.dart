@@ -1,11 +1,10 @@
 import 'package:chat/futures/map/map.controller.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:vector_map_tiles/vector_map_tiles.dart';
 
 class MapView extends GetView<MapViewController> {
   const MapView({super.key});
@@ -107,14 +106,24 @@ class MapView extends GetView<MapViewController> {
                 ),
               ),
               children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}&hl=fa',
-                  tileProvider: CachedTileProvider(
-                    // use the store for your CachedTileProvider instance
-                    store: MemCacheStore(),
+                // TileLayer(
+                //   urlTemplate:
+                //       // 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}&hl=fa',
+                //       'https://map.doting.ir/styles/OSM OpenMapTiles/512/{z}/{x}/{y}.png',
+                //   tileProvider: CachedTileProvider(
+                //     // use the store for your CachedTileProvider instance
+                //     store: MemCacheStore(),
+                //   ),
+                // ),
+                if (controller.style != null)
+                  VectorTileLayer(
+                    tileProviders: controller.style!.providers,
+                    theme: controller.style!.theme,
+                    sprites: controller.style!.sprites,
+                    maximumZoom: 19,
+                    tileOffset: TileOffset.mapbox,
+                    layerMode: VectorTileLayerMode.vector,
                   ),
-                ),
                 MarkerLayer(
                   markers: [
                     Marker(

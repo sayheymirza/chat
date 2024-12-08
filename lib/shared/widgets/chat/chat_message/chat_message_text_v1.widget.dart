@@ -20,10 +20,20 @@ class _ChatMessageTextV1WidgetState extends State<ChatMessageTextV1Widget> {
   @override
   void initState() {
     super.initState();
+    init();
+  }
 
+  @override
+  void didUpdateWidget(covariant ChatMessageTextV1Widget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    init();
+  }
+
+  void init() {
     if (widget.message.status == "unknown") {
       // send
-      Services.message.send(message: widget.message);
+      widget.message.status = "sending";
+      Services.message.update(message: widget.message);
     }
   }
 

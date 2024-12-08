@@ -63,7 +63,16 @@ class ChatModel {
     permissions = json['permissions'];
     status = json['status'];
     unreadCount = json['unread_count'];
-    updatedAt = json['updated_at'];
+    if (json['updated_at'] != null) {
+      // if type is int
+      if (json['updated_at'] is int) {
+        updatedAt = DateTime.fromMillisecondsSinceEpoch(json['updated_at'] * 1000);
+      } else if(json['updated_at'] is String) {
+        updatedAt = DateTime.parse(json['updated_at']);
+      } else {
+        updatedAt = DateTime.parse(json['updated_at']);
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {

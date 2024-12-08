@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -15,11 +14,11 @@ import 'package:chat/shared/services.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 
-class ChatService extends GetxService {
+class AdminChatService extends GetxService {
   // sync api with database
   Future<void> syncAPIWithDatabase() async {
     try {
-      var lastSyncDate = await Services.sync.get(category: 'chat');
+      var lastSyncDate = await Services.sync.get(category: 'admin-chat');
 
       var page = 1;
 
@@ -75,7 +74,7 @@ class ChatService extends GetxService {
         if (result.last >= page || result.last == 0) {
           // save new last sync date
           await Services.sync.set(
-            category: 'chat',
+            category: 'admin-chat',
             syncedAt: DateTime.now(),
           );
 
@@ -119,28 +118,23 @@ class ChatService extends GetxService {
             ..where((row) => row.chat_id.equals(message.chatId!)))
           .getSingleOrNull();
 
-      Timer(Duration(milliseconds: 100), () {
-        if (chat != null) {
-          log('[chat.service.dart] on receive message for chat id ${message.chatId} need update');
-          // update last message
-          updateLastMessage(chatId: message.chatId!);
-        } else {
-          log('[chat.service.dart] on receive message for chat id ${message.chatId} need create');
-          createByChatId(chatId: message.chatId!, message: message);
-        }
-      });
+      if (chat != null) {
+        // update last message
+        updateLastMessage(chatId: message.chatId!);
+      } else {
+        createByChatId(chatId: message.chatId!, message: message).then(print);
+      }
     } catch (e) {
-      print(e);
+      //
     }
   }
 
   // update last message
-  Future<void> updateLastMessage({required String chatId}) async {
+  void updateLastMessage({required String chatId}) async {
     try {
       // 1. get last message that exists
       var last = await (database.select(database.messageTable)
-            ..where((row) =>
-                row.chat_id.equals(chatId) & row.status.equals('deleted').not())
+            ..where((row) => row.chat_id.equals(chatId))
             ..limit(1)
             ..orderBy([
               (row) => drift.OrderingTerm(
@@ -155,15 +149,13 @@ class ChatService extends GetxService {
 
         await (database.update(database.chatTable)
               ..where((row) => row.chat_id.equals(chatId)))
-            .write(
-          ChatTableCompanion(
-            message: drift.Value(message.toJson()),
-            updated_at: drift.Value(message.sentAt!),
-          ),
-        );
+            .write(ChatTableCompanion(
+          message: drift.Value(message.toJson()),
+          updated_at: drift.Value(DateTime.now()),
+        ));
       }
     } catch (e) {
-      print(e);
+      //
     }
   }
 
@@ -228,7 +220,7 @@ class ChatService extends GetxService {
                 permissions: result.permissions,
                 unread_count: drift.Value(result.unread_count),
                 message: drift.Value(message != null ? message.toJson() : {}),
-                updated_at: message == null ? DateTime.now() : message.sentAt!,
+                updated_at: DateTime.now(),
               ),
             );
 
@@ -239,56 +231,6 @@ class ChatService extends GetxService {
     } catch (e) {
       print(e);
       return null;
-    }
-  }
-
-  // get chat by chat id and create if not exists else update it
-  Future<bool> one({required String chatId}) async {
-    try {
-      var result = await ApiService.chat.one(chatId: chatId);
-
-      if (result != null) {
-        await database.transaction(() async {
-          // 1. find one
-          var one = await (database.select(database.chatTable)
-                ..where((row) => row.chat_id.equals(chatId)))
-              .getSingleOrNull();
-          // 2. create
-          if (one == null) {
-            await database.into(database.chatTable).insert(
-                  ChatTableCompanion.insert(
-                    chat_id: chatId,
-                    user_id: result.userId,
-                    permissions: result.permissions,
-                    unread_count: drift.Value(result.unread_count),
-                    updated_at: DateTime.now(),
-                  ),
-                );
-          }
-          // 3. update
-          else {
-            await (database.update(database.chatTable)
-                  ..where((row) => row.chat_id.equals(chatId)))
-                .write(
-              ChatTableCompanion(
-                user_id: drift.Value(result.userId),
-                permissions: drift.Value(result.permissions),
-                unread_count: drift.Value(result.unread_count),
-              ),
-            );
-          }
-        });
-
-        // update last message for chat
-        await updateLastMessage(chatId: chatId);
-
-        return true;
-      }
-
-      return false;
-    } catch (e) {
-      print(e);
-      return false;
     }
   }
 
@@ -351,7 +293,7 @@ class ChatService extends GetxService {
         [
           drift.OrderingTerm(
               expression: database.chatTable.updated_at,
-              mode: drift.OrderingMode.desc),
+              mode: drift.OrderingMode.asc),
         ],
       );
 
@@ -366,7 +308,6 @@ class ChatService extends GetxService {
           "permissions": row.rawData.data['chat_table.permissions'],
           "status": row.rawData.data['chat_table.status'],
           "unread_count": row.rawData.data['chat_table.unread_count'],
-          'updated_at': row.rawData.data['chat_table.updated_at'],
         });
       }).get();
 
@@ -386,36 +327,6 @@ class ChatService extends GetxService {
         page: page,
         limit: limit,
       );
-    }
-  }
-
-  // see chat
-  Future<void> see({required String chatId}) async {
-    try {
-      // my user id
-      var userId = Services.profile.profile.value.id!;
-
-      // get list of message ids that are status 'sent' and message_id is not null and sender_id not equal to current user id
-      var messages = await (database.select(database.messageTable)
-            ..where((row) =>
-                row.chat_id.equals(chatId) &
-                row.status.equals('sent') &
-                row.message_id.isNotNull() &
-                row.sender_id.equals(userId).not()))
-          .get();
-
-      var ids = messages.map((e) => e.message_id!).toList();
-
-      log('[chat.service.dart] see ${ids.length} messages for chat id $chatId');
-
-      if (ids.isEmpty) return;
-
-      ApiService.socket.send(
-        event: CHAT_EVENTS.SEE_MESSAGE,
-        data: {'message_id': ids, 'method': 'multi'},
-      );
-    } catch (e) {
-      print(e);
     }
   }
 

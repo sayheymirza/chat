@@ -775,9 +775,17 @@ class $UserTableTable extends UserTable
       data = GeneratedColumn<String>('data', aliasedName, false,
               type: DriftSqlType.string, requiredDuringInsert: true)
           .withConverter<Map<dynamic, dynamic>>($UserTableTable.$converterdata);
+  static const VerificationMeta _updated_atMeta =
+      const VerificationMeta('updated_at');
+  @override
+  late final GeneratedColumn<DateTime> updated_at = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      clientDefault: () => DateTime.now());
   @override
   List<GeneratedColumn> get $columns =>
-      [id, status, avatar, fullname, last, seen, verified, data];
+      [id, status, avatar, fullname, last, seen, verified, data, updated_at];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -828,6 +836,12 @@ class $UserTableTable extends UserTable
           verified.isAcceptableOrUnknown(data['verified']!, _verifiedMeta));
     }
     context.handle(_dataMeta, const VerificationResult.success());
+    if (data.containsKey('updated_at')) {
+      context.handle(
+          _updated_atMeta,
+          updated_at.isAcceptableOrUnknown(
+              data['updated_at']!, _updated_atMeta));
+    }
     return context;
   }
 
@@ -853,6 +867,8 @@ class $UserTableTable extends UserTable
           .read(DriftSqlType.bool, data['${effectivePrefix}verified'])!,
       data: $UserTableTable.$converterdata.fromSql(attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}data'])!),
+      updated_at: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -874,6 +890,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
   final String seen;
   final bool verified;
   final Map<dynamic, dynamic> data;
+  final DateTime updated_at;
   const UserTableData(
       {required this.id,
       required this.status,
@@ -882,7 +899,8 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       required this.last,
       required this.seen,
       required this.verified,
-      required this.data});
+      required this.data,
+      required this.updated_at});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -897,6 +915,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       map['data'] =
           Variable<String>($UserTableTable.$converterdata.toSql(data));
     }
+    map['updated_at'] = Variable<DateTime>(updated_at);
     return map;
   }
 
@@ -910,6 +929,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       seen: Value(seen),
       verified: Value(verified),
       data: Value(data),
+      updated_at: Value(updated_at),
     );
   }
 
@@ -926,6 +946,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       verified: serializer.fromJson<bool>(json['verified']),
       data: $UserTableTable.$converterdata
           .fromJson(serializer.fromJson<String>(json['data'])),
+      updated_at: serializer.fromJson<DateTime>(json['updated_at']),
     );
   }
   @override
@@ -941,6 +962,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       'verified': serializer.toJson<bool>(verified),
       'data': serializer
           .toJson<String>($UserTableTable.$converterdata.toJson(data)),
+      'updated_at': serializer.toJson<DateTime>(updated_at),
     };
   }
 
@@ -952,7 +974,8 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           String? last,
           String? seen,
           bool? verified,
-          Map<dynamic, dynamic>? data}) =>
+          Map<dynamic, dynamic>? data,
+          DateTime? updated_at}) =>
       UserTableData(
         id: id ?? this.id,
         status: status ?? this.status,
@@ -962,6 +985,7 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
         seen: seen ?? this.seen,
         verified: verified ?? this.verified,
         data: data ?? this.data,
+        updated_at: updated_at ?? this.updated_at,
       );
   UserTableData copyWithCompanion(UserTableCompanion data) {
     return UserTableData(
@@ -973,6 +997,8 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
       seen: data.seen.present ? data.seen.value : this.seen,
       verified: data.verified.present ? data.verified.value : this.verified,
       data: data.data.present ? data.data.value : this.data,
+      updated_at:
+          data.updated_at.present ? data.updated_at.value : this.updated_at,
     );
   }
 
@@ -986,14 +1012,15 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           ..write('last: $last, ')
           ..write('seen: $seen, ')
           ..write('verified: $verified, ')
-          ..write('data: $data')
+          ..write('data: $data, ')
+          ..write('updated_at: $updated_at')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, status, avatar, fullname, last, seen, verified, data);
+  int get hashCode => Object.hash(
+      id, status, avatar, fullname, last, seen, verified, data, updated_at);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1005,7 +1032,8 @@ class UserTableData extends DataClass implements Insertable<UserTableData> {
           other.last == this.last &&
           other.seen == this.seen &&
           other.verified == this.verified &&
-          other.data == this.data);
+          other.data == this.data &&
+          other.updated_at == this.updated_at);
 }
 
 class UserTableCompanion extends UpdateCompanion<UserTableData> {
@@ -1017,6 +1045,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
   final Value<String> seen;
   final Value<bool> verified;
   final Value<Map<dynamic, dynamic>> data;
+  final Value<DateTime> updated_at;
   final Value<int> rowid;
   const UserTableCompanion({
     this.id = const Value.absent(),
@@ -1027,6 +1056,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     this.seen = const Value.absent(),
     this.verified = const Value.absent(),
     this.data = const Value.absent(),
+    this.updated_at = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserTableCompanion.insert({
@@ -1038,6 +1068,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     required String seen,
     this.verified = const Value.absent(),
     required Map<dynamic, dynamic> data,
+    this.updated_at = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         status = Value(status),
@@ -1055,6 +1086,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
     Expression<String>? seen,
     Expression<bool>? verified,
     Expression<String>? data,
+    Expression<DateTime>? updated_at,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1066,6 +1098,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       if (seen != null) 'seen': seen,
       if (verified != null) 'verified': verified,
       if (data != null) 'data': data,
+      if (updated_at != null) 'updated_at': updated_at,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1079,6 +1112,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       Value<String>? seen,
       Value<bool>? verified,
       Value<Map<dynamic, dynamic>>? data,
+      Value<DateTime>? updated_at,
       Value<int>? rowid}) {
     return UserTableCompanion(
       id: id ?? this.id,
@@ -1089,6 +1123,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       seen: seen ?? this.seen,
       verified: verified ?? this.verified,
       data: data ?? this.data,
+      updated_at: updated_at ?? this.updated_at,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1121,6 +1156,9 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
       map['data'] =
           Variable<String>($UserTableTable.$converterdata.toSql(data.value));
     }
+    if (updated_at.present) {
+      map['updated_at'] = Variable<DateTime>(updated_at.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1138,6 +1176,7 @@ class UserTableCompanion extends UpdateCompanion<UserTableData> {
           ..write('seen: $seen, ')
           ..write('verified: $verified, ')
           ..write('data: $data, ')
+          ..write('updated_at: $updated_at, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1212,9 +1251,7 @@ class $ChatTableTable extends ChatTable
   @override
   late final GeneratedColumn<DateTime> updated_at = GeneratedColumn<DateTime>(
       'updated_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: Constant(DateTime.now()));
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -1275,6 +1312,8 @@ class $ChatTableTable extends ChatTable
           _updated_atMeta,
           updated_at.isAcceptableOrUnknown(
               data['updated_at']!, _updated_atMeta));
+    } else if (isInserting) {
+      context.missing(_updated_atMeta);
     }
     return context;
   }
@@ -1488,10 +1527,11 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
     required String permissions,
     this.status = const Value.absent(),
     this.unread_count = const Value.absent(),
-    this.updated_at = const Value.absent(),
+    required DateTime updated_at,
   })  : chat_id = Value(chat_id),
         user_id = Value(user_id),
-        permissions = Value(permissions);
+        permissions = Value(permissions),
+        updated_at = Value(updated_at);
   static Insertable<ChatTableData> custom({
     Expression<int>? id,
     Expression<String>? chat_id,
@@ -2266,6 +2306,263 @@ class MessageTableCompanion extends UpdateCompanion<MessageTableData> {
   }
 }
 
+class $SyncTableTable extends SyncTable
+    with TableInfo<$SyncTableTable, SyncTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _keyMeta = const VerificationMeta('key');
+  @override
+  late final GeneratedColumn<String> key = GeneratedColumn<String>(
+      'key', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _synced_atMeta =
+      const VerificationMeta('synced_at');
+  @override
+  late final GeneratedColumn<DateTime> synced_at = GeneratedColumn<DateTime>(
+      'synced_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [id, category, key, synced_at];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<SyncTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('key')) {
+      context.handle(
+          _keyMeta, key.isAcceptableOrUnknown(data['key']!, _keyMeta));
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(_synced_atMeta,
+          synced_at.isAcceptableOrUnknown(data['synced_at']!, _synced_atMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+      key: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}key']),
+      synced_at: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
+    );
+  }
+
+  @override
+  $SyncTableTable createAlias(String alias) {
+    return $SyncTableTable(attachedDatabase, alias);
+  }
+}
+
+class SyncTableData extends DataClass implements Insertable<SyncTableData> {
+  final int id;
+  final String category;
+  final String? key;
+  final DateTime? synced_at;
+  const SyncTableData(
+      {required this.id, required this.category, this.key, this.synced_at});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['category'] = Variable<String>(category);
+    if (!nullToAbsent || key != null) {
+      map['key'] = Variable<String>(key);
+    }
+    if (!nullToAbsent || synced_at != null) {
+      map['synced_at'] = Variable<DateTime>(synced_at);
+    }
+    return map;
+  }
+
+  SyncTableCompanion toCompanion(bool nullToAbsent) {
+    return SyncTableCompanion(
+      id: Value(id),
+      category: Value(category),
+      key: key == null && nullToAbsent ? const Value.absent() : Value(key),
+      synced_at: synced_at == null && nullToAbsent
+          ? const Value.absent()
+          : Value(synced_at),
+    );
+  }
+
+  factory SyncTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncTableData(
+      id: serializer.fromJson<int>(json['id']),
+      category: serializer.fromJson<String>(json['category']),
+      key: serializer.fromJson<String?>(json['key']),
+      synced_at: serializer.fromJson<DateTime?>(json['synced_at']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'category': serializer.toJson<String>(category),
+      'key': serializer.toJson<String?>(key),
+      'synced_at': serializer.toJson<DateTime?>(synced_at),
+    };
+  }
+
+  SyncTableData copyWith(
+          {int? id,
+          String? category,
+          Value<String?> key = const Value.absent(),
+          Value<DateTime?> synced_at = const Value.absent()}) =>
+      SyncTableData(
+        id: id ?? this.id,
+        category: category ?? this.category,
+        key: key.present ? key.value : this.key,
+        synced_at: synced_at.present ? synced_at.value : this.synced_at,
+      );
+  SyncTableData copyWithCompanion(SyncTableCompanion data) {
+    return SyncTableData(
+      id: data.id.present ? data.id.value : this.id,
+      category: data.category.present ? data.category.value : this.category,
+      key: data.key.present ? data.key.value : this.key,
+      synced_at: data.synced_at.present ? data.synced_at.value : this.synced_at,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncTableData(')
+          ..write('id: $id, ')
+          ..write('category: $category, ')
+          ..write('key: $key, ')
+          ..write('synced_at: $synced_at')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, category, key, synced_at);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncTableData &&
+          other.id == this.id &&
+          other.category == this.category &&
+          other.key == this.key &&
+          other.synced_at == this.synced_at);
+}
+
+class SyncTableCompanion extends UpdateCompanion<SyncTableData> {
+  final Value<int> id;
+  final Value<String> category;
+  final Value<String?> key;
+  final Value<DateTime?> synced_at;
+  const SyncTableCompanion({
+    this.id = const Value.absent(),
+    this.category = const Value.absent(),
+    this.key = const Value.absent(),
+    this.synced_at = const Value.absent(),
+  });
+  SyncTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String category,
+    this.key = const Value.absent(),
+    this.synced_at = const Value.absent(),
+  }) : category = Value(category);
+  static Insertable<SyncTableData> custom({
+    Expression<int>? id,
+    Expression<String>? category,
+    Expression<String>? key,
+    Expression<DateTime>? synced_at,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (category != null) 'category': category,
+      if (key != null) 'key': key,
+      if (synced_at != null) 'synced_at': synced_at,
+    });
+  }
+
+  SyncTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? category,
+      Value<String?>? key,
+      Value<DateTime?>? synced_at}) {
+    return SyncTableCompanion(
+      id: id ?? this.id,
+      category: category ?? this.category,
+      key: key ?? this.key,
+      synced_at: synced_at ?? this.synced_at,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (key.present) {
+      map['key'] = Variable<String>(key.value);
+    }
+    if (synced_at.present) {
+      map['synced_at'] = Variable<DateTime>(synced_at.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncTableCompanion(')
+          ..write('id: $id, ')
+          ..write('category: $category, ')
+          ..write('key: $key, ')
+          ..write('synced_at: $synced_at')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2274,12 +2571,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UserTableTable userTable = $UserTableTable(this);
   late final $ChatTableTable chatTable = $ChatTableTable(this);
   late final $MessageTableTable messageTable = $MessageTableTable(this);
+  late final $SyncTableTable syncTable = $SyncTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [dropdownTable, cacheTable, userTable, chatTable, messageTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        dropdownTable,
+        cacheTable,
+        userTable,
+        chatTable,
+        messageTable,
+        syncTable
+      ];
 }
 
 typedef $$DropdownTableTableCreateCompanionBuilder = DropdownTableCompanion
@@ -2635,6 +2939,7 @@ typedef $$UserTableTableCreateCompanionBuilder = UserTableCompanion Function({
   required String seen,
   Value<bool> verified,
   required Map<dynamic, dynamic> data,
+  Value<DateTime> updated_at,
   Value<int> rowid,
 });
 typedef $$UserTableTableUpdateCompanionBuilder = UserTableCompanion Function({
@@ -2646,6 +2951,7 @@ typedef $$UserTableTableUpdateCompanionBuilder = UserTableCompanion Function({
   Value<String> seen,
   Value<bool> verified,
   Value<Map<dynamic, dynamic>> data,
+  Value<DateTime> updated_at,
   Value<int> rowid,
 });
 
@@ -2715,6 +3021,11 @@ class $$UserTableTableFilterComposer
               column,
               joinBuilders: joinBuilders));
 
+  ColumnFilters<DateTime> get updated_at => $state.composableBuilder(
+      column: $state.table.updated_at,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   ComposableFilter chatTableRefs(
       ComposableFilter Function($$ChatTableTableFilterComposer f) f) {
     final $$ChatTableTableFilterComposer composer = $state.composerBuilder(
@@ -2771,6 +3082,11 @@ class $$UserTableTableOrderingComposer
       column: $state.table.data,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get updated_at => $state.composableBuilder(
+      column: $state.table.updated_at,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 class $$UserTableTableTableManager extends RootTableManager<
@@ -2801,6 +3117,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             Value<String> seen = const Value.absent(),
             Value<bool> verified = const Value.absent(),
             Value<Map<dynamic, dynamic>> data = const Value.absent(),
+            Value<DateTime> updated_at = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               UserTableCompanion(
@@ -2812,6 +3129,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             seen: seen,
             verified: verified,
             data: data,
+            updated_at: updated_at,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -2823,6 +3141,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             required String seen,
             Value<bool> verified = const Value.absent(),
             required Map<dynamic, dynamic> data,
+            Value<DateTime> updated_at = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               UserTableCompanion.insert(
@@ -2834,6 +3153,7 @@ class $$UserTableTableTableManager extends RootTableManager<
             seen: seen,
             verified: verified,
             data: data,
+            updated_at: updated_at,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -2887,7 +3207,7 @@ typedef $$ChatTableTableCreateCompanionBuilder = ChatTableCompanion Function({
   required String permissions,
   Value<String> status,
   Value<int> unread_count,
-  Value<DateTime> updated_at,
+  required DateTime updated_at,
 });
 typedef $$ChatTableTableUpdateCompanionBuilder = ChatTableCompanion Function({
   Value<int> id,
@@ -3070,7 +3390,7 @@ class $$ChatTableTableTableManager extends RootTableManager<
             required String permissions,
             Value<String> status = const Value.absent(),
             Value<int> unread_count = const Value.absent(),
-            Value<DateTime> updated_at = const Value.absent(),
+            required DateTime updated_at,
           }) =>
               ChatTableCompanion.insert(
             id: id,
@@ -3435,6 +3755,134 @@ typedef $$MessageTableTableProcessedTableManager = ProcessedTableManager<
     ),
     MessageTableData,
     PrefetchHooks Function()>;
+typedef $$SyncTableTableCreateCompanionBuilder = SyncTableCompanion Function({
+  Value<int> id,
+  required String category,
+  Value<String?> key,
+  Value<DateTime?> synced_at,
+});
+typedef $$SyncTableTableUpdateCompanionBuilder = SyncTableCompanion Function({
+  Value<int> id,
+  Value<String> category,
+  Value<String?> key,
+  Value<DateTime?> synced_at,
+});
+
+class $$SyncTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $SyncTableTable> {
+  $$SyncTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get key => $state.composableBuilder(
+      column: $state.table.key,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get synced_at => $state.composableBuilder(
+      column: $state.table.synced_at,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$SyncTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $SyncTableTable> {
+  $$SyncTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get key => $state.composableBuilder(
+      column: $state.table.key,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get synced_at => $state.composableBuilder(
+      column: $state.table.synced_at,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $$SyncTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $SyncTableTable,
+    SyncTableData,
+    $$SyncTableTableFilterComposer,
+    $$SyncTableTableOrderingComposer,
+    $$SyncTableTableCreateCompanionBuilder,
+    $$SyncTableTableUpdateCompanionBuilder,
+    (
+      SyncTableData,
+      BaseReferences<_$AppDatabase, $SyncTableTable, SyncTableData>
+    ),
+    SyncTableData,
+    PrefetchHooks Function()> {
+  $$SyncTableTableTableManager(_$AppDatabase db, $SyncTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$SyncTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$SyncTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> category = const Value.absent(),
+            Value<String?> key = const Value.absent(),
+            Value<DateTime?> synced_at = const Value.absent(),
+          }) =>
+              SyncTableCompanion(
+            id: id,
+            category: category,
+            key: key,
+            synced_at: synced_at,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String category,
+            Value<String?> key = const Value.absent(),
+            Value<DateTime?> synced_at = const Value.absent(),
+          }) =>
+              SyncTableCompanion.insert(
+            id: id,
+            category: category,
+            key: key,
+            synced_at: synced_at,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$SyncTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $SyncTableTable,
+    SyncTableData,
+    $$SyncTableTableFilterComposer,
+    $$SyncTableTableOrderingComposer,
+    $$SyncTableTableCreateCompanionBuilder,
+    $$SyncTableTableUpdateCompanionBuilder,
+    (
+      SyncTableData,
+      BaseReferences<_$AppDatabase, $SyncTableTable, SyncTableData>
+    ),
+    SyncTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3449,4 +3897,6 @@ class $AppDatabaseManager {
       $$ChatTableTableTableManager(_db, _db.chatTable);
   $$MessageTableTableTableManager get messageTable =>
       $$MessageTableTableTableManager(_db, _db.messageTable);
+  $$SyncTableTableTableManager get syncTable =>
+      $$SyncTableTableTableManager(_db, _db.syncTable);
 }

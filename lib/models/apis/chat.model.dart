@@ -22,6 +22,18 @@ class ApiChatCreateWithChatResponse {
   });
 }
 
+class ApiChatOneResponse {
+  final String userId;
+  final String permissions;
+  final int unread_count;
+
+  ApiChatOneResponse({
+    required this.userId,
+    required this.permissions,
+    required this.unread_count,
+  });
+}
+
 class ApiChatListResponse {
   final int page;
   final int last;

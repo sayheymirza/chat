@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:chat/shared/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:vector_map_tiles/vector_map_tiles.dart';
 
 class MapViewController extends GetxController {
   MapController mapController = MapController();
@@ -14,6 +17,8 @@ class MapViewController extends GetxController {
 
   RxString gps = "loading".obs;
 
+  Style? style;
+
   @override
   void onInit() {
     super.onInit();
@@ -21,6 +26,23 @@ class MapViewController extends GetxController {
     Services.permission.has('gps').then((value) {
       gps.value = value ? 'ready' : 'faild';
     });
+
+    initMap();
+  }
+
+  Future<void> initMap() async {
+    try {
+      style = await StyleReader(
+        uri: 'https://map.doting.ir/styles/OSM%20OpenMapTiles/style.json',
+      ).read();
+
+      log('[map.controller.dart] map inited');
+
+      update();
+    } catch (e) {
+      print(e);
+      //
+    }
   }
 
   void useCurrentLocation() async {

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat/shared/services/access.service.dart';
+import 'package:chat/shared/services/admin-chat.service.dart';
 import 'package:chat/shared/services/app.service.dart';
 import 'package:chat/shared/services/cache.service.dart';
 import 'package:chat/shared/services/call.service.dart';
@@ -16,6 +17,7 @@ import 'package:chat/shared/services/notification.service.dart';
 import 'package:chat/shared/services/permission.service.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/services/queue.service.dart';
+import 'package:chat/shared/services/sync.service.dart';
 import 'package:chat/shared/services/user.service.dart';
 import 'package:chat/shared/services/waveframe.service.dart';
 import 'package:get/get.dart';
@@ -34,11 +36,13 @@ class Services {
   static NotificationService get notification => Get.find(tag: 'notification');
   static FileService get file => Get.find(tag: 'file');
   static ChatService get chat => Get.find(tag: 'chat');
+  static AdminChatService get adminChat => Get.find(tag: 'admin-chat');
   static MessageService get message => Get.find(tag: 'message');
   static PermissionService get permission => Get.find(tag: 'permission');
   static WaveframeService get waveframe => Get.find(tag: 'waveframe');
   static CallService get call => Get.find(tag: 'call');
   static UserService get user => Get.find(tag: 'user');
+  static SyncService get sync => Get.find(tag: 'sync');
 
   static put() async {
     log('[services.dart] start put Get services');
@@ -55,11 +59,13 @@ class Services {
     Get.lazyPut(() => NotificationService(), tag: 'notification');
     Get.lazyPut(() => FileService(), tag: 'file');
     Get.lazyPut(() => ChatService(), tag: 'chat');
+    Get.lazyPut(() => AdminChatService(), tag: 'admin-chat');
     Get.lazyPut(() => MessageService(), tag: 'message');
     Get.lazyPut(() => PermissionService(), tag: 'permission');
     Get.lazyPut(() => WaveframeService(), tag: 'waveframe');
     Get.lazyPut(() => CallService(), tag: 'call');
     Get.lazyPut(() => UserService(), tag: 'user');
+    Get.lazyPut(() => SyncService(), tag: 'sync');
     log('[services.dart] end put Get services');
   }
 }

@@ -4,6 +4,8 @@ import 'package:chat/futures/account_delete_leave/account_delete_leave.view.dart
 import 'package:chat/futures/account_notification/account_notification.view.dart';
 import 'package:chat/futures/account_security/account_security.view.dart';
 import 'package:chat/futures/account_verify_phone/account_verify_phone.view.dart';
+import 'package:chat/futures/admin_chat/chat.view.dart';
+import 'package:chat/futures/admin_chats/chats.view.dart';
 import 'package:chat/futures/app/app.view.dart';
 import 'package:chat/futures/auth/auth.view.dart';
 import 'package:chat/futures/auth_forgot/auth_forgot.view.dart';
@@ -54,6 +56,8 @@ List<GetPage> pages = [
   GetPage(name: '/app/transactions/:id', page: () => const TransactionView()),
   GetPage(name: '/app/storage', page: () => const CacheManagerView()),
   GetPage(name: '/app/chat/:id', page: () => const ChatView()),
+  GetPage(name: '/app/admin/chat', page: () => const AdminChatsView()),
+  GetPage(name: '/app/admin/chat/:id', page: () => const AdminChatView()),
   GetPage(
     name: '/app/report',
     page: () => const ReportView(),

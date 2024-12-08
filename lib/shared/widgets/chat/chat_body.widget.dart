@@ -8,6 +8,7 @@ class ChatBodyWidget extends StatelessWidget {
   final List<Widget> children;
   final Function onLoadMore;
   final Function onLoadLess;
+  final String? error;
 
   const ChatBodyWidget({
     super.key,
@@ -15,6 +16,7 @@ class ChatBodyWidget extends StatelessWidget {
     required this.onLoadMore,
     required this.onLoadLess,
     this.children = const [],
+    this.error,
   });
 
   @override
@@ -43,13 +45,37 @@ class ChatBodyWidget extends StatelessWidget {
           messages: messages,
           children: children,
         ),
-        // footer
-        Positioned(
-          left: 16,
-          right: 16,
-          bottom: MediaQuery.of(context).padding.bottom + 16,
-          child: ChatFooterWidget(),
-        ),
+        if (error == null || error!.isEmpty)
+          // footer
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).padding.bottom + 16,
+            child: ChatFooterWidget(),
+          ),
+        if (error != null && error!.isNotEmpty)
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: MediaQuery.of(context).padding.bottom + 16,
+            child: Container(
+              width: double.infinity,
+              height: 48,
+              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+              decoration: BoxDecoration(
+                color: Colors.white70,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Center(
+                child: Text(
+                  error!,
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

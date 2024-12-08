@@ -20,6 +20,16 @@ class AppService extends GetxService {
     }
   }
 
+  Future<void> logout() {
+    return Future.wait([
+      Services.configs.unset(key: CONSTANTS.STORAGE_ACCESS_TOKEN),
+      Services.chat.clear(),
+      Services.adminChat.clear(),
+      Services.message.clear(),
+      Services.sync.clear(),
+    ]);
+  }
+
   Future<void> copy(String value) async {
     await Clipboard.setData(
       ClipboardData(text: value),

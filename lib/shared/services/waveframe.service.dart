@@ -11,8 +11,6 @@ class WaveframeService extends GetxService {
         useCache: false,
       );
 
-      print(result.length);
-
       return result;
     } catch (e) {
       return [];

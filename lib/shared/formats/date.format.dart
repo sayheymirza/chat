@@ -1,7 +1,9 @@
 import 'package:shamsi_date/shamsi_date.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-String formatAgoChat(String value) {
+String formatAgoChat(String? value) {
+  if(value == null) return '';
+
   String format(int value) => value < 9 ? '0$value' : value.toString();
 
   var date = Jalali.fromDateTime(DateTime.parse(value));

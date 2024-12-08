@@ -33,11 +33,13 @@ class ChatMessageWidget extends StatelessWidget {
 
     color ??= me ? Get.theme.primaryColor.withAlpha(72) : Colors.grey.shade100;
 
-    if (message.type!.startsWith("map") ||
-        message.type!.startsWith('image') ||
-        message.type!.startsWith('video')) {
-      nip = BubbleNip.no;
-      padding = BubbleEdges.all(0);
+    if (message.status != 'deleted') {
+      if (message.type!.startsWith("map") ||
+          message.type!.startsWith('image') ||
+          message.type!.startsWith('video')) {
+        nip = BubbleNip.no;
+        padding = BubbleEdges.all(0);
+      }
     }
 
     return GestureDetector(
@@ -80,6 +82,27 @@ class ChatMessageWidget extends StatelessWidget {
               mainAxisAlignment:
                   me ? MainAxisAlignment.start : MainAxisAlignment.end,
               children: [
+                // if unknown
+                if (message.status == 'unknown')
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      ),
+                      const Gap(8),
+                      Text(
+                        "",
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 // if sent
                 if (message.status == 'sending')
                   Row(
@@ -90,7 +113,6 @@ class ChatMessageWidget extends StatelessWidget {
                         color: Colors.grey,
                       ),
                       Gap(8),
-                      // date time
                       Text(
                         "در حال ارسال",
                         style: TextStyle(
@@ -105,6 +127,25 @@ class ChatMessageWidget extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.done_rounded,
+                        size: 14,
+                        color: Colors.green,
+                      ),
+                      Gap(8),
+                      // date time
+                      Text(
+                        formatAgoChatMessage(message.sentAt.toString()),
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                if (message.status == 'seen')
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.done_all_rounded,
                         size: 14,
                         color: Colors.green,
                       ),

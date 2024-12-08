@@ -16,6 +16,13 @@ class UserService extends GetxService {
 
       query.where((row) => row.id.equals(userId.toString()));
 
+      query.limit(1);
+
+      query.orderBy([
+        (row) => drift.OrderingTerm(
+            expression: row.updated_at, mode: drift.OrderingMode.desc),
+      ]);
+
       var result = query.watch().map(
             (value) => value
                 .map(
@@ -68,6 +75,17 @@ class UserService extends GetxService {
               verified: drift.Value(profile.verified ?? false),
             ),
           );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> delete({required String userId}) async {
+    try {
+      log('[user.service.dart] deleted user with id $userId');
+      await (database.delete(database.userTable)
+            ..where((row) => row.id.equals(userId)))
+          .go();
     } catch (e) {
       print(e);
     }

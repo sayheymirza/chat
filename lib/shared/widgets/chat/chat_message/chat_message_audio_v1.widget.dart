@@ -34,24 +34,43 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
 
     controller.load(url: widget.message.data['url']);
 
+    init();
+  }
+
+  @override
+  void didUpdateWidget(covariant ChatMessageAudioV1Widget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    init();
+  }
+
+  void init() {
     if (widget.message.status == "unknown") {
       upload();
     }
   }
 
+  void setUploading({int percent = 0, int total = 0, int sent = 0}) {
+    widget.message.status = "uploading";
+    widget.message.meta = {
+      'percent': percent,
+      'total': total,
+      'sent': sent,
+    };
+    setState(() {});
+  }
+
   void upload() async {
+    setUploading();
     // start uploading
     var result = await Services.file.upload(
         file: File(widget.message.data['url']),
         category: 'audio',
         onUploading: ({int percent = 0, int total = 0, int sent = 0}) {
-          widget.message.status = "uploading";
-          widget.message.meta = {
-            'percent': percent,
-            'total': total,
-            'sent': sent,
-          };
-          setState(() {});
+          setUploading(
+            percent: percent,
+            total: total,
+            sent: sent,
+          );
         });
 
     if (result != null && result.done) {
@@ -59,7 +78,7 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
       widget.message.data['file_id'] = result.fileId;
       widget.message.status = "sending";
 
-      Services.message.send(message: widget.message);
+      Services.message.update(message: widget.message);
       setState(() {});
     }
   }

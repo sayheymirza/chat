@@ -118,6 +118,22 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
           file!,
           alignment: widget.alignment,
           fit: widget.fit,
+          errorBuilder: (context, error, stackTrace) {
+            if(widget.url.startsWith('http')) {
+              return Image.network(
+                widget.url,
+                alignment: widget.alignment,
+                fit: widget.fit,
+              );
+            }
+
+            return Center(
+              child: Icon(
+                Icons.image_rounded,
+                color: Colors.grey.shade700,
+              ),
+            );
+          },
         ),
       );
     }

@@ -54,6 +54,7 @@ dependencies:
   glass: ^2.0.0+1
   socket_io_client: ^3.0.1
   objectid: ^3.1.0
+  vector_map_tiles: ^8.0.0
 
 dependency_overrides:
   flutter_inappwebview:

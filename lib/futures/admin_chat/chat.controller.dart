@@ -15,7 +15,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ChatController extends GetxController {
+class AdminChatController extends GetxController {
   Rx<Relation> relation = Relation.empty.obs;
 
   List<Widget> children = [];
@@ -33,8 +33,6 @@ class ChatController extends GetxController {
   int limit = 20;
   bool ended = false;
   bool loading = false;
-
-  String? userId;
 
   @override
   void onInit() {
@@ -58,7 +56,6 @@ class ChatController extends GetxController {
     cancelToken.cancel();
 
     chatStream.close();
-    messageStream.close();
   }
 
   Future<void> load() async {
@@ -66,9 +63,7 @@ class ChatController extends GetxController {
       sync();
       listenChat();
       listenMessages();
-      fetch();
       childing();
-      markAllAsSeen();
     } catch (e) {
       print(e);
     }
@@ -83,34 +78,10 @@ class ChatController extends GetxController {
     );
   }
 
-  Future<void> markAllAsSeen() {
-    return Services.chat.see(chatId: Get.parameters['id']!);
-  }
-
-  Future<void> fetch() async {
-    await Future.wait([
-      fetchUser(),
-      fetchChat(),
-    ]);
-  }
-
-  Future<void> fetchUser() async {
-    if(userId != null) {
-      await Services.user.fetch(userId: userId!);
-      childing();
-    }
-  }
-
-  Future<void> fetchChat() async {
-    var id = Get.parameters['id'];
-
-    await Services.chat.one(chatId: id!);
-  }
-
   void listenChat() async {
     var id = Get.parameters['id'];
 
-    var stream = await Services.chat.stream(chatId: id!);
+    var stream = await Services.adminChat.stream(chatId: id!);
 
     var subchat = stream.listen((value) {
       if (value == null) {
@@ -121,11 +92,6 @@ class ChatController extends GetxController {
       }
 
       chatStream.add(value);
-
-      userId = value.userId!;
-
-      relation.value = value.user!.relation!;
-      update();
     });
 
     chatStream.onCancel = () {
@@ -144,7 +110,7 @@ class ChatController extends GetxController {
 
     var subsending = Services.message.listenToSending(chatId: id);
 
-    messageStream.onCancel = () {
+    chatStream.onCancel = () {
       subsending.cancel();
       submessages.cancel();
     };
@@ -216,7 +182,7 @@ class ChatController extends GetxController {
       updateTimeout!.cancel();
     }
 
-    updateTimeout = Timer(Duration(milliseconds: 100), () {
+    updateTimeout = Timer(Duration(milliseconds: 300), () {
       log('[chat.controller.dart] update message stream');
       messageStream
           .add(messages..sort((a, b) => a.sentAt!.compareTo(b.sentAt!)));
@@ -235,47 +201,45 @@ class ChatController extends GetxController {
   }
 
   void block() async {
-    if(userId == null) return;
-
     relation.value = relation.value.copyWith({"blocked": true});
+
+    var id = Get.parameters['id']!;
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: userId!,
+        user: id,
         action: RELATION_ACTION.BLOCK,
       );
       if (result) {
         showSnackbar(message: 'کاربر به بلاکی ها اضافه شد');
-        fetchUser();
       }
     });
   }
 
   void unblock() async {
-    if(userId == null) return;
-
     relation.value = relation.value.copyWith({"blocked": false});
+
+    var id = Get.parameters['id']!;
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: userId!,
+        user: id,
         action: RELATION_ACTION.UNBLOCK,
       );
       if (result) {
         showSnackbar(message: 'کاربر از بلاکی ها حذف شد');
-        fetchUser();
       }
     });
   }
 
   void favorite() async {
-    if(userId == null) return;
-
     relation.value = relation.value.copyWith({"favorited": true});
+
+    var id = Get.parameters['id']!;
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: userId!,
+        user: id,
         action: RELATION_ACTION.FAVORITE,
       );
       if (result) {
@@ -285,13 +249,13 @@ class ChatController extends GetxController {
   }
 
   void disfavorite() async {
-    if(userId == null) return;
-
     relation.value = relation.value.copyWith({"favorited": false});
+
+    var id = Get.parameters['id']!;
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: userId!,
+        user: id,
         action: RELATION_ACTION.DISFAVORITE,
       );
       if (result) {
@@ -303,12 +267,12 @@ class ChatController extends GetxController {
   void report({
     required String fullname,
   }) {
-    if(userId == null) return;
+    var id = Get.parameters['id'];
 
     Get.toNamed(
       '/app/report',
       arguments: {
-        'id': userId!,
+        'id': id,
         'fullname': fullname,
       },
     );

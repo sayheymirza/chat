@@ -34,7 +34,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> load() async {
-    var id = Get.parameters['id'];
+    var id = Get.parameters['id']!;
     var args = Get.arguments;
 
     showOptions.value = args != null && args['options'] != false;
@@ -52,15 +52,18 @@ class ProfileController extends GetxController {
         showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
       }
     } else {
-      Services.user.fetch(userId: id!);
-
       if (streamed == false) {
         try {
           var result = await Services.user.stream(userId: id);
 
           var sub = result.listen((data) {
-            if (!profile.isClosed) {
+            if (!profile.isClosed && data.isNotEmpty) {
               profile.add(data);
+
+              // set relation
+              if (data.first.relation != null) {
+                relation.value = data.first.relation!;
+              }
             }
           });
 
@@ -70,12 +73,21 @@ class ProfileController extends GetxController {
         }
 
         streamed = true;
+
+        fetch();
       }
     }
   }
 
+  Future<void> fetch() async {
+    var id = Get.parameters['id']!;
+
+    await Services.user.fetch(userId: id);
+  }
+
   void block({required String id}) async {
     relation.value = relation.value.copyWith({"blocked": true});
+    update();
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
@@ -84,12 +96,14 @@ class ProfileController extends GetxController {
       );
       if (result) {
         showSnackbar(message: 'کاربر به بلاکی ها اضافه شد');
+        fetch();
       }
     });
   }
 
   void unblock({required String id}) async {
     relation.value = relation.value.copyWith({"blocked": false});
+    update();
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
@@ -98,6 +112,7 @@ class ProfileController extends GetxController {
       );
       if (result) {
         showSnackbar(message: 'کاربر از بلاکی ها حذف شد');
+        fetch();
       }
     });
   }
@@ -141,8 +156,10 @@ class ProfileController extends GetxController {
   void startChat({required String id}) async {
     try {
       openingChat.value = true;
+      update();
       var chatId = await Services.chat.createByUserId(userId: id);
       openingChat.value = false;
+      update();
 
       if (chatId != null) {
         var path = '/app/chat/$chatId';

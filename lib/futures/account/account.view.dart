@@ -2,6 +2,7 @@ import 'package:chat/futures/account/account.controller.dart';
 import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -40,11 +41,17 @@ class AccountView extends GetView<AccountController> {
                   icon: Icons.forum_rounded,
                   color: Colors.cyan,
                   onTap: () {
-                    Get.toNamed('/app/messages');
+                    Get.toNamed('/app/admin/chat');
                   },
-                  suffix: const Badge(
-                    label: Text('0'),
-                  ),
+                  suffix: StreamBuilder(
+                      stream: Services.adminChat.listenToUnreadedChats(),
+                      builder: (context, snapshot) {
+                        var count = snapshot.data ?? 0;
+
+                        return Badge(
+                          label: Text(count.toString()),
+                        );
+                      }),
                 ),
                 if (controller.profile.profile.value.id != null)
                   item(
@@ -402,8 +409,8 @@ class AccountView extends GetView<AccountController> {
                           );
                         },
                         child: CachedImageWidget(
-                          url:
-                              "https://avatar.iran.liara.run/public/8", // controller.profile.profile.value.avatar!,
+                          url: "https://avatar.iran.liara.run/public/8",
+                          // controller.profile.profile.value.avatar!,
                           category: "avatar",
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,

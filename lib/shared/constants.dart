@@ -7,8 +7,6 @@ class CONSTANTS {
 
   static String CURRENT_CHAT = "chat:id";
 
-  static String SYNC_CHAT = "sync:chat";
-
   static String STORAGE_ENDPOINT_API = "endpoint:api";
   static String STORAGE_ENDPOINT_SOCKET = "endpoint:socket";
   static String STORAGE_ACCESS_TOKEN = "app:access_token";

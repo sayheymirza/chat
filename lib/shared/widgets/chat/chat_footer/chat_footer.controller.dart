@@ -40,6 +40,15 @@ class ChatFooterController extends GetxController {
     messageController.clear();
   }
 
+  // Function to perform the test with timeout
+  Future<void> testSendMessages(int times, Duration delay) async {
+    for (int i = 0; i < times; i++) {
+      messageText = 'Message #${i + 1}';
+      sendTextMessage();
+      await Future.delayed(delay); // Add delay before the next message
+    }
+  }
+
   void sendTextMessage() {
     if (messageText.isEmpty) return;
 
@@ -49,6 +58,7 @@ class ChatFooterController extends GetxController {
     )
         .then((_) {
       changeMessageText('');
+      cancelRecoring();
     });
   }
 

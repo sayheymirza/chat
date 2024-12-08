@@ -2,7 +2,7 @@ import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 
-class ChatsController extends GetxController {
+class AdminChatsController extends GetxController {
   RxList<ChatModel> chats = List<ChatModel>.empty(growable: true).obs;
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
@@ -16,11 +16,11 @@ class ChatsController extends GetxController {
   }
 
   void open({required String id}) {
-    Get.toNamed('/app/chat/$id')!.then((_) => load());
+    Get.toNamed('/app/admin/chat/$id')!.then((_) => load());
   }
 
   void load() async {
-    var result = await Services.chat.select(
+    var result = await Services.adminChat.select(
       page: page.value,
     );
 

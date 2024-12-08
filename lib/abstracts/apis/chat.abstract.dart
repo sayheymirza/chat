@@ -16,6 +16,10 @@ abstract class ChatAbstract extends GetxService {
     DateTime? syncDate,
   });
 
+  Future<ApiChatOneResponse?> one({
+    required String chatId,
+  });
+
   Future<ApiChatCreateWithChatResponse?> createWithChatId({
     required String chatId,
   });

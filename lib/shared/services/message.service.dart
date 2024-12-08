@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
@@ -17,7 +18,9 @@ class MessageService extends GetxService {
   Future<ChatMessageModel?> lastByChatId({required String chatId}) async {
     try {
       var last = await (database.select(database.messageTable)
-            ..where((row) => row.chat_id.equals(chatId))
+            ..where((row) =>
+                row.chat_id.equals(chatId) &
+                (row.status.equals('sent') | row.status.equals('seen')))
             ..limit(1)
             ..orderBy([
               (row) => drift.OrderingTerm(
@@ -45,13 +48,14 @@ class MessageService extends GetxService {
   }) async {
     try {
       // get last message of that chatId
-      var last = await lastByChatId(chatId: chatId);
+      var last = await Services.sync.get(category: 'message', key: chatId);
 
-      DateTime? lastSyncDate;
       var page = 1;
 
       if (last != null) {
-        lastSyncDate = last.sentAt;
+        log('[message.service.dart] syncing api with database for chat id $chatId with last sync date $last');
+      } else {
+        log('[message.service.dart] syncing api with database for chat id $chatId without last sync date');
       }
 
       do {
@@ -59,11 +63,12 @@ class MessageService extends GetxService {
           chatId: chatId,
           page: page,
           limit: limit,
-          syncDate: lastSyncDate,
+          syncDate: last,
           cancelToken: cancelToken,
         );
 
         if (result.isEmpty) {
+          log('[message.service.dart] syncing api with database for chat id $chatId on page $page got 0 messages');
           break;
         }
 
@@ -93,17 +98,13 @@ class MessageService extends GetxService {
                 .getSingleOrNull();
             // 2. create
             if (one == null) {
-              var count =
-                  await database.into(database.messageTable).insert(data);
-              print('create $count');
+              await database.into(database.messageTable).insert(data);
             }
             // 3. update
             else {
-              var count = await (database.update(database.messageTable)
+              await (database.update(database.messageTable)
                     ..where((row) => row.id.equals(one.id)))
                   .write(data);
-
-              print('update $count');
             }
           });
         }
@@ -114,6 +115,17 @@ class MessageService extends GetxService {
           page += 1;
         }
       } while (true);
+
+      // save new last sync date from last message of that chatId
+      var newLast = await lastByChatId(chatId: chatId);
+      if (newLast != null) {
+        await Services.sync.set(
+          category: 'message',
+          key: chatId,
+          syncedAt: newLast.sentAt!,
+        );
+        log('[message.service.dart] syncing api with database for chat id $chatId with new last sync date ${newLast.sentAt}');
+      }
     } catch (e) {
       print(e);
     }
@@ -122,16 +134,36 @@ class MessageService extends GetxService {
   // listen to events
   void listenToEvents() {
     event.on<EventModel>().listen((data) async {
-      if (data.event == CHAT_EVENTS.RECIVE_MESSAGE) {
+      if (data.event == CHAT_EVENTS.ON_RECEIVE_MESSAGE) {
         var value = data.value as ChatMessageModel;
 
         onReciveMessage(message: value);
+      }
+
+      if (data.event == CHAT_EVENTS.DELETE_CHAT) {
+        var value = data.value as String;
+
+        // delete messages by chat_id (forever)
+        deleteByChatId(chatId: value);
+      }
+
+      if (data.event == CHAT_EVENTS.ON_DELETE_MESSAGE) {
+        var id = data.value['message_id'];
+
+        // delete message by message_id
+        deleteByMessageId(messageId: id);
+      }
+
+      if (data.event == CHAT_EVENTS.ON_SEE_MESSAGE) {
+        var id = data.value['message_id'];
+
+        // seen message by message_id
+        seen(messageId: id);
       }
     });
   }
 
   void onReciveMessage({required ChatMessageModel message}) async {
-    print(message.toJson());
     try {
       // 1. check local id exists to update that
       if (message.localId != null && message.localId != '-1') {
@@ -140,7 +172,7 @@ class MessageService extends GetxService {
         var updated = await update(message: message);
 
         if (updated == true) {
-          log('[message.service.dart] recive message and updated with local id ${message.localId} and chat id ${message.chatId}');
+          log('[message.service.dart] receive message and updated with local id ${message.localId} and chat id ${message.chatId}');
           return;
         }
       }
@@ -163,9 +195,41 @@ class MessageService extends GetxService {
               reaction: drift.Value(message.reaction),
             ),
           );
+
+      // 3. see message if sender_id not equal to current user id and chat_id is current chat
+      var userId = Services.profile.profile.value.id;
+      var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
+
+      if (userId != null &&
+          chatId == message.chatId &&
+          message.senderId != userId) {
+        seen(messageId: message.messageId!);
+        see(messageId: message.messageId!);
+      }
     } catch (e) {
       print(e);
     }
+  }
+
+  // listen to chat_id to send message when status is sending
+  StreamSubscription<List<MessageTableData>> listenToSending({
+    required String chatId,
+  }) {
+    log('[message.service.dart] sending messages for chat id $chatId');
+
+    var query = database.select(database.messageTable);
+
+    query.where(
+      (row) => row.chat_id.equals(chatId) & row.status.equals('sending'),
+    );
+
+    var watcher = query.watch();
+
+    return watcher.listen((data) {
+      for (var item in data) {
+        send(message: ChatMessageModel.fromDatabase(item));
+      }
+    });
   }
 
   // stream message (chat_id and limit)
@@ -177,9 +241,20 @@ class MessageService extends GetxService {
 
     var query = database.select(database.messageTable);
 
-    query.where((row) => row.chat_id.equals(chatId));
+    // limit
+    if (limit != 0) {
+      query.limit(limit);
+    }
 
-    query.limit(limit);
+    // order by sent_at new to old
+    query.orderBy([
+      (row) => drift.OrderingTerm(
+            expression: row.sent_at,
+            mode: drift.OrderingMode.desc,
+          ),
+    ]);
+
+    query.where((row) => row.chat_id.equals(chatId));
 
     return query.watch();
   }
@@ -238,11 +313,33 @@ class MessageService extends GetxService {
   void send({required ChatMessageModel message}) {
     try {
       // update message to sending and send it to socket
-      message.status = "sending";
-      update(message: message);
+      if (message.status != "sending") {
+        message.status = "sending";
+        update(message: message);
+      }
       ApiService.socket.send(event: CHAT_EVENTS.SEND_MESSAGE, data: message);
     } catch (e) {
       //
+    }
+  }
+
+  // see message
+  void see({required String messageId}) {
+    ApiService.socket.send(
+      event: CHAT_EVENTS.SEE_MESSAGE,
+      data: {'message_id': messageId, 'method': 'one'},
+    );
+  }
+
+  // seen message (update status to seen)
+  void seen({required String messageId}) {
+    try {
+      log('[message.service.dart] seen message with message id $messageId');
+      (database.update(database.messageTable)
+            ..where((row) => row.message_id.equals(messageId)))
+          .write(MessageTableCompanion(status: drift.Value("seen")));
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -282,8 +379,6 @@ class MessageService extends GetxService {
         ),
       );
 
-      print(result);
-
       return result != 0;
     } catch (error) {
       return false;
@@ -312,6 +407,11 @@ class MessageService extends GetxService {
       (database.update(database.messageTable)
             ..where((row) => row.message_id.equals(messageId)))
           .write(MessageTableCompanion(status: drift.Value("deleted")));
+
+      ApiService.socket.send(event: CHAT_EVENTS.DELETE_MESSAGE, data: {
+        'message_id': messageId,
+        'all': forAll,
+      });
     } catch (e) {
       //
     }

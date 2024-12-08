@@ -16,8 +16,19 @@ class ChatView extends GetView<ChatController> {
 
     return Scaffold(
       appBar: appBar(),
-      body: GetBuilder<ChatController>(
-        builder: (controller) => ChatBodyWidget(
+      body: GetBuilder<ChatController>(builder: (controller) {
+        var error = '';
+
+        if (controller.relation.value.blocked == true) {
+          error = 'شما این کاربر را بلاک کرده اید';
+        }
+
+        if (controller.relation.value.blockedMe == true) {
+          error = 'این کاربر شما را بلاک کرده است';
+        }
+
+        return ChatBodyWidget(
+          error: error,
           messages: controller.messageStream.stream,
           children: controller.children,
           onLoadMore: () {
@@ -26,8 +37,8 @@ class ChatView extends GetView<ChatController> {
           onLoadLess: () {
             // controller.loadMessages(pageValue: max(controller.page - 2, 0));
           },
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -50,6 +61,8 @@ class ChatView extends GetView<ChatController> {
               data == null) {
             return GradientAppBarWidget(back: true);
           }
+
+          data.status ??= 'normal';
 
           return GradientAppBarWidget(
             back: true,
@@ -97,7 +110,7 @@ class ChatView extends GetView<ChatController> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         if (data.status == 'normal' &&
-                            data.user?.status == "online")
+                            data.user?.seen == "online")
                           Text(
                             "آنلاین",
                             style: TextStyle(
@@ -107,7 +120,7 @@ class ChatView extends GetView<ChatController> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         if (data.status == 'normal' &&
-                            data.user?.status != "online")
+                            data.user?.seen != "online")
                           Text(
                             formatAgo(data.user!.lastAt.toString()),
                             style: TextStyle(
@@ -153,6 +166,9 @@ class ChatView extends GetView<ChatController> {
                       case "block":
                         controller.block();
                         break;
+                      case "unblock":
+                        controller.unblock();
+                        break;
                       case "report":
                         controller.report(
                           fullname: data.user!.fullname!,
@@ -166,18 +182,34 @@ class ChatView extends GetView<ChatController> {
                   },
                   itemBuilder: (context) {
                     return [
-                      const PopupMenuItem(
-                        value: "block",
-                        child: Row(
-                          children: [
-                            Icon(Icons.block),
-                            SizedBox(width: 10),
-                            Text(
-                              "بلاک کردن",
+                      controller.relation.value.blocked == false
+                          ? const PopupMenuItem(
+                              value: "block",
+                              child: Row(
+                                children: [
+                                  Icon(Icons.block),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "بلاک کردن",
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const PopupMenuItem(
+                              value: "unblock",
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.block,
+                                    color: Colors.blue,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "آنبلاک کردن",
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
                       // report
                       const PopupMenuItem(
                         value: "report",

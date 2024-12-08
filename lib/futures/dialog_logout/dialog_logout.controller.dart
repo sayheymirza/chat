@@ -10,8 +10,7 @@ class DialogLogoutController extends GetxController {
     try {
       disabled.value = true;
 
-      // clear the storage
-      await Services.configs.unset(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
+      await Services.app.logout();
 
       disabled.value = false;
       Get.offAllNamed('/');

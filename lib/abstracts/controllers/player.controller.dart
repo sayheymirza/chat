@@ -11,7 +11,7 @@ import 'package:video_player/video_player.dart';
 
 class PlayerController {
   bool playing = false;
-  late VideoPlayerController controller;
+  VideoPlayerController? controller;
 
   String totalTime = '00:00';
   String passedTime = '00:00';
@@ -35,7 +35,7 @@ class PlayerController {
       if (result == null) {
         try {
           controller = VideoPlayerController.networkUrl(Uri.parse(url));
-          await controller.initialize();
+          await controller!.initialize();
 
           durationing();
         } catch (e) {
@@ -52,7 +52,7 @@ class PlayerController {
 
     try {
       controller = VideoPlayerController.file(File(url));
-      await controller.initialize();
+      await controller!.initialize();
 
       durationing();
     } catch (e) {
@@ -62,7 +62,7 @@ class PlayerController {
   }
 
   void seek(Duration duration) async {
-    await controller.seekTo(duration);
+    await controller!.seekTo(duration);
     durationing();
   }
 
@@ -77,7 +77,7 @@ class PlayerController {
   }
 
   void play() async {
-    await controller.play();
+    await controller!.play();
 
     playing = true;
 
@@ -88,7 +88,7 @@ class PlayerController {
   }
 
   void pause() async {
-    await controller.pause();
+    await controller!.pause();
 
     playing = false;
 
@@ -103,16 +103,16 @@ class PlayerController {
     }
 
     // init passed
-    var position = (await controller.position) ?? Duration();
+    var position = (await controller!.position) ?? Duration();
     passedTime = formatTime(position);
     passedDuration = position;
     // init total
-    var total = controller.value.duration;
+    var total = controller!.value.duration;
     totalTime = formatTime(total);
     totalDuration = total;
 
     // if end
-    if (controller.value.isPlaying) {
+    if (controller!.value.isPlaying) {
       playing = true;
     } else {
       playing = false;

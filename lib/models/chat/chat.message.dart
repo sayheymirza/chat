@@ -41,7 +41,14 @@ class ChatMessageModel {
     chatId = json['chat_id'];
     senderId = json['sender_id'];
     status = json['status'];
-    sentAt = json['sent_at'];
+    if (json['sent_at'] != null || json['sent_at'] != "null") {
+      // if sent_at is string parse to DateTime else do nothing
+      if (json['sent_at'] is String) {
+        sentAt = DateTime.parse(json['sent_at']);
+      } else {
+        sentAt = json['sent_at'];
+      }
+    }
     type = json['type'];
     data = json['data'];
     meta = json['meta'];
@@ -58,7 +65,7 @@ class ChatMessageModel {
     data['chat_id'] = chatId;
     data['sender_id'] = senderId;
     data['status'] = status;
-    data['sent_at'] = sentAt;
+    data['sent_at'] = sentAt?.toString();
     data['type'] = type;
     data['data'] = toData();
     data['meta'] = meta;

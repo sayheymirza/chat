@@ -5,4 +5,5 @@ abstract class SocketAbstract extends GetxService {
   void disconnect();
   void listen();
   void send({required String event, required dynamic data});
+  void emit({required String event, required dynamic data});
 }

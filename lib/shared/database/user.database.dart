@@ -10,6 +10,8 @@ class UserTable extends Table {
   TextColumn get seen => text()(); // online/recently/offline
   BoolColumn get verified => boolean().withDefault(Constant(false))();
   TextColumn get data => text().map(JsonConverter())();
+  DateTimeColumn get updated_at =>
+      dateTime().clientDefault(() => DateTime.now())();
 
   @override
   Set<Column> get primaryKey => {id};
