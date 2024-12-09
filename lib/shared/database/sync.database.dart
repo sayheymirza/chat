@@ -1,5 +1,3 @@
-import 'package:chat/shared/database/json.convertor.dart';
-import 'package:chat/shared/database/user.database.dart';
 import 'package:drift/drift.dart';
 
 class SyncTable extends Table {

@@ -1,4 +1,15 @@
+import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
+
+class ApiChatMessagesResponse {
+  final List<ChatMessageModel> messages;
+  final DateTime? syncDate;
+
+  ApiChatMessagesResponse({
+    required this.messages,
+    required this.syncDate,
+  });
+}
 
 class ApiChatCreateWithUserResponse {
   final String chatId;

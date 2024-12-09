@@ -24,7 +24,7 @@ abstract class ChatAbstract extends GetxService {
     required String chatId,
   });
 
-  Future<List<ChatMessageModel>> messages({
+  Future<ApiChatMessagesResponse> messages({
     required String chatId,
     required int limit,
     required int page,

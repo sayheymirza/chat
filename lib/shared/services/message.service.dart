@@ -58,6 +58,8 @@ class MessageService extends GetxService {
         log('[message.service.dart] syncing api with database for chat id $chatId without last sync date');
       }
 
+      DateTime? newLast;
+
       do {
         var result = await ApiService.chat.messages(
           chatId: chatId,
@@ -67,14 +69,18 @@ class MessageService extends GetxService {
           cancelToken: cancelToken,
         );
 
-        if (result.isEmpty) {
+        if (result.messages.isEmpty) {
           log('[message.service.dart] syncing api with database for chat id $chatId on page $page got 0 messages');
           break;
         }
 
-        log('[message.service.dart] syncing api with database for chat id $chatId on page $page got ${result.length} messages');
+        if (result.syncDate != null) {
+          newLast = result.syncDate;
+        }
 
-        for (var message in result) {
+        log('[message.service.dart] syncing api with database for chat id $chatId on page $page got ${result.messages.length} messages');
+
+        for (var message in result.messages) {
           var data = MessageTableCompanion(
             message_id: drift.Value(message.messageId!),
             local_id: drift.Value(message.localId),
@@ -109,7 +115,7 @@ class MessageService extends GetxService {
           });
         }
 
-        if (result.length < limit) {
+        if (result.messages.length < limit) {
           break;
         } else {
           page += 1;
@@ -117,14 +123,13 @@ class MessageService extends GetxService {
       } while (true);
 
       // save new last sync date from last message of that chatId
-      var newLast = await lastByChatId(chatId: chatId);
       if (newLast != null) {
         await Services.sync.set(
           category: 'message',
           key: chatId,
-          syncedAt: newLast.sentAt!,
+          syncedAt: newLast,
         );
-        log('[message.service.dart] syncing api with database for chat id $chatId with new last sync date ${newLast.sentAt}');
+        log('[message.service.dart] syncing api with database for chat id $chatId with new last sync date ${newLast.toString()}');
       }
     } catch (e) {
       print(e);
