@@ -184,6 +184,13 @@ class AccountView extends GetView<AccountController> {
                     controller.deleteOrLeaveAccount();
                   },
                 ),
+                // dev log
+                item(
+                  title: 'لاگ ها',
+                  icon: Icons.bug_report,
+                  color: Colors.red,
+                  page: "/dev/log",
+                ),
                 version(),
               ],
             ),
@@ -403,14 +410,13 @@ class AccountView extends GetView<AccountController> {
                         onTap: () {
                           Get.dialog(
                             DialogImageView(
-                              url: "https://avatar.iran.liara.run/public/8",
+                              url: controller.profile.profile.value.avatar!,
                             ),
                             useSafeArea: false,
                           );
                         },
                         child: CachedImageWidget(
-                          url: "https://avatar.iran.liara.run/public/8",
-                          // controller.profile.profile.value.avatar!,
+                          url: controller.profile.profile.value.avatar!,
                           category: "avatar",
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,

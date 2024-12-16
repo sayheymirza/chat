@@ -410,10 +410,9 @@ class ChatService extends GetxService {
 
       if (ids.isEmpty) return;
 
-      ApiService.socket.send(
-        event: CHAT_EVENTS.SEE_MESSAGE,
-        data: {'message_id': ids, 'method': 'multi'},
-      );
+      for (var id in ids) {
+        Services.message.see(messageId: id);
+      }
     } catch (e) {
       print(e);
     }
@@ -427,5 +426,23 @@ class ChatService extends GetxService {
     } catch (e) {
       //
     }
+  }
+
+  void action({required String type}) {
+    var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
+
+    if (chatId == null) {
+      return;
+    }
+
+    log('[chat.service.dart] action $type');
+
+    ApiService.socket.send(
+      event: CHAT_EVENTS.ACTION_EVENT,
+      data: {
+        'action': type,
+        'chat_id': chatId,
+      },
+    );
   }
 }

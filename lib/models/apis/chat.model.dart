@@ -1,6 +1,11 @@
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 
+enum ApiChatMessageOperator {
+  BEFORE,
+  AFTER
+}
+
 class ApiChatMessagesResponse {
   final List<ChatMessageModel> messages;
   final DateTime? syncDate;

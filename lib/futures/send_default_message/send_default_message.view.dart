@@ -23,7 +23,11 @@ class SendDefaultMessageView extends GetView<SendDefaultMessageController> {
             : SizedBox(
                 width: Get.width - 32,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: controller.disabled.value
+                      ? null
+                      : () {
+                          controller.submit();
+                        },
                   child: Text(
                     'ارسال پیام',
                     style: TextStyle(

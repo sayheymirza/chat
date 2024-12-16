@@ -3,11 +3,15 @@ import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_delete_chat/dialog_delete_chat.view.dart';
+import 'package:chat/models/apis/chat.model.dart';
+import 'package:chat/models/apis/socket.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
+import 'package:chat/shared/event.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/widgets/chat/chat_card/chat_card_verify.widget.dart';
@@ -23,8 +27,9 @@ class AdminChatController extends GetxController {
   List<ChatMessageModel> messages = [];
 
   StreamController<List<ChatMessageModel>> messageStream =
-      StreamController<List<ChatMessageModel>>();
+  StreamController<List<ChatMessageModel>>();
   StreamController<ChatModel> chatStream = StreamController<ChatModel>();
+  StreamSubscription<EventModel>? subsocket;
 
   CancelToken cancelToken = CancelToken();
   Timer? updateTimeout;
@@ -33,6 +38,8 @@ class AdminChatController extends GetxController {
   int limit = 20;
   bool ended = false;
   bool loading = false;
+
+  String? userId;
 
   @override
   void onInit() {
@@ -45,6 +52,12 @@ class AdminChatController extends GetxController {
     );
 
     load();
+
+    subsocket = event.on<EventModel>().listen((data) async {
+      if (data.event == SOCKET_EVENTS.CONNECTED) {
+        Services.message.sendAll();
+      }
+    });
   }
 
   @override
@@ -56,6 +69,9 @@ class AdminChatController extends GetxController {
     cancelToken.cancel();
 
     chatStream.close();
+    messageStream.close();
+
+    subsocket!.cancel();
   }
 
   Future<void> load() async {
@@ -63,25 +79,63 @@ class AdminChatController extends GetxController {
       sync();
       listenChat();
       listenMessages();
+      fetch();
       childing();
+      markAllAsSeen();
     } catch (e) {
       print(e);
     }
   }
 
   Future<void> sync() async {
+    var id = Get.parameters['id']!;
+
+    var last = await Services.message.lastByChatId(chatId: id);
+
+    if (last != null) {
+      await Future.wait([
+        Services.message.syncAPIWithDatabase(
+          chatId: id,
+          seq: last.seq!,
+          operator: ApiChatMessageOperator.AFTER,
+        ),
+        Services.message.syncAPIWithDatabase(
+          chatId: id,
+          seq: last.seq!,
+          operator: ApiChatMessageOperator.BEFORE,
+        ),
+      ]);
+    }
+  }
+
+  Future<void> markAllAsSeen() {
+    return Services.chat.see(chatId: Get.parameters['id']!);
+  }
+
+  Future<void> fetch() async {
+    await Future.wait([
+      fetchUser(),
+      fetchChat(),
+    ]);
+  }
+
+  Future<void> fetchUser() async {
+    if (userId != null) {
+      await Services.user.fetch(userId: userId!);
+      childing();
+    }
+  }
+
+  Future<void> fetchChat() async {
     var id = Get.parameters['id'];
 
-    await Services.message.syncAPIWithDatabase(
-      chatId: id!,
-      cancelToken: cancelToken,
-    );
+    await Services.chat.one(chatId: id!);
   }
 
   void listenChat() async {
     var id = Get.parameters['id'];
 
-    var stream = await Services.adminChat.stream(chatId: id!);
+    var stream = await Services.chat.stream(chatId: id!);
 
     var subchat = stream.listen((value) {
       if (value == null) {
@@ -92,6 +146,11 @@ class AdminChatController extends GetxController {
       }
 
       chatStream.add(value);
+
+      userId = value.userId!;
+
+      relation.value = value.user!.relation!;
+      update();
     });
 
     chatStream.onCancel = () {
@@ -110,7 +169,7 @@ class AdminChatController extends GetxController {
 
     var subsending = Services.message.listenToSending(chatId: id);
 
-    chatStream.onCancel = () {
+    messageStream.onCancel = () {
       subsending.cancel();
       submessages.cancel();
     };
@@ -124,23 +183,30 @@ class AdminChatController extends GetxController {
 
     if (last == null) return;
 
-    log('[chat.controller.dart] load messages before ${last.sentAt.toString()}');
+    log('[chat.controller.dart] load messages before ${last.seq}');
 
     try {
       loading = true;
 
       var result = await Services.message.select(
         chatId: id!,
-        sentAt: last.sentAt!,
+        seq: last.seq!,
         limit: 100,
       );
 
-      loading = false;
-
       if (result.isEmpty) {
-        ended = true;
-        return;
+        var fetchedResult = await Services.message.syncAPIWithDatabase(
+          chatId: id,
+          seq: last.seq!,
+        );
+
+        if (fetchedResult.isEmpty) {
+          ended = true;
+          return;
+        }
       }
+
+      loading = false;
 
       handleMessages(result);
     } catch (e) {
@@ -182,7 +248,7 @@ class AdminChatController extends GetxController {
       updateTimeout!.cancel();
     }
 
-    updateTimeout = Timer(Duration(milliseconds: 300), () {
+    updateTimeout = Timer(Duration(milliseconds: 100), () {
       log('[chat.controller.dart] update message stream');
       messageStream
           .add(messages..sort((a, b) => a.sentAt!.compareTo(b.sentAt!)));
@@ -201,45 +267,47 @@ class AdminChatController extends GetxController {
   }
 
   void block() async {
-    relation.value = relation.value.copyWith({"blocked": true});
+    if (userId == null) return;
 
-    var id = Get.parameters['id']!;
+    relation.value = relation.value.copyWith({"blocked": true});
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: id,
+        user: userId!,
         action: RELATION_ACTION.BLOCK,
       );
       if (result) {
         showSnackbar(message: 'کاربر به بلاکی ها اضافه شد');
+        fetchUser();
       }
     });
   }
 
   void unblock() async {
-    relation.value = relation.value.copyWith({"blocked": false});
+    if (userId == null) return;
 
-    var id = Get.parameters['id']!;
+    relation.value = relation.value.copyWith({"blocked": false});
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: id,
+        user: userId!,
         action: RELATION_ACTION.UNBLOCK,
       );
       if (result) {
         showSnackbar(message: 'کاربر از بلاکی ها حذف شد');
+        fetchUser();
       }
     });
   }
 
   void favorite() async {
-    relation.value = relation.value.copyWith({"favorited": true});
+    if (userId == null) return;
 
-    var id = Get.parameters['id']!;
+    relation.value = relation.value.copyWith({"favorited": true});
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: id,
+        user: userId!,
         action: RELATION_ACTION.FAVORITE,
       );
       if (result) {
@@ -249,13 +317,13 @@ class AdminChatController extends GetxController {
   }
 
   void disfavorite() async {
-    relation.value = relation.value.copyWith({"favorited": false});
+    if (userId == null) return;
 
-    var id = Get.parameters['id']!;
+    relation.value = relation.value.copyWith({"favorited": false});
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: id,
+        user: userId!,
         action: RELATION_ACTION.DISFAVORITE,
       );
       if (result) {
@@ -267,12 +335,12 @@ class AdminChatController extends GetxController {
   void report({
     required String fullname,
   }) {
-    var id = Get.parameters['id'];
+    if (userId == null) return;
 
     Get.toNamed(
       '/app/report',
       arguments: {
-        'id': id,
+        'id': userId!,
         'fullname': fullname,
       },
     );

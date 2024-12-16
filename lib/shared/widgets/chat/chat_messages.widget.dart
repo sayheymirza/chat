@@ -106,32 +106,31 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
         ),
 
         // scroll to bottom (floating action button)
-        if (showScrollToBottom)
-          AnimatedPositioned(
-            left: 16,
-            bottom: showScrollToBottom ? 100 : -100,
-            duration: Duration(milliseconds: 500),
-            child: FloatingActionButton(
-              shape: CircleBorder(),
-              backgroundColor: Get.theme.primaryColor,
-              onPressed: () {
-                // scroll to bottom
-                scrollController.animateTo(
-                  0.0,
-                  duration: Duration(milliseconds: 500),
-                  curve: Curves.easeOut,
-                );
+        AnimatedPositioned(
+          left: 16,
+          bottom: showScrollToBottom ? 85 + Get.mediaQuery.padding.bottom : -100,
+          duration: Duration(milliseconds: 200),
+          child: FloatingActionButton(
+            shape: CircleBorder(),
+            backgroundColor: Get.theme.primaryColor,
+            onPressed: () {
+              // scroll to bottom
+              scrollController.animateTo(
+                0.0,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeOut,
+              );
 
-                setState(() {
-                  showScrollToBottom = false;
-                });
-              },
-              child: Icon(
-                Icons.arrow_downward,
-                color: Get.theme.colorScheme.onPrimary,
-              ),
+              showScrollToBottom = false;
+
+              setState(() {});
+            },
+            child: Icon(
+              Icons.arrow_downward,
+              color: Get.theme.colorScheme.onPrimary,
             ),
           ),
+        ),
       ],
     );
   }

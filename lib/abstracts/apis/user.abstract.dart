@@ -48,4 +48,11 @@ abstract class ApiUserAbstract extends GetxService {
   });
 
   Future<bool> disable({required String type, required String description});
+
+  Future<ApiSimpleResponseModel> sendSMS({required String user});
+
+  Future<ApiSimpleResponseModel> sendFreeMessage({
+    required String user,
+    required String message,
+  });
 }

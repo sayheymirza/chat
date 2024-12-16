@@ -71,6 +71,8 @@ class ChatFooterController extends GetxController {
       visableSendButton.value = true;
       visableVoiceButton.value = false;
       visableAttachmentButton.value = false;
+
+      Services.chat.action(type: 'typing');
     }
   }
 

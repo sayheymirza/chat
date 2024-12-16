@@ -14,6 +14,7 @@ class ChatsView extends GetView<ChatsController> {
   Widget build(BuildContext context) {
     Get.put(ChatsController());
 
+    Services.chat.syncAPIWithDatabase();
     controller.load();
 
     return Scaffold(

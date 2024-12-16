@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/apis/chat.model.dart';
 import 'package:chat/models/chat/chat.event.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/event.model.dart';
@@ -41,98 +42,79 @@ class MessageService extends GetxService {
   }
 
   // sync api with database
-  Future<void> syncAPIWithDatabase({
+  Future<List<MessageTableData>> syncAPIWithDatabase({
     required String chatId,
+    int? seq,
+    ApiChatMessageOperator operator = ApiChatMessageOperator.BEFORE,
     CancelToken? cancelToken,
     int limit = 100,
+    int page = 1,
   }) async {
     try {
-      // get last message of that chatId
-      var last = await Services.sync.get(category: 'message', key: chatId);
+      var result = await ApiService.chat.messages(
+        chatId: chatId,
+        page: page,
+        limit: limit,
+        operator: operator,
+        seq: seq,
+        cancelToken: cancelToken,
+      );
 
-      var page = 1;
-
-      if (last != null) {
-        log('[message.service.dart] syncing api with database for chat id $chatId with last sync date $last');
-      } else {
-        log('[message.service.dart] syncing api with database for chat id $chatId without last sync date');
+      if (cancelToken != null && cancelToken.isCancelled) {
+        return [];
       }
 
-      DateTime? newLast;
-
-      do {
-        var result = await ApiService.chat.messages(
-          chatId: chatId,
-          page: page,
-          limit: limit,
-          syncDate: last,
-          cancelToken: cancelToken,
-        );
-
-        if (result.messages.isEmpty) {
-          log('[message.service.dart] syncing api with database for chat id $chatId on page $page got 0 messages');
-          break;
-        }
-
-        if (result.syncDate != null) {
-          newLast = result.syncDate;
-        }
-
-        log('[message.service.dart] syncing api with database for chat id $chatId on page $page got ${result.messages.length} messages');
-
-        for (var message in result.messages) {
-          var data = MessageTableCompanion(
-            message_id: drift.Value(message.messageId!),
-            local_id: drift.Value(message.localId),
-            chat_id: drift.Value(message.chatId!),
-            status: drift.Value(message.status!),
-            sender_id: drift.Value(message.senderId!),
-            sent_at: drift.Value(message.sentAt!),
-            type: drift.Value(message.type!),
-            data: drift.Value(message.data),
-            meta: drift.Value(message.meta),
-            theme: drift.Value(message.theme),
-            seq: drift.Value(message.seq!),
-          );
-
-          await database.transaction(() async {
-            // 1. find one
-            var one = await (database.select(database.messageTable)
-                  ..where((row) =>
-                      row.message_id.equals(message.messageId!) |
-                      row.local_id.equals(message.localId!)))
-                .getSingleOrNull();
-            // 2. create
-            if (one == null) {
-              await database.into(database.messageTable).insert(data);
-            }
-            // 3. update
-            else {
-              await (database.update(database.messageTable)
-                    ..where((row) => row.id.equals(one.id)))
-                  .write(data);
-            }
-          });
-        }
-
-        if (result.messages.length < limit) {
-          break;
-        } else {
-          page += 1;
-        }
-      } while (true);
-
-      // save new last sync date from last message of that chatId
-      if (newLast != null) {
-        await Services.sync.set(
-          category: 'message',
-          key: chatId,
-          syncedAt: newLast,
-        );
-        log('[message.service.dart] syncing api with database for chat id $chatId with new last sync date ${newLast.toString()}');
+      if (result.messages.isEmpty) {
+        log('[message.service.dart] syncing api with database for chat id $chatId at seq $seq ${operator.toString().split('.').last.toLowerCase()} got 0 messages');
+        return [];
       }
+
+      log('[message.service.dart] syncing api with database for chat id $chatId at seq $seq ${operator.toString().split('.').last.toLowerCase()} got ${result.messages.length} messages');
+
+      for (var message in result.messages) {
+        var data = MessageTableCompanion(
+          message_id: drift.Value(message.messageId!),
+          local_id: drift.Value(message.localId),
+          chat_id: drift.Value(message.chatId!),
+          status: drift.Value(message.status!),
+          sender_id: drift.Value(message.senderId!),
+          sent_at: drift.Value(message.sentAt!),
+          type: drift.Value(message.type!),
+          data: drift.Value(message.data),
+          meta: drift.Value(message.meta),
+          theme: drift.Value(message.theme),
+          seq: drift.Value(message.seq!),
+        );
+
+        await database.transaction(() async {
+          // 1. find one
+          var one = await (database.select(database.messageTable)
+                ..where((row) =>
+                    row.message_id.equals(message.messageId!) |
+                    row.local_id.equals(message.localId!)))
+              .getSingleOrNull();
+          // 2. create
+          if (one == null) {
+            await database.into(database.messageTable).insert(data);
+          }
+          // 3. update
+          else {
+            await (database.update(database.messageTable)
+                  ..where((row) => row.id.equals(one.id)))
+                .write(data);
+          }
+        });
+      }
+
+      if (seq == null) {
+        return [];
+      }
+
+      return select(chatId: chatId, seq: seq);
     } catch (e) {
       print(e);
+
+      return [];
     }
   }
 
@@ -209,7 +191,8 @@ class MessageService extends GetxService {
           chatId == message.chatId &&
           message.senderId != userId) {
         seen(messageId: message.messageId!);
-        see(messageId: message.messageId!);
+        // see(messageId: message.messageId!);
+        Services.chat.see(chatId: message.chatId!);
       }
     } catch (e) {
       print(e);
@@ -254,7 +237,7 @@ class MessageService extends GetxService {
     // order by sent_at new to old
     query.orderBy([
       (row) => drift.OrderingTerm(
-            expression: row.sent_at,
+            expression: row.seq,
             mode: drift.OrderingMode.desc,
           ),
     ]);
@@ -267,13 +250,24 @@ class MessageService extends GetxService {
   // select message (sent_at and limit)
   Future<List<MessageTableData>> select({
     required String chatId,
-    required DateTime sentAt,
+    required int seq,
+    ApiChatMessageOperator operator = ApiChatMessageOperator.BEFORE,
     int limit = 20,
   }) async {
     try {
       var messages = await (database.select(database.messageTable)
-            ..where((row) => row.sent_at.isSmallerThanValue(sentAt))
-            ..limit(limit))
+            ..where((row) =>
+                row.chat_id.equals(chatId) &
+                (operator == ApiChatMessageOperator.BEFORE
+                    ? row.seq.isSmallerThanValue(seq)
+                    : row.seq.isBiggerThanValue(seq)))
+            ..limit(limit)
+            ..orderBy([
+              (row) => drift.OrderingTerm(
+                    expression: row.sent_at,
+                    mode: drift.OrderingMode.desc,
+                  ),
+            ]))
           .get();
 
       return messages;
@@ -440,6 +434,22 @@ class MessageService extends GetxService {
     try {
       var count = await database.delete(database.messageTable).go();
       log('[message.service.dart] clear over $count messages');
+    } catch (e) {
+      //
+    }
+  }
+
+  Future<void> sendAll() async {
+    try {
+      var messages = await (database.select(database.messageTable)
+            ..where((row) => row.status.equals('sending')))
+          .get();
+
+      log('[message.service.dart] send all messages with length ${messages.length}');
+
+      for (var message in messages) {
+        send(message: ChatMessageModel.fromDatabase(message));
+      }
     } catch (e) {
       //
     }

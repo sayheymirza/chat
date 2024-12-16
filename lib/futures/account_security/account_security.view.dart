@@ -1,6 +1,7 @@
 import 'package:chat/futures/account_security/account_security.controller.dart';
 import 'package:chat/futures/dialog_change_password/dialog_change_password.view.dart';
 import 'package:chat/futures/dialog_change_phone/dialog_change_phone.view.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,48 @@ class AccountSecurityView extends GetView<AccountSecurityController> {
         () => SingleChildScrollView(
           child: Column(
             children: [
+              const ListTile(
+                title: Text(
+                  "دسترسی ها",
+                ),
+                dense: true,
+              ),
+              permission(
+                icon: Icons.notifications,
+                text: "دسترسی به اعلان ها",
+                access: controller.permissionToNotification.value,
+                onTap: () {
+                  Services.permission.ask("notification").then(
+                    (value) {
+                      controller.init();
+                    },
+                  );
+                },
+              ),
+              permission(
+                icon: Icons.gps_fixed,
+                text: "دسترسی به موقعیت مکانی",
+                access: controller.permissionToGPS.value,
+                onTap: () {
+                  Services.permission.ask("gps").then(
+                    (value) {
+                      controller.init();
+                    },
+                  );
+                },
+              ),
+              permission(
+                icon: Icons.mic,
+                text: "دسترسی به میکروفون",
+                access: controller.permissionToMicrophone.value,
+                onTap: () {
+                  Services.permission.ask("microphone").then(
+                    (value) {
+                      controller.init();
+                    },
+                  );
+                },
+              ),
               const ListTile(
                 title: Text(
                   "تنظیمات دریافت تماس",
@@ -111,6 +154,32 @@ class AccountSecurityView extends GetView<AccountSecurityController> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget permission({
+    required IconData icon,
+    required String text,
+    required bool access,
+    Function? onTap,
+  }) {
+    return ListTile(
+      onTap: access == true
+          ? null
+          : () {
+              if (onTap != null) {
+                onTap();
+              }
+            },
+      leading: Icon(icon),
+      title: Text(text),
+      trailing: Text(
+        access ? "فعال" : "غیرفعال",
+        style: TextStyle(
+          color: access ? Colors.green : Colors.red,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

@@ -28,7 +28,7 @@ class AvatarWidget extends StatelessWidget {
         ),
       ),
       child: CachedImageWidget(
-        url: "https://avatar.iran.liara.run/public/8", // url,
+        url: url,
         category: "avatar",
       ),
     );

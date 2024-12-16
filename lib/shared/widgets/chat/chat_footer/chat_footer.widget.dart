@@ -81,12 +81,12 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
               }
             }),
 
-            // iconButton(
-            //   icon: Icons.send_time_extension_rounded,
-            //   onPressed: () {
-            //     controller.testSendMessages(20, Duration(milliseconds: 300));
-            //   },
-            // ),
+            iconButton(
+              icon: Icons.send_time_extension_rounded,
+              onPressed: () {
+                controller.testSendMessages(20, Duration(milliseconds: 300));
+              },
+            ),
 
             // Recording indicator
             Obx(() {

@@ -147,7 +147,7 @@ class ProfileController extends GetxController {
 
   void sendSMS({required String id}) {
     Get.bottomSheet(
-      const DialogSendSMSView(),
+      DialogSendSMSView(userId: id),
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
     );

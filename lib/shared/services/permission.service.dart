@@ -8,6 +8,7 @@ class PermissionService extends GetxService {
     switch (permission) {
       case "camera":
         return Permission.camera.request();
+      case "mic":
       case "microphone":
         return Permission.microphone.request();
       case "gps":

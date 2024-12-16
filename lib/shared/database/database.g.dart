@@ -2563,6 +2563,263 @@ class SyncTableCompanion extends UpdateCompanion<SyncTableData> {
   }
 }
 
+class $LogTableTable extends LogTable
+    with TableInfo<$LogTableTable, LogTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LogTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+      'category', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _messageMeta =
+      const VerificationMeta('message');
+  @override
+  late final GeneratedColumn<String> message = GeneratedColumn<String>(
+      'message', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: Constant(DateTime.now()));
+  @override
+  List<GeneratedColumn> get $columns => [id, category, message, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'log_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<LogTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('category')) {
+      context.handle(_categoryMeta,
+          category.isAcceptableOrUnknown(data['category']!, _categoryMeta));
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('message')) {
+      context.handle(_messageMeta,
+          message.isAcceptableOrUnknown(data['message']!, _messageMeta));
+    } else if (isInserting) {
+      context.missing(_messageMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LogTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LogTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+      message: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}message'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $LogTableTable createAlias(String alias) {
+    return $LogTableTable(attachedDatabase, alias);
+  }
+}
+
+class LogTableData extends DataClass implements Insertable<LogTableData> {
+  final int id;
+  final String category;
+  final String message;
+  final DateTime createdAt;
+  const LogTableData(
+      {required this.id,
+      required this.category,
+      required this.message,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['category'] = Variable<String>(category);
+    map['message'] = Variable<String>(message);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  LogTableCompanion toCompanion(bool nullToAbsent) {
+    return LogTableCompanion(
+      id: Value(id),
+      category: Value(category),
+      message: Value(message),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory LogTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LogTableData(
+      id: serializer.fromJson<int>(json['id']),
+      category: serializer.fromJson<String>(json['category']),
+      message: serializer.fromJson<String>(json['message']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'category': serializer.toJson<String>(category),
+      'message': serializer.toJson<String>(message),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  LogTableData copyWith(
+          {int? id, String? category, String? message, DateTime? createdAt}) =>
+      LogTableData(
+        id: id ?? this.id,
+        category: category ?? this.category,
+        message: message ?? this.message,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  LogTableData copyWithCompanion(LogTableCompanion data) {
+    return LogTableData(
+      id: data.id.present ? data.id.value : this.id,
+      category: data.category.present ? data.category.value : this.category,
+      message: data.message.present ? data.message.value : this.message,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LogTableData(')
+          ..write('id: $id, ')
+          ..write('category: $category, ')
+          ..write('message: $message, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, category, message, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LogTableData &&
+          other.id == this.id &&
+          other.category == this.category &&
+          other.message == this.message &&
+          other.createdAt == this.createdAt);
+}
+
+class LogTableCompanion extends UpdateCompanion<LogTableData> {
+  final Value<int> id;
+  final Value<String> category;
+  final Value<String> message;
+  final Value<DateTime> createdAt;
+  const LogTableCompanion({
+    this.id = const Value.absent(),
+    this.category = const Value.absent(),
+    this.message = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  LogTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String category,
+    required String message,
+    this.createdAt = const Value.absent(),
+  })  : category = Value(category),
+        message = Value(message);
+  static Insertable<LogTableData> custom({
+    Expression<int>? id,
+    Expression<String>? category,
+    Expression<String>? message,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (category != null) 'category': category,
+      if (message != null) 'message': message,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  LogTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? category,
+      Value<String>? message,
+      Value<DateTime>? createdAt}) {
+    return LogTableCompanion(
+      id: id ?? this.id,
+      category: category ?? this.category,
+      message: message ?? this.message,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (message.present) {
+      map['message'] = Variable<String>(message.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LogTableCompanion(')
+          ..write('id: $id, ')
+          ..write('category: $category, ')
+          ..write('message: $message, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2572,6 +2829,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ChatTableTable chatTable = $ChatTableTable(this);
   late final $MessageTableTable messageTable = $MessageTableTable(this);
   late final $SyncTableTable syncTable = $SyncTableTable(this);
+  late final $LogTableTable logTable = $LogTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2582,7 +2840,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         userTable,
         chatTable,
         messageTable,
-        syncTable
+        syncTable,
+        logTable
       ];
 }
 
@@ -3883,6 +4142,128 @@ typedef $$SyncTableTableProcessedTableManager = ProcessedTableManager<
     ),
     SyncTableData,
     PrefetchHooks Function()>;
+typedef $$LogTableTableCreateCompanionBuilder = LogTableCompanion Function({
+  Value<int> id,
+  required String category,
+  required String message,
+  Value<DateTime> createdAt,
+});
+typedef $$LogTableTableUpdateCompanionBuilder = LogTableCompanion Function({
+  Value<int> id,
+  Value<String> category,
+  Value<String> message,
+  Value<DateTime> createdAt,
+});
+
+class $$LogTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $LogTableTable> {
+  $$LogTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get message => $state.composableBuilder(
+      column: $state.table.message,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$LogTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $LogTableTable> {
+  $$LogTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get category => $state.composableBuilder(
+      column: $state.table.category,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get message => $state.composableBuilder(
+      column: $state.table.message,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get createdAt => $state.composableBuilder(
+      column: $state.table.createdAt,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $$LogTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $LogTableTable,
+    LogTableData,
+    $$LogTableTableFilterComposer,
+    $$LogTableTableOrderingComposer,
+    $$LogTableTableCreateCompanionBuilder,
+    $$LogTableTableUpdateCompanionBuilder,
+    (LogTableData, BaseReferences<_$AppDatabase, $LogTableTable, LogTableData>),
+    LogTableData,
+    PrefetchHooks Function()> {
+  $$LogTableTableTableManager(_$AppDatabase db, $LogTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$LogTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$LogTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> category = const Value.absent(),
+            Value<String> message = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              LogTableCompanion(
+            id: id,
+            category: category,
+            message: message,
+            createdAt: createdAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String category,
+            required String message,
+            Value<DateTime> createdAt = const Value.absent(),
+          }) =>
+              LogTableCompanion.insert(
+            id: id,
+            category: category,
+            message: message,
+            createdAt: createdAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$LogTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $LogTableTable,
+    LogTableData,
+    $$LogTableTableFilterComposer,
+    $$LogTableTableOrderingComposer,
+    $$LogTableTableCreateCompanionBuilder,
+    $$LogTableTableUpdateCompanionBuilder,
+    (LogTableData, BaseReferences<_$AppDatabase, $LogTableTable, LogTableData>),
+    LogTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3899,4 +4280,6 @@ class $AppDatabaseManager {
       $$MessageTableTableTableManager(_db, _db.messageTable);
   $$SyncTableTableTableManager get syncTable =>
       $$SyncTableTableTableManager(_db, _db.syncTable);
+  $$LogTableTableTableManager get logTable =>
+      $$LogTableTableTableManager(_db, _db.logTable);
 }

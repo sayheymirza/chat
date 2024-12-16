@@ -18,6 +18,7 @@ import 'package:chat/futures/contact/contact.view.dart';
 import 'package:chat/futures/cropper/cropper.view.dart';
 import 'package:chat/futures/earning_income/earning_income.view.dart';
 import 'package:chat/futures/favorites/favorites.view.dart';
+import 'package:chat/futures/log/log.view.dart';
 import 'package:chat/futures/map/map.view.dart';
 import 'package:chat/futures/page/page.view.dart';
 import 'package:chat/futures/payment/payment.view.dart';
@@ -119,5 +120,9 @@ List<GetPage> pages = [
   GetPage(
     name: '/payment',
     page: () => const PaymentView(),
+  ),
+  GetPage(
+    name: '/dev/log',
+    page: () => const LogView(),
   ),
 ];

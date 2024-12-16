@@ -1,6 +1,8 @@
 import 'package:chat/futures/map/map.controller.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:screenshot/screenshot.dart';
@@ -83,63 +85,65 @@ class MapView extends GetView<MapViewController> {
             ],
           ),
         ),
-        body: Screenshot(
-          controller: controller.screenshotController,
-          child: Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: FlutterMap(
-              mapController: controller.mapController,
-              options: MapOptions(
-                initialCenter: const LatLng(32.4279, 53.688),
-                initialZoom: 5,
-                onPositionChanged: (position, hasGesture) {
-                  controller.setPosition(position.center, position.zoom);
-                },
-                interactionOptions: InteractionOptions(
-                  flags: InteractiveFlag.drag | InteractiveFlag.pinchZoom,
-                ),
-              ),
-              children: [
-                // TileLayer(
-                //   urlTemplate:
-                //       // 'https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}&hl=fa',
-                //       'https://map.doting.ir/styles/OSM OpenMapTiles/512/{z}/{x}/{y}.png',
-                //   tileProvider: CachedTileProvider(
-                //     // use the store for your CachedTileProvider instance
-                //     store: MemCacheStore(),
-                //   ),
-                // ),
-                if (controller.style != null)
-                  VectorTileLayer(
-                    tileProviders: controller.style!.providers,
-                    theme: controller.style!.theme,
-                    sprites: controller.style!.sprites,
-                    maximumZoom: 19,
-                    tileOffset: TileOffset.mapbox,
-                    layerMode: VectorTileLayerMode.vector,
+        body: controller.inited.value == false
+            ? Container()
+            : Screenshot(
+                controller: controller.screenshotController,
+                child: Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 16,
                   ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      width: 32.0,
-                      height: 32.0,
-                      point: controller.position.value,
-                      child: Image.asset(
-                        'lib/app/assets/images/map_marker.png',
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: FlutterMap(
+                    mapController: controller.mapController,
+                    options: MapOptions(
+                      initialCenter: controller.centerPosition.value,
+                      initialZoom: controller.centerZoom.value,
+                      onPositionChanged: (position, hasGesture) {
+                        controller.setPosition(position.center, position.zoom);
+                      },
+                      interactionOptions: InteractionOptions(
+                        flags: InteractiveFlag.drag | InteractiveFlag.pinchZoom,
                       ),
                     ),
-                  ],
+                    children: [
+                      if (controller.type.value == "raster")
+                        TileLayer(
+                          urlTemplate: controller.url.value,
+                          tileProvider: CachedTileProvider(
+                            // use the store for your CachedTileProvider instance
+                            store: MemCacheStore(),
+                          ),
+                        ),
+                      if (controller.type.value == "vector" &&
+                          controller.style != null)
+                        VectorTileLayer(
+                          tileProviders: controller.style!.providers,
+                          theme: controller.style!.theme,
+                          sprites: controller.style!.sprites,
+                          maximumZoom: 19,
+                          tileOffset: TileOffset.mapbox,
+                          layerMode: VectorTileLayerMode.vector,
+                        ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            width: 32.0,
+                            height: 32.0,
+                            point: controller.position.value,
+                            child: Image.asset(
+                              'lib/app/assets/images/map_marker.png',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }

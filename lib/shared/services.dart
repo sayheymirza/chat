@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:developer' as developer;
 
 import 'package:chat/shared/services/access.service.dart';
 import 'package:chat/shared/services/admin-chat.service.dart';
@@ -12,6 +12,7 @@ import 'package:chat/shared/services/event.service.dart';
 import 'package:chat/shared/services/file.service.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:chat/shared/services/launch_instance.service.dart';
+import 'package:chat/shared/services/log.service.dart';
 import 'package:chat/shared/services/message.service.dart';
 import 'package:chat/shared/services/notification.service.dart';
 import 'package:chat/shared/services/permission.service.dart';
@@ -24,28 +25,49 @@ import 'package:get/get.dart';
 
 class Services {
   static ChromeService get chrome => Get.find(tag: 'chrome');
+
   static HttpService get http => Get.find(tag: 'http');
+
   static LaunchInstanceService get launch => Get.find(tag: 'launch');
+
   static ProfileService get profile => Get.find(tag: 'profile');
+
   static ConfigsService get configs => Get.find(tag: 'configs');
+
   static EventService get event => Get.find(tag: 'event');
+
   static AppService get app => Get.find(tag: 'app');
+
   static QueueService get queue => Get.find(tag: 'queue');
+
   static AccessService get access => Get.find(tag: 'access');
+
   static CacheService get cache => Get.find(tag: 'cache');
+
   static NotificationService get notification => Get.find(tag: 'notification');
+
   static FileService get file => Get.find(tag: 'file');
+
   static ChatService get chat => Get.find(tag: 'chat');
+
   static AdminChatService get adminChat => Get.find(tag: 'admin-chat');
+
   static MessageService get message => Get.find(tag: 'message');
+
   static PermissionService get permission => Get.find(tag: 'permission');
+
   static WaveframeService get waveframe => Get.find(tag: 'waveframe');
+
   static CallService get call => Get.find(tag: 'call');
+
   static UserService get user => Get.find(tag: 'user');
+
   static SyncService get sync => Get.find(tag: 'sync');
 
+  static LogService get log => Get.find(tag: 'log');
+
   static put() async {
-    log('[services.dart] start put Get services');
+    developer.log('[services.dart] start put Get services');
     Get.put(HttpService(), tag: 'http');
     Get.put(QueueService(), tag: 'queue');
     Get.lazyPut(() => ChromeService(), tag: 'chrome');
@@ -66,6 +88,7 @@ class Services {
     Get.lazyPut(() => CallService(), tag: 'call');
     Get.lazyPut(() => UserService(), tag: 'user');
     Get.lazyPut(() => SyncService(), tag: 'sync');
-    log('[services.dart] end put Get services');
+    Get.lazyPut(() => LogService(), tag: 'log');
+    developer.log('[services.dart] end put Get services');
   }
 }

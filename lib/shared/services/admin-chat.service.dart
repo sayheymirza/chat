@@ -7,7 +7,6 @@ import 'package:chat/models/chat/chat.event.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
-import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/event.dart';
 import 'package:chat/shared/services.dart';

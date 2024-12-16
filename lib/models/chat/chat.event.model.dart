@@ -8,4 +8,6 @@ class CHAT_EVENTS {
   static String ON_DELETE_CHAT = "chat:on-delete-chat";
   static String SEE_MESSAGE = "chat:see-message";
   static String ON_SEE_MESSAGE = "chat:on-see-message";
+  static String ACTION_EVENT = "chat:action-event";
+  static String ON_ACTION_EVENT = "chat:on-action-event";
 }

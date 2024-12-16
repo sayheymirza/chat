@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:chat/app/apis/api.dart';
 import 'package:chat/shared/database/database.dart';
+import 'package:chat/shared/snackbar.dart';
 import 'package:drift/drift.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +11,7 @@ class SendDefaultMessageController extends GetxController {
   RxList<Map<String, dynamic>> messages = List<Map<String, dynamic>>.empty(
     growable: true,
   ).obs;
+  RxBool disabled = false.obs;
 
   @override
   void onInit() async {
@@ -42,5 +45,22 @@ class SendDefaultMessageController extends GetxController {
   void select(String value) {
     selected.value = value;
     log('[send_default_message.controller.dart] select $value');
+  }
+
+  Future<void> submit() async {
+    try {
+      disabled.value = true;
+      var userId = Get.parameters['id'] ?? Get.arguments['id'];
+      var result = await ApiService.user.sendSMS(user: userId);
+      disabled.value = false;
+
+      if (result.status) {
+        Get.back();
+      }
+
+      showSnackbar(message: result.message);
+    } catch (e) {
+      disabled.value = false;
+    }
   }
 }

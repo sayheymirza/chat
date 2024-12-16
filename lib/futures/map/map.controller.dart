@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -13,7 +14,14 @@ class MapViewController extends GetxController {
   ScreenshotController screenshotController = ScreenshotController();
 
   Rx<LatLng> position = LatLng(32.4279, 53.688).obs;
+  Rx<LatLng> centerPosition = LatLng(32.4279, 53.688).obs;
+  RxDouble centerZoom = 5.0.obs;
   RxDouble zoom = 5.0.obs;
+
+  RxString type = "raster".obs;
+  RxString url = "".obs;
+
+  RxBool inited = false.obs;
 
   RxString gps = "loading".obs;
 
@@ -32,9 +40,28 @@ class MapViewController extends GetxController {
 
   Future<void> initMap() async {
     try {
-      style = await StyleReader(
-        uri: 'https://map.doting.ir/styles/OSM%20OpenMapTiles/style.json',
-      ).read();
+      type.value = Services.configs.get(key: CONSTANTS.STORAGE_MAP_TYPE);
+      url.value = Services.configs.get(key: CONSTANTS.STORAGE_MAP_URL);
+
+      var lat = Services.configs.get(key: CONSTANTS.STORAGE_MAP_LAT);
+      var lon = Services.configs.get(key: CONSTANTS.STORAGE_MAP_LON);
+      var zoom = Services.configs.get(key: CONSTANTS.STORAGE_MAP_ZOOM);
+
+      if (lat != null && lon != null) {
+        centerPosition.value = LatLng(double.parse(lat), double.parse(lon));
+      }
+
+      if (zoom != null) {
+        centerZoom.value = double.parse(zoom);
+      }
+
+      if (type.value == "vector") {
+        style = await StyleReader(
+          uri: url.value,
+        ).read();
+      }
+
+      inited.value = true;
 
       log('[map.controller.dart] map inited');
 

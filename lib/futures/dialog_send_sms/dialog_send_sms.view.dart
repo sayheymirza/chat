@@ -5,7 +5,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class DialogSendSMSView extends GetView<DialogSendSMSController> {
-  const DialogSendSMSView({super.key});
+  final String userId;
+
+  const DialogSendSMSView({
+    super.key,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +59,11 @@ class DialogSendSMSView extends GetView<DialogSendSMSController> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.disabled.value
+                  ? null
+                  : () {
+                      controller.submit(userId: userId);
+                    },
               child: Text(
                 'ارسال پیامک',
                 style: TextStyle(color: Colors.white),
@@ -67,9 +76,11 @@ class DialogSendSMSView extends GetView<DialogSendSMSController> {
           SizedBox(
             width: double.infinity,
             child: TextButton(
-              onPressed: () {
-                Get.toNamed('/app/purchase/one-step');
-              },
+              onPressed: controller.disabled.value
+                  ? null
+                  : () {
+                      Get.toNamed('/app/purchase/one-step');
+                    },
               child: Text('خرید اعتبار پیامکی'),
             ),
           ),

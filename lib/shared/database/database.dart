@@ -2,6 +2,7 @@ import 'package:chat/shared/database/cache.database.dart';
 import 'package:chat/shared/database/chat.database.dart';
 import 'package:chat/shared/database/dropdown.database.dart';
 import 'package:chat/shared/database/json.convertor.dart';
+import 'package:chat/shared/database/log.database.dart';
 import 'package:chat/shared/database/message.database.dart';
 import 'package:chat/shared/database/sync.database.dart';
 import 'package:chat/shared/database/user.database.dart';
@@ -17,7 +18,8 @@ part 'database.g.dart';
     ChatTable,
     MessageTable,
     UserTable,
-    SyncTable
+    SyncTable,
+    LogTable
   ],
 )
 class AppDatabase extends _$AppDatabase {

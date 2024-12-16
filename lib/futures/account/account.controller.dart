@@ -167,4 +167,8 @@ class AccountController extends GetxController {
   void fireFeedbackEvent() {
     Services.event.fire(event: EVENTS.FEEDBACK);
   }
+
+  void openLogs() {
+    Get.toNamed('/dev/log');
+  }
 }

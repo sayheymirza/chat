@@ -15,6 +15,12 @@ class CONSTANTS {
   static String STORAGE_SETTINGS_SOUND_CALL = "settings:sound_call";
   static String STORAGE_SETTINGS_VIBRATION = "settings:vibration";
 
+  static String STORAGE_MAP_TYPE = "map:type";
+  static String STORAGE_MAP_URL = "map:url";
+  static String STORAGE_MAP_LAT = "map:lat";
+  static String STORAGE_MAP_LON = "map:lon";
+  static String STORAGE_MAP_ZOOM = "map:zoom";
+
   static String STORAGE_CARD_BANK = "card:bank";
   static String STORAGE_CARD_NUMBER = "card:number";
   static String STORAGE_CARD_NAME = "card:name";

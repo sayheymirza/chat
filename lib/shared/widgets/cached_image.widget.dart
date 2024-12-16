@@ -81,11 +81,16 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
         errored = true;
       }
 
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     } catch (e) {
       loading = false;
       errored = true;
-      setState(() {});
+
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -119,7 +124,7 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
           alignment: widget.alignment,
           fit: widget.fit,
           errorBuilder: (context, error, stackTrace) {
-            if(widget.url.startsWith('http')) {
+            if (widget.url.startsWith('http')) {
               return Image.network(
                 widget.url,
                 alignment: widget.alignment,

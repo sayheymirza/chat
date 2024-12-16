@@ -137,7 +137,9 @@ class CacheManagerController extends GetxController {
 
   Future<void> deleteChats() async {
     await Services.chat.clear();
+    await Services.adminChat.clear();
     await Services.message.clear();
+    await Services.sync.clear();
     load();
   }
 }
