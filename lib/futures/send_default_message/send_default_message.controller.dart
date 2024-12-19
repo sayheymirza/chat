@@ -48,10 +48,14 @@ class SendDefaultMessageController extends GetxController {
   }
 
   Future<void> submit() async {
+    if (disabled.value) return;
     try {
       disabled.value = true;
       var userId = Get.parameters['id'] ?? Get.arguments['id'];
-      var result = await ApiService.user.sendSMS(user: userId);
+      var result = await ApiService.user.sendFreeMessage(
+        user: userId,
+        message: selected.value,
+      );
       disabled.value = false;
 
       if (result.status) {

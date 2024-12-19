@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
 class ChatFooterWidget extends GetView<ChatFooterController> {
-  const ChatFooterWidget({super.key});
+  final List<String> permissions;
+
+  const ChatFooterWidget({super.key, required this.permissions});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,9 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
         color: Colors.white70,
         borderRadius: BorderRadius.circular(24),
       ),
+      constraints: BoxConstraints(
+        minHeight: 48,
+      ),
       duration: Duration(seconds: 1),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -40,7 +45,8 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
           children: [
             // Voice button
             Obx(() {
-              if (controller.visableVoiceButton.value) {
+              if (controller.visableVoiceButton.value &&
+                  permissions.contains('CAN_RECORD_VOICE')) {
                 return iconButton(
                   onPressed: () {
                     controller.toggleRecording();
@@ -66,7 +72,8 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
 
             // Send button
             Obx(() {
-              if (controller.visableSendButton.value) {
+              if (controller.visableSendButton.value &&
+                  permissions.contains('CAN_SEND_MESSAGE')) {
                 return iconButton(
                   onPressed: () {
                     controller.sendTextMessage();
@@ -81,12 +88,13 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
               }
             }),
 
-            iconButton(
-              icon: Icons.send_time_extension_rounded,
-              onPressed: () {
-                controller.testSendMessages(20, Duration(milliseconds: 300));
-              },
-            ),
+            if (permissions.contains('CAN_SEND_TEST_MESSAGE'))
+              iconButton(
+                icon: Icons.send_time_extension_rounded,
+                onPressed: () {
+                  controller.testSendMessages(20, Duration(milliseconds: 300));
+                },
+              ),
 
             // Recording indicator
             Obx(() {
@@ -132,13 +140,14 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   // Text input area
-                  message(),
+                  if (permissions.contains('CAN_TYPE_MESSAGE')) message(),
                   // Attach button
                   Obx(() {
-                    if (controller.visableAttachmentButton.value) {
+                    if (controller.visableAttachmentButton.value &&
+                        permissions.contains('CAN_SEND_ATTACHMENT')) {
                       return iconButton(
                         onPressed: () {
-                          controller.openAttachment();
+                          controller.openAttachment(permissions: permissions);
                         },
                         icon: Icons.attach_file_rounded,
                       );
@@ -148,16 +157,17 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
                   }),
 
                   // Emoji toggle button
-                  Obx(() {
-                    return iconButton(
-                      onPressed: () {
-                        controller.toggleVisableEmojis();
-                      },
-                      icon: controller.visableEmojis.value
-                          ? Icons.keyboard_rounded
-                          : Icons.emoji_emotions_rounded,
-                    );
-                  }),
+                  if (permissions.contains('CAN_PICK_EMOJI'))
+                    Obx(() {
+                      return iconButton(
+                        onPressed: () {
+                          controller.toggleVisableEmojis();
+                        },
+                        icon: controller.visableEmojis.value
+                            ? Icons.keyboard_rounded
+                            : Icons.emoji_emotions_rounded,
+                      );
+                    }),
                 ],
               ),
             ),
@@ -168,12 +178,26 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
   }
 
   Widget message() {
+    var placeholder = "";
+
+    if (permissions.contains('PLACEHOLDER_NORMAL')) {
+      placeholder = "پیام خود را بنویسید";
+    } else if (permissions.contains('PLACEHOLDER_CONFIRM_PHONE')) {
+      placeholder = "برای چت کردن ابتدا موبایل خود را تایید کنید";
+    } else if (permissions.contains('PLACEHOLDER_NEED_PLAN')) {
+      placeholder =
+          "جهت ارسال تصویر و چت صوتی و تصویری یکی از طرفین باید حساب کاربری ویژه داشته باشد";
+    } else if (permissions.contains('PLACEHOLDER_JUST_NEED_PLAN')) {
+      placeholder =
+          "فقط میتوانید متن و اموجی ارسال کنید،جهت ارسال تصویر و نیز چت صوتی و تصویری یکی از طرفین باید حساب کاربری ویژه داشته باشد";
+    }
+
     return Expanded(
       child: TextField(
         controller: controller.messageController,
         focusNode: controller.messageFocus,
         decoration: InputDecoration(
-          hintText: "پیام خود را بنویسید",
+          hintText: placeholder,
           hintStyle: const TextStyle(
             color: Colors.black54,
             fontSize: 10,

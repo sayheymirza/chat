@@ -363,18 +363,18 @@ class ProfileView extends GetView<ProfileController> {
               blurX: 20,
               blurY: 20,
             ),
-          // back button on top right
-          Positioned(
-            top: Get.mediaQuery.padding.top + 10,
-            right: 10,
-            child: IconButton(
-              onPressed: () {
-                Get.back();
-              },
-              icon: const Icon(Icons.arrow_back),
+            // back button on top right
+            Positioned(
+              top: Get.mediaQuery.padding.top + 10,
+              right: 10,
+              child: IconButton(
+                onPressed: () {
+                  Get.back();
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
             ),
-          ),
-          //   if action exists Position to bottom and center
+            //   if action exists Position to bottom and center
             if (action != null)
               Positioned(
                 bottom: Get.mediaQuery.padding.bottom + 20,
@@ -402,7 +402,7 @@ class ProfileView extends GetView<ProfileController> {
             onTap: () {
               Get.dialog(
                 DialogImageView(
-                  url: "https://avatar.iran.liara.run/public/8",
+                  url: avatar,
                 ),
                 useSafeArea: false,
               );
@@ -411,7 +411,7 @@ class ProfileView extends GetView<ProfileController> {
               width: double.infinity,
               height: double.infinity,
               child: CachedImageWidget(
-                url: "https://avatar.iran.liara.run/public/8", //data.avatar!,
+                url: avatar,
                 category: "avatar",
                 fit: BoxFit.cover,
                 alignment: Alignment.topCenter,

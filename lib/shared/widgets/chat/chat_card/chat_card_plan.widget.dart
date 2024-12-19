@@ -3,7 +3,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ChatCardPlanWidget extends StatelessWidget {
-  const ChatCardPlanWidget({super.key});
+  final String userId;
+
+  const ChatCardPlanWidget({
+    super.key,
+    required this.userId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class ChatCardPlanWidget extends StatelessWidget {
           const Text(
             'برای ارسال پیام خصوصی و استفاده از چت صوتی و تصویری باید حداقل یکی از طرفین حساب کاربری ویژه داشته باشد. می توانید جهت خرید از این لینک استفاده کنید',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.white,
             ),
           ),
@@ -35,6 +40,9 @@ class ChatCardPlanWidget extends StatelessWidget {
               onPressed: () {
                 Get.toNamed('/app/purchase/one-step');
               },
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Colors.white),
+              ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -58,7 +66,7 @@ class ChatCardPlanWidget extends StatelessWidget {
           const Text(
             ' البته می توانید به کاربر پیام علاقه مندی به صورت رایگان بفرستید در صورتی که ایشان عضویت ویژه داشته باشند می توانید به گفتگو ادامه دهید',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.white,
             ),
           ),
@@ -67,8 +75,16 @@ class ChatCardPlanWidget extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Get.toNamed('/app/default-message');
+                Get.toNamed(
+                  '/app/default-message',
+                  arguments: {
+                    'id': userId,
+                  },
+                );
               },
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Colors.white),
+              ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

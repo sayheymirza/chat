@@ -5,7 +5,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ChatAttachmentView extends GetView<ChatAttachmentController> {
-  const ChatAttachmentView({super.key});
+  final List<String> permissions;
+
+  const ChatAttachmentView({
+    super.key,
+    this.permissions = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,33 +34,37 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        button(
-          color: HexColor("3B81F6"),
-          icon: Icons.collections,
-          label: "گالری",
-          onTap: () {
-            controller.imageFromGallery();
-          },
-        ),
+        if (permissions.contains('CAN_PICK_GALLERY'))
+          button(
+            color: HexColor("3B81F6"),
+            icon: Icons.collections,
+            label: "گالری",
+            onTap: () {
+              controller.imageFromGallery();
+            },
+          ),
         // button دوربین
-        button(
-          color: HexColor("EC4899"),
-          icon: Icons.camera_alt,
-          label: "دوربین",
-          onTap: () {
-            controller.imageFromCamera();
-          },
-        ),
+        if (permissions.contains('CAN_PICK_CAMERA'))
+          button(
+            color: HexColor("EC4899"),
+            icon: Icons.camera_alt,
+            label: "دوربین",
+            onTap: () {
+              controller.imageFromCamera();
+            },
+          ),
         // button موزیک
-        button(
-          color: HexColor("F43F5E"),
-          icon: Icons.headset,
-          label: "موزیک",
-          onTap: () {
-            controller.pickAudio();
-          },
-        ),
+        if (permissions.contains('CAN_PICK_AUDIO'))
+          button(
+            color: HexColor("F43F5E"),
+            icon: Icons.headset,
+            label: "موزیک",
+            onTap: () {
+              controller.pickAudio();
+            },
+          ),
         // button فیلم
+        if(permissions.contains('CAN_PICK_VIDEO'))
         button(
           color: HexColor("A854F7"),
           icon: Icons.movie,
@@ -65,6 +74,7 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
           },
         ),
         // button لوکیشن
+        if(permissions.contains('CAN_PICK_LOCATION'))
         button(
           color: HexColor("16A349"),
           icon: Icons.location_on,

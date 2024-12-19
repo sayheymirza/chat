@@ -42,10 +42,15 @@ class _ChatMessageVideoV1WidgetState extends State<ChatMessageVideoV1Widget> {
     init();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    controller.unload();
+  }
+
   void init() {
-    if (widget.message.status == "unknown") {
-      upload();
-    }
+    upload();
   }
 
   void setUploading({int percent = 0, int total = 0, int sent = 0}) {

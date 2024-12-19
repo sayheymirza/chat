@@ -35,17 +35,19 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
 
     timer = Timer(Duration(seconds: 1), () {
       // check if scroll to bottom
-      if (pixels <= 100) {
-        if (showScrollToBottom != false) {
-          setState(() {
-            showScrollToBottom = false;
-          });
-        }
-      } else {
-        if (showScrollToBottom != true) {
-          setState(() {
-            showScrollToBottom = true;
-          });
+      if (mounted) {
+        if (pixels <= 100) {
+          if (showScrollToBottom != false) {
+            setState(() {
+              showScrollToBottom = false;
+            });
+          }
+        } else {
+          if (showScrollToBottom != true) {
+            setState(() {
+              showScrollToBottom = true;
+            });
+          }
         }
       }
     });
@@ -84,7 +86,6 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  ...widget.children,
                   StreamBuilder(
                     stream: widget.messages,
                     builder: (context, snapshot) {
@@ -99,6 +100,7 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
                       );
                     },
                   ),
+                  ...widget.children,
                 ],
               ),
             ),
@@ -108,7 +110,8 @@ class _ChatMessagesWidgetState extends State<ChatMessagesWidget> {
         // scroll to bottom (floating action button)
         AnimatedPositioned(
           left: 16,
-          bottom: showScrollToBottom ? 85 + Get.mediaQuery.padding.bottom : -100,
+          bottom:
+          showScrollToBottom ? 85 + Get.mediaQuery.padding.bottom : -100,
           duration: Duration(milliseconds: 200),
           child: FloatingActionButton(
             shape: CircleBorder(),

@@ -14,6 +14,7 @@ import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/event.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
+import 'package:chat/shared/widgets/chat/chat_card/chat_card_plan.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_card/chat_card_verify.widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,9 @@ class ChatController extends GetxController {
   StreamSubscription<EventModel>? subsocket;
 
   CancelToken cancelToken = CancelToken();
+
   Timer? updateTimeout;
+  Timer? syncTimeout;
 
   int page = 0;
   int limit = 20;
@@ -40,6 +43,7 @@ class ChatController extends GetxController {
   bool loading = false;
 
   String? userId;
+  RxList<String> permissions = <String>[].obs;
 
   @override
   void onInit() {
@@ -62,7 +66,24 @@ class ChatController extends GetxController {
 
   @override
   void dispose() {
+    log('[chat.controller.dart] dispose');
+
+    unload();
+
     super.dispose();
+  }
+
+  @override
+  void onClose() {
+    log('[chat.controller.dart] on close');
+
+    unload();
+
+    super.onClose();
+  }
+
+  Future<void> unload() async {
+    log('[chat.controller.dart] unload');
 
     Services.configs.unset(key: CONSTANTS.CURRENT_CHAT);
 
@@ -72,6 +93,9 @@ class ChatController extends GetxController {
     messageStream.close();
 
     subsocket!.cancel();
+
+    updateTimeout!.cancel();
+    syncTimeout!.cancel();
   }
 
   Future<void> load() async {
@@ -115,17 +139,24 @@ class ChatController extends GetxController {
       fetchUser(),
       fetchChat(),
     ]);
+
+    childing();
+
+    // syncTimeout = Timer(Duration(seconds: 5), () {
+    //   fetch();
+    // });
   }
 
   Future<void> fetchUser() async {
     if (userId != null) {
       await Services.user.fetch(userId: userId!);
-      childing();
     }
   }
 
   Future<void> fetchChat() async {
     var id = Get.parameters['id'];
+
+    print(Get.parameters);
 
     await Services.chat.one(chatId: id!);
   }
@@ -147,7 +178,12 @@ class ChatController extends GetxController {
 
       userId = value.userId!;
 
+      if (value.permissions!.isNotEmpty) {
+        permissions.value = value.permissions?.split(',') ?? [];
+      }
+
       relation.value = value.user!.relation!;
+
       update();
     });
 
@@ -158,11 +194,19 @@ class ChatController extends GetxController {
 
   void listenMessages() async {
     var id = Get.parameters['id'];
+    var limit = 50;
 
-    var stream = Services.message.stream(chatId: id!, limit: 100);
+    var stream = Services.message.stream(chatId: id!, limit: limit);
 
     var submessages = stream.listen((value) {
-      handleMessages(value);
+      print(value.length);
+      if (limit == 0) {
+        messageStream.add(
+          value.map((elem) => ChatMessageModel.fromDatabase(elem)).toList(),
+        );
+      } else {
+        handleMessages(value);
+      }
     });
 
     var subsending = Services.message.listenToSending(chatId: id);
@@ -258,8 +302,12 @@ class ChatController extends GetxController {
     children = [];
 
     // check user profile phone number is verified
-    if (Services.profile.profile.value.verified != true) {
+    if (permissions.contains('CARD_CONFIRM_PHONE')) {
       children.add(ChatCardVerifyWidget(onChange: childing));
+    }
+
+    if (permissions.contains('CARD_NEED_PLAN')) {
+      children.add(ChatCardPlanWidget(userId: userId!));
     }
 
     update();

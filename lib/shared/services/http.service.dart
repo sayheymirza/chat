@@ -133,9 +133,7 @@ class HttpService extends GetxService {
 
     var url = "$endpoint$path";
 
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-    };
+    Map<String, String> headers = {};
 
     var accessToken = Services.configs.get(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
 
@@ -145,9 +143,17 @@ class HttpService extends GetxService {
       return Future.error("Unauthorized");
     }
 
+    // Get the file size for progress calculation
+    int fileSize = await file.length();
+
+    // Create a stream for the file
+    Stream<List<int>> fileStream = file.openRead();
+
+    // Use Dio to upload the file in streaming mode
     Dio.FormData data = Dio.FormData.fromMap({
-      "file": await Dio.MultipartFile.fromFile(
-        file.path,
+      "file": Dio.MultipartFile(
+        fileStream,
+        fileSize,
         filename: basename(file.path),
       ),
     });

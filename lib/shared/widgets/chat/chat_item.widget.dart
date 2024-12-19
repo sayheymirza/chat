@@ -112,7 +112,13 @@ class ChatItemWidget extends StatelessWidget {
       text = 'گفتگوی جدید';
     } else if (type.startsWith('text')) {
       icon = Icons.message_rounded;
-      text = data['text'] ?? '';
+      String val = data['text'] ?? '';
+      val = val.replaceAll('\n', ' ');
+
+      text = val.substring(0, val.length < 20 ? val.length : 20);
+      if (val.length > 20) {
+        text += '...';
+      }
     } else if (type.startsWith('voice')) {
       icon = Icons.mic_rounded;
       text = 'پیام صوتی';

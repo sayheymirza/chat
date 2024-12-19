@@ -152,6 +152,18 @@ class MessageService extends GetxService {
 
   void onReciveMessage({required ChatMessageModel message}) async {
     try {
+      // 0. see message if sender_id not equal to current user id and chat_id is current chat
+      var userId = Services.profile.profile.value.id;
+      var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
+
+      if (userId != null &&
+          chatId == message.chatId &&
+          message.senderId != userId) {
+        seen(messageId: message.messageId!);
+        see(messageId: message.messageId!);
+        // Services.chat.see(chatId: message.chatId!);
+      }
+
       // 1. check local id exists to update that
       if (message.localId != null && message.localId != '-1') {
         // update message with that local id
@@ -182,18 +194,6 @@ class MessageService extends GetxService {
               reaction: drift.Value(message.reaction),
             ),
           );
-
-      // 3. see message if sender_id not equal to current user id and chat_id is current chat
-      var userId = Services.profile.profile.value.id;
-      var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
-
-      if (userId != null &&
-          chatId == message.chatId &&
-          message.senderId != userId) {
-        seen(messageId: message.messageId!);
-        // see(messageId: message.messageId!);
-        Services.chat.see(chatId: message.chatId!);
-      }
     } catch (e) {
       print(e);
     }
@@ -215,6 +215,7 @@ class MessageService extends GetxService {
 
     return watcher.listen((data) {
       for (var item in data) {
+        log('[message.service.dart] sending message for chat id $chatId and local_id ${item.local_id}');
         send(message: ChatMessageModel.fromDatabase(item));
       }
     });
@@ -238,7 +239,7 @@ class MessageService extends GetxService {
     query.orderBy([
       (row) => drift.OrderingTerm(
             expression: row.seq,
-            mode: drift.OrderingMode.desc,
+            mode: limit == 0 ? drift.OrderingMode.asc : drift.OrderingMode.desc,
           ),
     ]);
 
@@ -288,7 +289,7 @@ class MessageService extends GetxService {
     message.sentAt = DateTime.now();
     message.seq = DateTime.now().millisecondsSinceEpoch;
 
-    log('[message.service.dart] save message with local id ${message.localId} and chat id ${message.chatId}');
+    log('[message.service.dart] save message with local id ${message.localId} and chat id ${message.chatId} and seq ${message.seq}');
 
     try {
       await database.into(database.messageTable).insert(
@@ -301,6 +302,7 @@ class MessageService extends GetxService {
               data: message.toData(),
               meta: message.meta ?? {},
               theme: message.theme ?? {},
+              seq: drift.Value(message.seq ?? 0),
             ),
           );
     } catch (e) {
@@ -324,6 +326,7 @@ class MessageService extends GetxService {
 
   // see message
   void see({required String messageId}) {
+    log('[message.service.dart] see message with message id $messageId');
     ApiService.socket.send(
       event: CHAT_EVENTS.SEE_MESSAGE,
       data: {'message_id': messageId, 'method': 'one'},
@@ -386,13 +389,13 @@ class MessageService extends GetxService {
 
   // upload message (callback)
   // delete message by local_id
-  void deleteByLocalId({required String localId}) {
+  void deleteByLocalId({required String localId}) async {
     log('[message.service.dart] delete message with local id $localId');
 
     try {
-      (database.update(database.messageTable)
+      (database.delete(database.messageTable)
             ..where((row) => row.local_id.equals(localId)))
-          .write(MessageTableCompanion(status: drift.Value("deleted")));
+          .go();
     } catch (e) {
       //
     }

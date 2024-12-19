@@ -14,23 +14,47 @@ Widget formatChatMessage(
   bool longPress = true,
 }) {
   if (item.status == "deleted") {
-    return ChatMessageDeletedWidget(message: item);
+    return ChatMessageDeletedWidget(
+      message: item,
+      key: Key(item.localId!),
+    );
   }
 
   switch (item.type) {
     case "video@v1":
-      return ChatMessageVideoV1Widget(message: item);
+      return ChatMessageVideoV1Widget(
+        message: item,
+        key: Key(item.localId!),
+      );
     case "audio@v1":
-      return ChatMessageAudioV1Widget(message: item);
+      return ChatMessageAudioV1Widget(
+        message: item,
+        key: Key(item.localId!),
+      );
     case "voice@v1":
-      return ChatMessageVoiceV1Widget(message: item);
+      return ChatMessageVoiceV1Widget(
+        message: item,
+        key: Key(item.localId!),
+      );
     case "text@v1":
-      return ChatMessageTextV1Widget(message: item);
+      return ChatMessageTextV1Widget(
+        message: item,
+        key: Key(item.localId!),
+      );
     case "image@v1":
-      return ChatMessageImageV1Widget(message: item);
+      return ChatMessageImageV1Widget(
+        message: item,
+        key: Key(item.localId!),
+      );
     case "map@v1":
-      return ChatMessageMapV1Widget(message: item);
+      return ChatMessageMapV1Widget(
+        message: item,
+        key: Key(item.localId!),
+      );
     default:
-      return ChatMessageNotSupportWidget(message: item);
+      return ChatMessageNotSupportWidget(
+        message: item,
+        key: Key(item.localId!),
+      );
   }
 }

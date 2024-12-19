@@ -90,9 +90,13 @@ class ChatFooterController extends GetxController {
     }
   }
 
-  void openAttachment() {
+  void openAttachment({
+    required List<String> permissions,
+  }) {
     Get.bottomSheet(
-      ChatAttachmentView(),
+      ChatAttachmentView(
+        permissions: permissions,
+      ),
       isScrollControlled: true,
     ).then((value) {
       if (value != null) {

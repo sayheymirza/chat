@@ -9,6 +9,7 @@ class ChatBodyWidget extends StatelessWidget {
   final Function onLoadMore;
   final Function onLoadLess;
   final String? error;
+  final List<String> permissions;
 
   const ChatBodyWidget({
     super.key,
@@ -16,6 +17,7 @@ class ChatBodyWidget extends StatelessWidget {
     required this.onLoadMore,
     required this.onLoadLess,
     this.children = const [],
+    this.permissions = const [],
     this.error,
   });
 
@@ -45,13 +47,15 @@ class ChatBodyWidget extends StatelessWidget {
           messages: messages,
           children: children,
         ),
-        if (error == null || error!.isEmpty)
+        if ((error == null || error!.isEmpty) && permissions.contains('CAN_SEE_FOOTER'))
           // footer
           Positioned(
             left: 16,
             right: 16,
             bottom: MediaQuery.of(context).padding.bottom + 16,
-            child: ChatFooterWidget(),
+            child: ChatFooterWidget(
+              permissions: permissions,
+            ),
           ),
         if (error != null && error!.isNotEmpty)
           Positioned(

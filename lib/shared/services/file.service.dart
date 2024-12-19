@@ -42,6 +42,11 @@ class FileService extends GetxService {
     })? onUploading,
   }) async {
     try {
+      // check file is uploading or not
+      if (uploads.values.any((element) => element.file?.path == file.path)) {
+        return null;
+      }
+
       var id = uuid();
       var filename = basename(file.path);
       var cancelToken = CancelToken();

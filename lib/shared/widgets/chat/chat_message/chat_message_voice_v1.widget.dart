@@ -42,6 +42,13 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
     init();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    controller.unload();
+  }
+
   void init() {
     if (widget.message.status == "unknown") {
       upload();

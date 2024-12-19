@@ -25,9 +25,7 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
       () => PopScope(
         canPop: controller.index.value == 0,
         onPopInvokedWithResult: (_, __) {
-          if (controller.index.value == 0) {
-            Get.back(canPop: true);
-          } else {
+          if (controller.index.value != 0) {
             controller.back();
           }
         },

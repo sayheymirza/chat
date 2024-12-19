@@ -39,7 +39,8 @@ class ChatService extends GetxService {
             message: drift.Value(
               chat.message?.toJson() ?? {},
             ),
-            permissions: drift.Value(chat.permissions!),
+            // permissions: drift.Value(chat.permissions!),
+            permissions: drift.Value(''),
             status: drift.Value('normal'),
             unread_count: drift.Value(chat.unreadCount!),
             updated_at: drift.Value(chat.updatedAt!),
@@ -197,7 +198,7 @@ class ChatService extends GetxService {
               ChatTableCompanion.insert(
                 chat_id: resultOfCreate.chatId,
                 user_id: userId,
-                permissions: resultOfCreate.permissions,
+                permissions: '', //resultOfCreate.permissions,
                 updated_at: DateTime.now(),
               ),
             );
@@ -225,7 +226,8 @@ class ChatService extends GetxService {
               ChatTableCompanion.insert(
                 chat_id: chatId,
                 user_id: result.userId,
-                permissions: result.permissions,
+                permissions: '',
+                //result.permissions,
                 unread_count: drift.Value(result.unread_count),
                 message: drift.Value(message != null ? message.toJson() : {}),
                 updated_at: message == null ? DateTime.now() : message.sentAt!,
@@ -391,31 +393,14 @@ class ChatService extends GetxService {
 
   // see chat
   Future<void> see({required String chatId}) async {
-    try {
-      // my user id
-      var userId = Services.profile.profile.value.id!;
-
-      // get list of message ids that are status 'sent' and message_id is not null and sender_id not equal to current user id
-      var messages = await (database.select(database.messageTable)
-            ..where((row) =>
-                row.chat_id.equals(chatId) &
-                row.status.equals('sent') &
-                row.message_id.isNotNull() &
-                row.sender_id.equals(userId).not()))
-          .get();
-
-      var ids = messages.map((e) => e.message_id!).toList();
-
-      log('[chat.service.dart] see ${ids.length} messages for chat id $chatId');
-
-      if (ids.isEmpty) return;
-
-      for (var id in ids) {
-        Services.message.see(messageId: id);
-      }
-    } catch (e) {
-      print(e);
-    }
+    log('[chat.service.dart] see all $chatId');
+    ApiService.socket.send(
+      event: CHAT_EVENTS.SEE_MESSAGE,
+      data: {
+        'method': 'all',
+        'chat_id': chatId,
+      },
+    );
   }
 
   // clear (clear all chats)
@@ -429,6 +414,7 @@ class ChatService extends GetxService {
   }
 
   void action({required String type}) {
+    return;
     var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
 
     if (chatId == null) {

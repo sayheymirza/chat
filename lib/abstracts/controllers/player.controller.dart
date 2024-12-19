@@ -26,6 +26,12 @@ class PlayerController {
     required this.onStateChange,
   });
 
+  Future<void> unload() async {
+    if (controller != null) {
+      await controller!.dispose();
+    }
+  }
+
   Future<void> load({
     required String url,
   }) async {

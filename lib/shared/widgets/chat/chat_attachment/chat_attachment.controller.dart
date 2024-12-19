@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:chat/shared/snackbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -58,17 +57,17 @@ class ChatAttachmentController extends GetxController {
         String path = result.files.first.path!;
         var size = result.files.first.size;
 
-        if (type == "video" && size >= 1e+8) {
-          Get.back();
-          showSnackbar(message: 'حجم فایل فیلم زیاد است');
-          return;
-        }
-
-        if (type == "audio" && size >= 2e+7) {
-          Get.back();
-          showSnackbar(message: 'حجم فایل موزیک زیاد است');
-          return;
-        }
+        // if (type == "video" && size >= 1e+8) {
+        //   Get.back();
+        //   showSnackbar(message: 'حجم فایل فیلم زیاد است');
+        //   return;
+        // }
+        //
+        // if (type == "audio" && size >= 2e+7) {
+        //   Get.back();
+        //   showSnackbar(message: 'حجم فایل موزیک زیاد است');
+        //   return;
+        // }
 
         var data = {};
 

@@ -43,6 +43,13 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
     init();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    controller.unload();
+  }
+
   void init() {
     if (widget.message.status == "unknown") {
       upload();

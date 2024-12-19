@@ -29,6 +29,7 @@ class ChatView extends GetView<ChatController> {
 
         return ChatBodyWidget(
           error: error,
+          permissions: controller.permissions,
           messages: controller.messageStream.stream,
           children: controller.children,
           onLoadMore: () {
@@ -138,109 +139,125 @@ class ChatView extends GetView<ChatController> {
             left: Row(
               children: [
                 // call buttons
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.videocam_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.call_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-                // menu button
-                PopupMenuButton(
-                  child: const IconButton(
-                    onPressed: null,
+                if (controller.permissions.contains('CAN_VOICE_CALL'))
+                  IconButton(
+                    onPressed:
+                        controller.permissions.contains('ALLOW_VOICE_CALL')
+                            ? () {}
+                            : null,
                     icon: Icon(
-                      Icons.more_vert_rounded,
-                      color: Colors.white,
+                      Icons.call_rounded,
+                      color: controller.permissions.contains('ALLOW_VOICE_CALL')
+                          ? Colors.red
+                          : Colors.white70,
                     ),
                   ),
-                  onSelected: (value) {
-                    switch (value) {
-                      case "block":
-                        controller.block();
-                        break;
-                      case "unblock":
-                        controller.unblock();
-                        break;
-                      case "report":
-                        controller.report(
-                          fullname: data.user!.fullname!,
-                        );
-                        break;
-                      case "delete":
-                        controller.delete();
-                        break;
-                      default:
-                    }
-                  },
-                  itemBuilder: (context) {
-                    return [
-                      controller.relation.value.blocked == false
-                          ? const PopupMenuItem(
-                              value: "block",
-                              child: Row(
-                                children: [
-                                  Icon(Icons.block),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "بلاک کردن",
-                                  ),
-                                ],
-                              ),
-                            )
-                          : const PopupMenuItem(
-                              value: "unblock",
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.block,
-                                    color: Colors.blue,
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "آنبلاک کردن",
-                                  ),
-                                ],
-                              ),
-                            ),
-                      // report
-                      const PopupMenuItem(
-                        value: "report",
-                        child: Row(
-                          children: [
-                            Icon(Icons.report),
-                            SizedBox(width: 10),
-                            Text(
-                              "گزارش تخلف",
-                            ),
-                          ],
-                        ),
+                if (controller.permissions.contains('CAN_VIDEO_CALL'))
+                  IconButton(
+                    onPressed:
+                        controller.permissions.contains('ALLOW_VIDEO_CALL')
+                            ? () {}
+                            : null,
+                    icon: Icon(
+                      Icons.videocam_rounded,
+                      color: controller.permissions.contains('ALLOW_VIDEO_CALL')
+                          ? Colors.green
+                          : Colors.white70,
+                    ),
+                  ),
+                // menu button
+                if (controller.permissions.contains('CAN_SEE_MENU'))
+                  PopupMenuButton(
+                    child: const IconButton(
+                      onPressed: null,
+                      icon: Icon(
+                        Icons.more_vert_rounded,
+                        color: Colors.white,
                       ),
-                      const PopupMenuItem(
-                        value: "delete",
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.delete,
-                              color: Colors.red,
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case "block":
+                          controller.block();
+                          break;
+                        case "unblock":
+                          controller.unblock();
+                          break;
+                        case "report":
+                          controller.report(
+                            fullname: data.user!.fullname!,
+                          );
+                          break;
+                        case "delete":
+                          controller.delete();
+                          break;
+                        default:
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        if (controller.permissions.contains('CAN_BLOCK'))
+                          controller.relation.value.blocked == false
+                              ? const PopupMenuItem(
+                                  value: "block",
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.block),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "بلاک کردن",
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const PopupMenuItem(
+                                  value: "unblock",
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.block,
+                                        color: Colors.blue,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "آنبلاک کردن",
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        // report
+                        if (controller.permissions.contains('CAN_REPORT'))
+                          const PopupMenuItem(
+                            value: "report",
+                            child: Row(
+                              children: [
+                                Icon(Icons.report),
+                                SizedBox(width: 10),
+                                Text(
+                                  "گزارش تخلف",
+                                ),
+                              ],
                             ),
-                            SizedBox(width: 10),
-                            Text(
-                              "حذف چت",
+                          ),
+                        if (controller.permissions.contains('CAN_DELETE_CHAT'))
+                          const PopupMenuItem(
+                            value: "delete",
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  "حذف چت",
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ];
-                  },
-                ),
+                          ),
+                      ];
+                    },
+                  ),
               ],
             ),
           );

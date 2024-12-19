@@ -41,8 +41,13 @@ class _ChatMessageTextV1WidgetState extends State<ChatMessageTextV1Widget> {
   Widget build(BuildContext context) {
     return ChatMessageWidget(
       message: widget.message,
-      child: Text(
-        widget.message.data['text'],
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: 300,
+        ),
+        child: Text(
+          widget.message.data['text'],
+        ),
       ),
     );
   }
