@@ -1,10 +1,12 @@
 import 'package:chat/models/chat/chat.message.dart';
+import 'package:chat/shared/widgets/chat/chat_body/chat_body.controller.dart';
 import 'package:chat/shared/widgets/chat/chat_footer/chat_footer.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_messages.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ChatBodyWidget extends StatelessWidget {
-  final Stream<List<ChatMessageModel>> messages;
+class ChatBodyWidget extends GetView<ChatBodyController> {
+  final List<ChatMessageModel> messages;
   final List<Widget> children;
   final Function onLoadMore;
   final Function onLoadLess;
@@ -23,6 +25,8 @@ class ChatBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ChatBodyController());
+
     return Stack(
       children: [
         // background
@@ -41,13 +45,19 @@ class ChatBodyWidget extends StatelessWidget {
           ),
         ),
         // messages
-        ChatMessagesWidget(
-          onLoadMore: onLoadMore,
-          onLoadLess: onLoadLess,
-          messages: messages,
-          children: children,
+        Obx(
+          () => ChatMessagesWidget(
+            onLoadMore: onLoadMore,
+            onLoadLess: onLoadLess,
+            messages: messages,
+            bottom: controller.pickingEmoji.value
+                ? MediaQuery.of(context).padding.bottom + 280
+                : 0,
+            children: children,
+          ),
         ),
-        if ((error == null || error!.isEmpty) && permissions.contains('CAN_SEE_FOOTER'))
+        if ((error == null || error!.isEmpty) &&
+            permissions.contains('CAN_SEE_FOOTER'))
           // footer
           Positioned(
             left: 16,
@@ -55,6 +65,9 @@ class ChatBodyWidget extends StatelessWidget {
             bottom: MediaQuery.of(context).padding.bottom + 16,
             child: ChatFooterWidget(
               permissions: permissions,
+              onPickEmoji: (bool value) {
+                controller.pickingEmoji.value = value;
+              },
             ),
           ),
         if (error != null && error!.isNotEmpty)

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
@@ -8,6 +10,13 @@ class ChatsController extends GetxController {
   RxInt page = 1.obs;
   RxInt limit = 12.obs;
   RxBool loading = false.obs;
+  StreamSubscription<ChatListModel>? stream;
+
+  @override
+  void onClose() {
+    stream?.cancel();
+    super.onClose();
+  }
 
   void goToPage(int value) {
     if (loading.value == true) return;
@@ -20,10 +29,29 @@ class ChatsController extends GetxController {
   }
 
   void load() async {
-    var result = await Services.chat.select(
-      page: page.value,
-    );
+    // if page is 1 use stream to get data
+    if (page.value == 1) {
+      if (stream != null) return;
 
-    chats.value = result.chats ?? [];
+      var result = await Services.chat.list(
+        page: page.value,
+      );
+
+      stream = result.listen((event) {
+        chats.value = event.chats ?? [];
+        lastPage.value = event.last ?? 0;
+      });
+    } else {
+      // close stream
+      stream?.cancel();
+      stream = null;
+
+      var result = await Services.chat.select(
+        page: page.value,
+      );
+
+      chats.value = result.chats ?? [];
+      lastPage.value = result.last ?? 0;
+    }
   }
 }

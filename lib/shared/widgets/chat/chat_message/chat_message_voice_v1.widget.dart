@@ -23,15 +23,32 @@ class ChatMessageVoiceV1Widget extends StatefulWidget {
 
 class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
   late PlayerController controller;
+  List<int>? waveforms;
 
   @override
   void initState() {
     super.initState();
 
     controller = PlayerController(onStateChange: () {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
-    controller.load(url: widget.message.data['url']);
+    controller.load(
+        url: widget.message.data['url'],
+        onLoad: (file) async {
+          try {
+            var result = await Services.waveframe.process(path: file.path);
+
+            if (result != null && mounted) {
+              setState(() {
+                waveforms = result;
+              });
+            }
+          } catch (e) {
+            print(e);
+          }
+        });
 
     init();
   }
@@ -55,38 +72,48 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
     }
   }
 
-  void setUploading({int percent = 0, int total = 0, int sent = 0}) {
-    widget.message.status = "uploading";
-    widget.message.meta = {
-      'percent': percent,
-      'total': total,
-      'sent': sent,
-    };
-    setState(() {});
-  }
-
   void upload() async {
-    setUploading();
     // start uploading
-    var result = await Services.file.upload(
-        file: File(widget.message.data['url']),
-        category: 'voice',
-        onUploading: ({int percent = 0, int total = 0, int sent = 0}) {
-          setUploading(
-            percent: percent,
-            total: total,
-            sent: sent,
-          );
-        });
+    await Services.file.upload(
+      file: File(widget.message.data['url']),
+      category: 'voice',
+      meta: widget.message.toJson(),
+      onError: (result) {
+        if (result != null) {
+          var message = ChatMessageModel.fromJson(result.meta);
 
-    if (result != null && result.done) {
-      widget.message.data['url'] = result.url;
-      widget.message.data['file_id'] = result.fileId;
-      widget.message.status = "sending";
+          message.status = "unuploaded";
+          message.meta = {};
 
-      Services.message.update(message: widget.message);
-      setState(() {});
-    }
+          Services.message.update(message: message);
+        }
+      },
+      onProgress: (result) {
+        if (result != null) {
+          var message = ChatMessageModel.fromJson(result.meta);
+
+          message.status = "uploading";
+          message.meta = {
+            'percent': result.percent,
+            'total': result.total,
+            'sent': result.sentOrRecived,
+          };
+
+          Services.message.update(message: message);
+        }
+      },
+      onDone: (result) {
+        if (result != null && result.done) {
+          var message = ChatMessageModel.fromJson(result.meta);
+
+          message.data['url'] = result.url;
+          message.data['file_id'] = result.fileId;
+          message.status = "sending";
+
+          Services.message.update(message: message);
+        }
+      },
+    );
   }
 
   @override
@@ -94,12 +121,12 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
     return ChatMessageWidget(
       message: widget.message,
       child: child(
-        waveforms: widget.message.data['waveforms'] ?? [],
+        waveforms: waveforms ?? widget.message.data['waveforms'] ?? [],
       ),
     );
   }
 
-  Widget child({required List<double> waveforms}) {
+  Widget child({required List<int> waveforms}) {
     return Container(
       padding: EdgeInsets.all(8),
       child: Row(

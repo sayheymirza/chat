@@ -21,12 +21,15 @@ class AppService extends GetxService {
   }
 
   Future<void> logout() {
+    ApiService.socket.disconnect();
+
     return Future.wait([
       Services.configs.unset(key: CONSTANTS.STORAGE_ACCESS_TOKEN),
       Services.chat.clear(),
       Services.adminChat.clear(),
       Services.message.clear(),
       Services.sync.clear(),
+      Services.log.clear(),
     ]);
   }
 

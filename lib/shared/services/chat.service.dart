@@ -39,8 +39,7 @@ class ChatService extends GetxService {
             message: drift.Value(
               chat.message?.toJson() ?? {},
             ),
-            // permissions: drift.Value(chat.permissions!),
-            permissions: drift.Value(''),
+            // permissions: drift.Value(''),
             status: drift.Value('normal'),
             unread_count: drift.Value(chat.unreadCount!),
             updated_at: drift.Value(chat.updatedAt!),
@@ -53,10 +52,19 @@ class ChatService extends GetxService {
                 .getSingleOrNull();
             // 2. create
             if (one == null) {
-              await database.into(database.chatTable).insert(data);
+              log('[chat.service.dart] sync create chat with chat id ${chat.chatId}');
+
+              // set data permissions to empty string
+              data = data.copyWith(permissions: drift.Value(''));
+
+              var result = await database
+                  .into(database.chatTable)
+                  .insertReturningOrNull(data);
+              print(result);
             }
             // 3. update
             else {
+              log('[chat.service.dart] sync update chat with chat id ${chat.chatId}');
               await (database.update(database.chatTable)
                     ..where((row) => row.chat_id.equals(chat.chatId!)))
                   .write(data);
@@ -198,7 +206,6 @@ class ChatService extends GetxService {
               ChatTableCompanion.insert(
                 chat_id: resultOfCreate.chatId,
                 user_id: userId,
-                permissions: '', //resultOfCreate.permissions,
                 updated_at: DateTime.now(),
               ),
             );
@@ -226,8 +233,6 @@ class ChatService extends GetxService {
               ChatTableCompanion.insert(
                 chat_id: chatId,
                 user_id: result.userId,
-                permissions: '',
-                //result.permissions,
                 unread_count: drift.Value(result.unread_count),
                 message: drift.Value(message != null ? message.toJson() : {}),
                 updated_at: message == null ? DateTime.now() : message.sentAt!,
@@ -261,7 +266,7 @@ class ChatService extends GetxService {
                   ChatTableCompanion.insert(
                     chat_id: chatId,
                     user_id: result.userId,
-                    permissions: result.permissions,
+                    permissions: drift.Value(result.permissions),
                     unread_count: drift.Value(result.unread_count),
                     updated_at: DateTime.now(),
                   ),
@@ -337,6 +342,63 @@ class ChatService extends GetxService {
     }
   }
 
+  // select chats (limit and sort by updated_at and join to last message) steam
+  Future<Stream<ChatListModel>> list({int page = 1, int limit = 12}) async {
+    try {
+      var query = database.select(database.chatTable).join([
+        drift.innerJoin(
+          database.userTable,
+          database.userTable.id.equalsExp(
+            database.chatTable.user_id,
+          ),
+        ),
+      ]);
+
+      query.orderBy(
+        [
+          drift.OrderingTerm(
+              expression: database.chatTable.updated_at,
+              mode: drift.OrderingMode.desc),
+        ],
+      );
+
+      query.limit(limit, offset: (page - 1) * limit);
+
+      var count = await database.chatTable.count().getSingle();
+
+      return query
+          .map((row) {
+            return ChatModel.fromJson({
+              "chat_id": row.rawData.data['chat_table.chat_id'],
+              "user_id": row.rawData.data['chat_table.user_id'],
+              "user": row.readTable(database.userTable).data,
+              "message": jsonDecode(row.rawData.data['chat_table.message']),
+              "permissions": row.rawData.data['chat_table.permissions'],
+              "status": row.rawData.data['chat_table.status'],
+              "unread_count": row.rawData.data['chat_table.unread_count'],
+              'updated_at': row.rawData.data['chat_table.updated_at'],
+            });
+          })
+          .watch()
+          .map((chats) {
+            var last = count ~/ limit;
+
+            return ChatListModel(
+              chats: chats,
+              page: page,
+              limit: limit,
+              last: last,
+              total: count,
+            );
+          });
+    } catch (e) {
+      return Stream.value(ChatListModel(
+        page: page,
+        limit: limit,
+      ));
+    }
+  }
+
   // select chats (limit and sort by updated_at and join to last message)
   Future<ChatListModel> select({int page = 1, int limit = 12}) async {
     try {
@@ -374,11 +436,14 @@ class ChatService extends GetxService {
 
       var count = await database.chatTable.count().getSingle();
 
+      // last page by devide count by limit and round up to integer (example: 5/2 = 3)
+      var last = count ~/ limit;
+
       return ChatListModel(
         chats: chats,
         page: page,
         limit: limit,
-        last: count ~/ page,
+        last: last,
         total: count,
       );
     } catch (e) {

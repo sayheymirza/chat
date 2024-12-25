@@ -188,7 +188,7 @@ class AdminChatService extends GetxService {
               ChatTableCompanion.insert(
                 chat_id: resultOfCreate.chatId,
                 user_id: userId,
-                permissions: resultOfCreate.permissions,
+                permissions: drift.Value(resultOfCreate.permissions),
                 updated_at: DateTime.now(),
               ),
             );
@@ -216,7 +216,7 @@ class AdminChatService extends GetxService {
               ChatTableCompanion.insert(
                 chat_id: chatId,
                 user_id: result.userId,
-                permissions: result.permissions,
+                permissions: drift.Value(result.permissions),
                 unread_count: drift.Value(result.unread_count),
                 message: drift.Value(message != null ? message.toJson() : {}),
                 updated_at: DateTime.now(),

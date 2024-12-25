@@ -7,6 +7,8 @@ import 'package:chat/shared/services.dart';
 import 'package:dio/dio.dart' as Dio;
 import 'package:get/get.dart';
 import 'package:path/path.dart';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 
 class HttpService extends GetxService {
   final Dio.Dio _client = Dio.Dio();
@@ -146,15 +148,19 @@ class HttpService extends GetxService {
     // Get the file size for progress calculation
     int fileSize = await file.length();
 
+    // mime
+    var fileMime = lookupMimeType(file.path);
+
     // Create a stream for the file
     Stream<List<int>> fileStream = file.openRead();
 
     // Use Dio to upload the file in streaming mode
     Dio.FormData data = Dio.FormData.fromMap({
       "file": Dio.MultipartFile(
-        fileStream,
-        fileSize,
+        fileStream, fileSize,
         filename: basename(file.path),
+        // mime type
+        contentType: MediaType.parse(fileMime ?? 'application/octet-stream'),
       ),
     });
 

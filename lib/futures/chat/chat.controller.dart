@@ -5,6 +5,7 @@ import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_delete_chat/dialog_delete_chat.view.dart';
 import 'package:chat/models/apis/chat.model.dart';
 import 'package:chat/models/apis/socket.model.dart';
+import 'package:chat/models/chat/chat.event.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
@@ -21,16 +22,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChatController extends GetxController {
-  Rx<Relation> relation = Relation.empty.obs;
+  Rx<ChatModel> chat = ChatModel().obs;
 
   List<Widget> children = [];
 
-  List<ChatMessageModel> messages = [];
+  RxList<ChatMessageModel> messages = <ChatMessageModel>[].obs;
 
-  StreamController<List<ChatMessageModel>> messageStream =
-      StreamController<List<ChatMessageModel>>();
-  StreamController<ChatModel> chatStream = StreamController<ChatModel>();
-  StreamSubscription<EventModel>? subsocket;
+  StreamSubscription<EventModel>? subevents;
+  StreamSubscription<ChatModel?>? subchat;
+
+  // StreamSubscription<List<MessageTableData>>? subsending;
 
   CancelToken cancelToken = CancelToken();
 
@@ -41,9 +42,6 @@ class ChatController extends GetxController {
   int limit = 20;
   bool ended = false;
   bool loading = false;
-
-  String? userId;
-  RxList<String> permissions = <String>[].obs;
 
   @override
   void onInit() {
@@ -57,10 +55,8 @@ class ChatController extends GetxController {
 
     load();
 
-    subsocket = event.on<EventModel>().listen((data) async {
-      if (data.event == SOCKET_EVENTS.CONNECTED) {
-        Services.message.sendAll();
-      }
+    subevents = event.on<EventModel>().listen((data) async {
+      onEvent(event: data.event, data: data.value);
     });
   }
 
@@ -82,6 +78,48 @@ class ChatController extends GetxController {
     super.onClose();
   }
 
+  void onEvent({
+    required String event,
+    required dynamic data,
+  }) async {
+    if (event == MESSAGE_EVENTS.DELETE_LOCAL_MESSAGE) {
+      var id = data;
+
+      // find and remove it
+      var index = messages.indexWhere((element) => element.localId == id);
+
+      if (index != -1) {
+        messages.removeAt(index);
+      }
+    }
+
+    if (event == MESSAGE_EVENTS.UPDATE_MESSAGE ||
+        event == MESSAGE_EVENTS.ADD_MESSAGE) {
+      data = ChatMessageModel.fromDatabase(data);
+
+      // find and update it
+      var index = -1;
+      for (var i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].localId == data.localId ||
+            (messages[i].messageId == data.messageId &&
+                data.messageId != null)) {
+          index = i;
+          break;
+        }
+      }
+
+      if (index != -1) {
+        messages[index] = data;
+      } else {
+        messages.add(data);
+      }
+
+      if (data.status == "sending") {
+        Services.message.send(message: data);
+      }
+    }
+  }
+
   Future<void> unload() async {
     log('[chat.controller.dart] unload');
 
@@ -89,13 +127,11 @@ class ChatController extends GetxController {
 
     cancelToken.cancel();
 
-    chatStream.close();
-    messageStream.close();
+    subevents?.cancel();
+    subchat?.cancel();
 
-    subsocket!.cancel();
-
-    updateTimeout!.cancel();
-    syncTimeout!.cancel();
+    updateTimeout?.cancel();
+    syncTimeout?.cancel();
   }
 
   Future<void> load() async {
@@ -104,7 +140,6 @@ class ChatController extends GetxController {
       listenChat();
       listenMessages();
       fetch();
-      childing();
       markAllAsSeen();
     } catch (e) {
       print(e);
@@ -115,19 +150,48 @@ class ChatController extends GetxController {
     var id = Get.parameters['id']!;
 
     var last = await Services.message.lastByChatId(chatId: id);
+    var page = 1;
 
-    await Future.wait([
-      Services.message.syncAPIWithDatabase(
+    do {
+      var result = await Services.message.syncAPIWithDatabase(
         chatId: id,
         seq: last?.seq,
         operator: ApiChatMessageOperator.AFTER,
-      ),
-      Services.message.syncAPIWithDatabase(
+        page: page,
+      );
+
+      if (result.isEmpty) {
+        break;
+      }
+
+      page++;
+
+      handleMessages(result);
+    } while (true);
+
+    // sync messages before last message for 2 pages
+    page = 1;
+
+    do {
+      var result = await Services.message.syncAPIWithDatabase(
         chatId: id,
         seq: last?.seq,
         operator: ApiChatMessageOperator.BEFORE,
-      ),
-    ]);
+        page: page,
+      );
+
+      if (result.isEmpty) {
+        break;
+      }
+
+      page++;
+
+      handleMessages(result);
+
+      if (page > 2) {
+        break;
+      }
+    } while (true);
   }
 
   Future<void> markAllAsSeen() {
@@ -136,27 +200,22 @@ class ChatController extends GetxController {
 
   Future<void> fetch() async {
     await Future.wait([
-      fetchUser(),
+      // fetchUser(),
       fetchChat(),
     ]);
-
-    childing();
-
     // syncTimeout = Timer(Duration(seconds: 5), () {
     //   fetch();
     // });
   }
 
   Future<void> fetchUser() async {
-    if (userId != null) {
-      await Services.user.fetch(userId: userId!);
+    if (chat.value.userId != null) {
+      await Services.user.fetch(userId: chat.value.userId!);
     }
   }
 
   Future<void> fetchChat() async {
     var id = Get.parameters['id'];
-
-    print(Get.parameters);
 
     await Services.chat.one(chatId: id!);
   }
@@ -166,7 +225,7 @@ class ChatController extends GetxController {
 
     var stream = await Services.chat.stream(chatId: id!);
 
-    var subchat = stream.listen((value) {
+    subchat = stream.listen((value) {
       if (value == null) {
         // destroy
         Get.back();
@@ -174,47 +233,38 @@ class ChatController extends GetxController {
         return;
       }
 
-      chatStream.add(value);
-
-      userId = value.userId!;
-
-      if (value.permissions!.isNotEmpty) {
-        permissions.value = value.permissions?.split(',') ?? [];
-      }
-
-      relation.value = value.user!.relation!;
-
-      update();
+      log('[chat.controller.dart] chat info updated');
+      chat.value = value;
+      childing();
     });
-
-    chatStream.onCancel = () {
-      subchat.cancel();
-    };
   }
 
   void listenMessages() async {
     var id = Get.parameters['id'];
-    var limit = 50;
 
-    var stream = Services.message.stream(chatId: id!, limit: limit);
+    // select last 50 messages
+    var data = await Services.message.select(
+      chatId: id!,
+    );
 
-    var submessages = stream.listen((value) {
-      print(value.length);
-      if (limit == 0) {
-        messageStream.add(
-          value.map((elem) => ChatMessageModel.fromDatabase(elem)).toList(),
-        );
-      } else {
-        handleMessages(value);
-      }
-    });
+    handleMessages(data);
 
-    var subsending = Services.message.listenToSending(chatId: id);
-
-    messageStream.onCancel = () {
-      subsending.cancel();
-      submessages.cancel();
-    };
+    // var limit = 50;
+    //
+    // var stream = Services.message.stream(chatId: id!, limit: limit);
+    //
+    // var submessages = stream.listen((value) {
+    //   print(value.length);
+    //   if (limit == 0) {
+    //     messageStream.add(
+    //       value.map((elem) => ChatMessageModel.fromDatabase(elem)).toList(),
+    //     );
+    //   } else {
+    //     handleMessages(value);
+    //   }
+    // });
+    //
+    // subsending = Services.message.listenToSending(chatId: id);
   }
 
   void loadMessages() async {
@@ -259,28 +309,22 @@ class ChatController extends GetxController {
 
   void handleMessages(List<MessageTableData> value) {
     for (var val in value) {
-      var message = ChatMessageModel.fromDatabase(val);
+      var data = ChatMessageModel.fromDatabase(val);
 
-      if (messages.isNotEmpty) {
-        var index = -1;
-        for (var i = messages.length - 1; i >= 0; i--) {
-          if (messages[i].localId == val.local_id ||
-              (messages[i].messageId == val.message_id &&
-                  val.message_id != null)) {
-            index = i;
-            break;
-          }
+      var index = -1;
+      for (var i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].localId == data.localId ||
+            (messages[i].messageId == data.messageId &&
+                data.messageId != null)) {
+          index = i;
+          break;
         }
+      }
 
-        if (index == -1) {
-          messages.insert(0, message);
-          // messages.add(message);
-        } else {
-          messages[index] = message;
-        }
+      if (index != -1) {
+        messages[index] = data;
       } else {
-        messages.insert(0, message);
-        // messages.add(message);
+        messages.add(data);
       }
     }
 
@@ -294,7 +338,9 @@ class ChatController extends GetxController {
 
     updateTimeout = Timer(Duration(milliseconds: 100), () {
       log('[chat.controller.dart] update message stream');
-      messageStream.add(messages..sort((a, b) => a.seq!.compareTo(b.seq!)));
+      // messageStream.add(messages..sort((a, b) => a.seq!.compareTo(b.seq!)));
+      messages = messages..sort((a, b) => a.seq!.compareTo(b.seq!));
+      update();
     });
   }
 
@@ -302,25 +348,29 @@ class ChatController extends GetxController {
     children = [];
 
     // check user profile phone number is verified
-    if (permissions.contains('CARD_CONFIRM_PHONE')) {
+    if (chat.value.permission.contains('CARD_CONFIRM_PHONE')) {
       children.add(ChatCardVerifyWidget(onChange: childing));
     }
 
-    if (permissions.contains('CARD_NEED_PLAN')) {
-      children.add(ChatCardPlanWidget(userId: userId!));
+    if (chat.value.permission.contains('CARD_NEED_PLAN')) {
+      children.add(ChatCardPlanWidget(userId: chat.value.userId!));
     }
 
     update();
   }
 
   void block() async {
-    if (userId == null) return;
+    if (chat.value.userId == null) return;
 
-    relation.value = relation.value.copyWith({"blocked": true});
+    // relation.value = relation.value.copyWith({"blocked": true});
+    await Services.user.relation(
+      userId: chat.value.userId!,
+      action: RELATION_ACTION.BLOCK,
+    );
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: userId!,
+        user: chat.value.userId!,
         action: RELATION_ACTION.BLOCK,
       );
       if (result) {
@@ -331,13 +381,19 @@ class ChatController extends GetxController {
   }
 
   void unblock() async {
-    if (userId == null) return;
+    if (chat.value.userId == null) return;
 
-    relation.value = relation.value.copyWith({"blocked": false});
+    // relation.value = relation.value.copyWith({"blocked": false});
+
+    // update user id relation blocked to false from database
+    await Services.user.relation(
+      userId: chat.value.userId!,
+      action: RELATION_ACTION.UNBLOCK,
+    );
 
     Services.queue.add(() async {
       var result = await ApiService.user.react(
-        user: userId!,
+        user: chat.value.userId!,
         action: RELATION_ACTION.UNBLOCK,
       );
       if (result) {
@@ -347,48 +403,14 @@ class ChatController extends GetxController {
     });
   }
 
-  void favorite() async {
-    if (userId == null) return;
-
-    relation.value = relation.value.copyWith({"favorited": true});
-
-    Services.queue.add(() async {
-      var result = await ApiService.user.react(
-        user: userId!,
-        action: RELATION_ACTION.FAVORITE,
-      );
-      if (result) {
-        showSnackbar(message: 'کاربر به علاقه مندی ها اضافه شد');
-      }
-    });
-  }
-
-  void disfavorite() async {
-    if (userId == null) return;
-
-    relation.value = relation.value.copyWith({"favorited": false});
-
-    Services.queue.add(() async {
-      var result = await ApiService.user.react(
-        user: userId!,
-        action: RELATION_ACTION.DISFAVORITE,
-      );
-      if (result) {
-        showSnackbar(message: 'کاربر از علاقه مندی ها حذف شد');
-      }
-    });
-  }
-
-  void report({
-    required String fullname,
-  }) {
-    if (userId == null) return;
+  void report() {
+    if (chat.value.userId == null) return;
 
     Get.toNamed(
       '/app/report',
       arguments: {
-        'id': userId!,
-        'fullname': fullname,
+        'id': chat.value.userId!,
+        'fullname': chat.value.user!.fullname,
       },
     );
   }

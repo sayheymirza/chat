@@ -57,6 +57,18 @@ class AdminChatController extends GetxController {
       if (data.event == SOCKET_EVENTS.CONNECTED) {
         Services.message.sendAll();
       }
+
+      if(data.event == "chat:delete-local-message") {
+        var id = data.value;
+
+        // find and remove it
+        var index = messages.indexWhere((element) => element.localId == id);
+
+        if(index != -1) {
+          messages.removeAt(index);
+          updateMessages();
+        }
+      }
     });
   }
 
@@ -230,13 +242,14 @@ class AdminChatController extends GetxController {
         }
 
         if (index == -1) {
-          // messages.insert(0, message);
-          messages.add(message);
+          messages.insert(0, message);
+          // messages.add(message);
         } else {
           messages[index] = message;
         }
       } else {
-        messages.add(message);
+        messages.insert(0, message);
+        // messages.add(message);
       }
     }
 

@@ -39,6 +39,8 @@ class ChatModel {
     this.updatedAt,
   });
 
+  List<String> get permission => (permissions?.split(',') ?? []);
+
   factory ChatModel.fromDatabase(ChatTableData data, {ProfileModel? user}) {
     return ChatModel(
       chatId: data.chat_id,
@@ -66,8 +68,9 @@ class ChatModel {
     if (json['updated_at'] != null) {
       // if type is int
       if (json['updated_at'] is int) {
-        updatedAt = DateTime.fromMillisecondsSinceEpoch(json['updated_at'] * 1000);
-      } else if(json['updated_at'] is String) {
+        updatedAt =
+            DateTime.fromMillisecondsSinceEpoch(json['updated_at'] * 1000);
+      } else if (json['updated_at'] is String) {
         updatedAt = DateTime.parse(json['updated_at']);
       } else {
         updatedAt = DateTime.parse(json['updated_at']);

@@ -38,7 +38,8 @@ class ChatsView extends GetView<ChatsController> {
                       }
                     },
                   ),
-                if (controller.chats.isNotEmpty)
+                if (controller.chats.isNotEmpty &&
+                    controller.lastPage.value > 1)
                   PaginationWidget(
                     last: controller.lastPage.value,
                     page: controller.page.value,

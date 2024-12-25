@@ -14,6 +14,11 @@ class DUModel {
   late bool done;
   late String? url;
   late String? fileId;
+  late Function? onDone;
+  late Function? onProgress;
+  late Function? onError;
+  late dynamic meta;
+  late bool cache;
 
   DUModel({
     required this.id,
@@ -27,5 +32,28 @@ class DUModel {
     this.file,
     this.url,
     this.fileId,
+    this.onDone,
+    this.onProgress,
+    this.onError,
+    this.meta,
+    this.cache = false,
   });
+
+  // toJson
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'filename': filename,
+      'category': category,
+      'percent': percent,
+      'total': total,
+      'sentOrRecived': sentOrRecived,
+      'cancelToken': cancelToken,
+      'done': done,
+      'url': url,
+      'fileId': fileId,
+      'meta': meta,
+      'cache': cache,
+    };
+  }
 }

@@ -23,7 +23,10 @@ String formatAgoChatMessage(String value) {
 
   var date = Jalali.fromDateTime(DateTime.parse(value));
 
-  return "${date.year}/${format(date.month)}/${format(date.day)} ${format(date.hour)}:${format(date.minute)}";
+  // return "${date.year}/${format(date.month)}/${format(date.day)} ${format(date.hour)}:${format(date.minute)}";
+
+  // day name day number month name year ساعت hour:minute:seconds
+  return '${date.formatter.wN} ${date.day} ${date.formatter.mN} ${date.year} ساعت ${format(date.hour)}:${format(date.minute)}';
 }
 
 String formatAgo(String value) {

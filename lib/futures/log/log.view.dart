@@ -17,14 +17,27 @@ class LogView extends GetView<LogController> {
       appBar: GradientAppBarWidget(
         back: true,
         title: 'لاگ ها',
-        left: IconButton(
-          onPressed: () {
-            Services.log.clear();
-          },
-          icon: Icon(
-            Icons.delete_rounded,
-            color: Colors.white,
-          ),
+        left: Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                controller.makeDB();
+              },
+              icon: Icon(
+                Icons.download,
+                color: Colors.white,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Services.log.clear();
+              },
+              icon: Icon(
+                Icons.delete_rounded,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
       body: Column(

@@ -1,7 +1,7 @@
 import 'package:chat/futures/admin_chat/chat.controller.dart';
 import 'package:chat/shared/formats/date.format.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
-import 'package:chat/shared/widgets/chat/chat_body.widget.dart';
+import 'package:chat/shared/widgets/chat/chat_body/chat_body.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -18,7 +18,7 @@ class AdminChatView extends GetView<AdminChatController> {
       appBar: appBar(),
       body: GetBuilder<AdminChatController>(
         builder: (controller) => ChatBodyWidget(
-          messages: controller.messageStream.stream,
+          messages: controller.messages,
           children: controller.children,
           onLoadMore: () {
             controller.loadMessages();

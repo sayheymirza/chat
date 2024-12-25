@@ -6,8 +6,13 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
 class ChatFooterWidget extends GetView<ChatFooterController> {
   final List<String> permissions;
+  final Function(bool value)? onPickEmoji;
 
-  const ChatFooterWidget({super.key, required this.permissions});
+  const ChatFooterWidget({
+    super.key,
+    required this.permissions,
+    this.onPickEmoji,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +53,9 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
               if (controller.visableVoiceButton.value &&
                   permissions.contains('CAN_RECORD_VOICE')) {
                 return iconButton(
-                  onPressed: () {
-                    controller.toggleRecording();
-                  },
+                  // onPressed: () {
+                  //   controller.toggleRecording();
+                  // },
                   onHold: () {
                     controller.startRecording();
                   },
@@ -92,7 +97,7 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
               iconButton(
                 icon: Icons.send_time_extension_rounded,
                 onPressed: () {
-                  controller.testSendMessages(20, Duration(milliseconds: 300));
+                  controller.testSendMessages(10, Duration(milliseconds: 300));
                 },
               ),
 
@@ -162,6 +167,9 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
                       return iconButton(
                         onPressed: () {
                           controller.toggleVisableEmojis();
+                          if (onPickEmoji != null) {
+                            onPickEmoji!(controller.visableEmojis.value);
+                          }
                         },
                         icon: controller.visableEmojis.value
                             ? Icons.keyboard_rounded

@@ -41,6 +41,16 @@ class NotificationService extends GetxService {
     );
   }
 
+  // ask for notification access
+  Future<bool> ask() async {
+    // if the user has already granted permission, this will return true
+    if (await AwesomeNotifications().isNotificationAllowed()) {
+      return true;
+    }
+
+    return AwesomeNotifications().requestPermissionToSendNotifications();
+  }
+
   Future<void> progress({
     required int id,
     required String title,
@@ -90,9 +100,11 @@ class NotificationController {
   ) async {
     var id = receivedAction.id!;
     if (receivedAction.buttonKeyPressed == "download_channel:cancel") {
+      log('[notification.service.dart] download canceled');
       Services.file.downloads[id]!.cancelToken.cancel();
     }
     if (receivedAction.buttonKeyPressed == "upload_channel:cancel") {
+      log('[notification.service.dart] upload canceled');
       Services.file.uploads[id]!.cancelToken.cancel();
     }
   }

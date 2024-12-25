@@ -1230,7 +1230,9 @@ class $ChatTableTable extends ChatTable
   @override
   late final GeneratedColumn<String> permissions = GeneratedColumn<String>(
       'permissions', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: Constant(''));
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<String> status = GeneratedColumn<String>(
@@ -1294,8 +1296,6 @@ class $ChatTableTable extends ChatTable
           _permissionsMeta,
           permissions.isAcceptableOrUnknown(
               data['permissions']!, _permissionsMeta));
-    } else if (isInserting) {
-      context.missing(_permissionsMeta);
     }
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
@@ -1524,13 +1524,12 @@ class ChatTableCompanion extends UpdateCompanion<ChatTableData> {
     required String chat_id,
     required String user_id,
     this.message = const Value.absent(),
-    required String permissions,
+    this.permissions = const Value.absent(),
     this.status = const Value.absent(),
     this.unread_count = const Value.absent(),
     required DateTime updated_at,
   })  : chat_id = Value(chat_id),
         user_id = Value(user_id),
-        permissions = Value(permissions),
         updated_at = Value(updated_at);
   static Insertable<ChatTableData> custom({
     Expression<int>? id,
@@ -3463,7 +3462,7 @@ typedef $$ChatTableTableCreateCompanionBuilder = ChatTableCompanion Function({
   required String chat_id,
   required String user_id,
   Value<Map<dynamic, dynamic>> message,
-  required String permissions,
+  Value<String> permissions,
   Value<String> status,
   Value<int> unread_count,
   required DateTime updated_at,
@@ -3646,7 +3645,7 @@ class $$ChatTableTableTableManager extends RootTableManager<
             required String chat_id,
             required String user_id,
             Value<Map<dynamic, dynamic>> message = const Value.absent(),
-            required String permissions,
+            Value<String> permissions = const Value.absent(),
             Value<String> status = const Value.absent(),
             Value<int> unread_count = const Value.absent(),
             required DateTime updated_at,

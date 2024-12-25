@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
@@ -10,9 +11,8 @@ import 'package:chat/shared/services/chat.service.dart';
 import 'package:get/get.dart';
 
 class AppController extends GetxController {
-  ChatService get chat => Get.find(tag: 'chat');
-
   SocketService get socket => Get.find(tag: 'api:socket');
+  StreamSubscription<EventModel>? subevents;
 
   RxInt view = 0.obs;
 
@@ -25,9 +25,13 @@ class AppController extends GetxController {
     Services.chat.listenToEvents();
     Services.message.listenToEvents();
 
-    socket.connect();
+    Services.notification.ask();
+    Services.notification.init();
 
-    event.on<EventModel>().listen((data) async {
+    socket.connect();
+    socket.listen();
+
+    subevents = event.on<EventModel>().listen((data) async {
       if (data.event == SOCKET_EVENTS.CONNECTED) {
         Services.message.sendAll();
       }
@@ -38,7 +42,7 @@ class AppController extends GetxController {
   void onClose() {
     super.onClose();
 
-    ApiService.socket.disconnect();
+    subevents?.cancel();
   }
 
   void setView(int value) {

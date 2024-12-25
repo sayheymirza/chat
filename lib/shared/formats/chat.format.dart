@@ -13,10 +13,12 @@ Widget formatChatMessage(
   ChatMessageModel item, {
   bool longPress = true,
 }) {
+  var key = ValueKey("${item.localId}");
+
   if (item.status == "deleted") {
     return ChatMessageDeletedWidget(
       message: item,
-      key: Key(item.localId!),
+      key: key,
     );
   }
 
@@ -24,37 +26,37 @@ Widget formatChatMessage(
     case "video@v1":
       return ChatMessageVideoV1Widget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
     case "audio@v1":
       return ChatMessageAudioV1Widget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
     case "voice@v1":
       return ChatMessageVoiceV1Widget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
     case "text@v1":
       return ChatMessageTextV1Widget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
     case "image@v1":
       return ChatMessageImageV1Widget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
     case "map@v1":
       return ChatMessageMapV1Widget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
     default:
       return ChatMessageNotSupportWidget(
         message: item,
-        key: Key(item.localId!),
+        key: key,
       );
   }
 }

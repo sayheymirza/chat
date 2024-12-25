@@ -12,7 +12,6 @@ class ChatMessageNotSupportWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChatMessageWidget(
       message: message,
-      longPress: false,
       color: Colors.red.withAlpha(64),
       child: Row(
         mainAxisSize: MainAxisSize.min,

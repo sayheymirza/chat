@@ -10,4 +10,11 @@ class CHAT_EVENTS {
   static String ON_SEE_MESSAGE = "chat:on-see-message";
   static String ACTION_EVENT = "chat:action-event";
   static String ON_ACTION_EVENT = "chat:on-action-event";
+  static String DELETE_LOCAL_MESSAGE = "chat:delete-local-message";
+}
+
+class MESSAGE_EVENTS {
+  static String DELETE_LOCAL_MESSAGE = "message:delete-local-message";
+  static String UPDATE_MESSAGE = "message:update-message";
+  static String ADD_MESSAGE = "message:add-message";
 }

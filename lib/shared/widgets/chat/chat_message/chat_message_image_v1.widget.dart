@@ -41,37 +41,48 @@ class _ChatMessageImageV1WidgetState extends State<ChatMessageImageV1Widget> {
     }
   }
 
-  void setUploading({int percent = 0, int total = 0, int sent = 0}) {
-    widget.message.status = "uploading";
-    widget.message.meta = {
-      'percent': percent,
-      'total': total,
-      'sent': sent,
-    };
-    setState(() {});
-  }
-
   void upload() async {
-    setUploading();
     // start uploading
-    var result = await Services.file.upload(
-        file: File(widget.message.data['url']),
-        category: 'image',
-        onUploading: ({int percent = 0, int total = 0, int sent = 0}) {
-          setUploading(
-            percent: percent,
-            total: total,
-            sent: sent,
-          );
-        });
-    if (result != null && result.done) {
-      widget.message.data['url'] = result.url;
-      widget.message.data['file_id'] = result.fileId;
-      widget.message.status = "sending";
+    await Services.file.upload(
+      file: File(widget.message.data['url']),
+      category: 'image',
+      meta: widget.message.toJson(),
+      onError: (result) {
+        if (result != null) {
+          var message = ChatMessageModel.fromJson(result.meta);
 
-      Services.message.update(message: widget.message);
-      setState(() {});
-    }
+          message.status = "unuploaded";
+          message.meta = {};
+
+          Services.message.update(message: message);
+        }
+      },
+      onProgress: (result) {
+        if (result != null) {
+          var message = ChatMessageModel.fromJson(result.meta);
+
+          message.status = "uploading";
+          message.meta = {
+            'percent': result.percent,
+            'total': result.total,
+            'sent': result.sentOrRecived,
+          };
+
+          Services.message.update(message: message);
+        }
+      },
+      onDone: (result) {
+        if (result != null && result.done) {
+          var message = ChatMessageModel.fromJson(result.meta);
+
+          message.data['url'] = result.url;
+          message.data['file_id'] = result.fileId;
+          message.status = "sending";
+
+          Services.message.update(message: message);
+        }
+      },
+    );
   }
 
   @override

@@ -100,4 +100,44 @@ class UserService extends GetxService {
       //
     }
   }
+
+  Future<void> relation({
+    required String userId,
+    required RELATION_ACTION action,
+  }) async {
+    await database.transaction(() async {
+      var user = await (database.select(database.userTable)
+            ..where((row) => row.id.equals(userId)))
+          .getSingle();
+
+      if (user != null) {
+        if (action == RELATION_ACTION.BLOCK) {
+          user.data['relation']['blocked'] = true;
+        }
+
+        if (action == RELATION_ACTION.UNBLOCK) {
+          user.data['relation']['blocked'] = false;
+        }
+
+        // favorite
+        if (action == RELATION_ACTION.FAVORITE) {
+          user.data['relation']['favorited'] = true;
+        }
+
+        // unfavorite
+        if (action == RELATION_ACTION.DISFAVORITE) {
+          user.data['relation']['favorited'] = false;
+        }
+
+        // update
+        await (database.update(database.userTable)
+              ..where((row) => row.id.equals(userId)))
+            .write(
+          UserTableCompanion(
+            data: drift.Value(user.data),
+          ),
+        );
+      }
+    });
+  }
 }

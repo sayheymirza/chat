@@ -50,7 +50,7 @@ class ChatFooterController extends GetxController {
   }
 
   void sendTextMessage() {
-    if (messageText.isEmpty) return;
+    if (messageText.trim().isEmpty) return;
 
     Services.message
         .save(
@@ -82,7 +82,7 @@ class ChatFooterController extends GetxController {
 
   void toggleVisableEmojis() {
     visableEmojis.value = !visableEmojis.value;
-    log('[chat_footer.controller.dart] visable emojis is ${visableEmojis.value}');
+    log('[chat_footer.controller.dart] visible emojis is ${visableEmojis.value}');
     if (visableEmojis.value) {
       messageFocus.unfocus();
     } else {
@@ -151,6 +151,8 @@ class ChatFooterController extends GetxController {
 
   Future<void> startRecording() async {
     try {
+      if (recoring.value == true) return;
+
       if (await record.hasPermission() && visableVoiceButton.value) {
         DateTime time = DateTime(200, 1, 1, 0, 0, 0);
 
@@ -159,14 +161,6 @@ class ChatFooterController extends GetxController {
         var output =
             '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.m4a';
 
-        await record.start(
-          const RecordConfig(
-            encoder: AudioEncoder.aacLc,
-          ),
-          path: output,
-        );
-
-        recoring.value = true;
         recordingDuration.value = '00:00';
 
         recordingInterval = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -180,6 +174,15 @@ class ChatFooterController extends GetxController {
 
           recordingDuration.value = '$minute:$second';
         });
+
+        await record.start(
+          const RecordConfig(
+            encoder: AudioEncoder.aacLc,
+          ),
+          path: output,
+        );
+
+        recoring.value = true;
       } else {
         showSnackbar(message: 'دسترسی به میکروفون نداریم');
 
@@ -206,6 +209,12 @@ class ChatFooterController extends GetxController {
         var controller = VideoPlayerController.file(file);
         await controller.initialize();
 
+        // if duration is less than 1 second
+        if (controller.value.duration.inMilliseconds < 300) {
+          showSnackbar(message: 'ویس کوتاه است');
+          return;
+        }
+
         // generate waveframe
         var waveframe = await Services.waveframe.process(path: path);
 
@@ -219,6 +228,9 @@ class ChatFooterController extends GetxController {
           ),
         );
       }
+
+      // after 1 seconds set recording to false
+      await Future.delayed(const Duration(milliseconds: 300));
 
       recoring.value = false;
     } catch (e) {

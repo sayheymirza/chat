@@ -34,6 +34,7 @@ class PlayerController {
 
   Future<void> load({
     required String url,
+    Function(File file)? onLoad,
   }) async {
     if (url.startsWith('https')) {
       var result = await Services.cache.load(url: url);
@@ -55,6 +56,10 @@ class PlayerController {
     }
 
     log('[player.controller.dart] load $url');
+
+    if (onLoad != null) {
+      onLoad(File(url));
+    }
 
     try {
       controller = VideoPlayerController.file(File(url));
