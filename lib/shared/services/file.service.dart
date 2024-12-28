@@ -47,6 +47,18 @@ class FileService extends GetxService {
     return null;
   }
 
+  DUModel? getDownloadByURL(String url) {
+    var model = downloads.values.where(
+      (element) => element.url == url,
+    );
+
+    if (model.isNotEmpty) {
+      return model.first;
+    }
+
+    return null;
+  }
+
   Future<DUModel?> upload({
     required File file,
     String category = "file",
@@ -213,7 +225,9 @@ class FileService extends GetxService {
       }
 
       // remove
-      uploads.remove(model!.id);
+      if (model != null) {
+        uploads.remove(model.id);
+      }
 
       return null;
     }
@@ -222,8 +236,18 @@ class FileService extends GetxService {
   Future<void> download({
     required String url,
     required String category,
+    int total = 0,
+    dynamic meta = const {},
+    Function(DUModel result)? onDone,
+    Function(DUModel result)? onProgress,
+    Function(DUModel result)? onError,
   }) async {
     try {
+      // check file is downloading or not
+      if (downloads.values.any((element) => element.url == url)) {
+        return;
+      }
+
       var filename = basename(url);
       var directory = Directory(
         '${(await getApplicationCacheDirectory()).path}/downloads/$category',
@@ -244,10 +268,14 @@ class FileService extends GetxService {
         category: category,
         filename: filename,
         percent: 0,
-        total: 0,
+        total: total,
         sentOrRecived: 0,
         cancelToken: cancelToken,
         url: url,
+        meta: meta,
+        onDone: onDone,
+        onProgress: onProgress,
+        onError: onError,
       );
 
       // make the notification
@@ -263,12 +291,35 @@ class FileService extends GetxService {
         downloads.remove(id);
         // dismiss notification
         Services.notification.dismiss(id: id);
+
+        // onError
+        if (downloads[id]?.onError != null) {
+          downloads[id]!.onError!(downloads[id]!);
+        }
       });
 
       var result = await Services.http.download(
         url: url,
-        onPercent: (int percent) {
-          downloads[id]!.percent = percent;
+        onPercent: ({
+          required int percent,
+          required int recive,
+          required int total,
+        }) {
+          downloads[id]!.sentOrRecived = recive;
+
+          downloads[id]!.percent =
+              ((100 * recive) / downloads[id]!.total).ceil();
+
+          Services.notification.progress(
+            id: id,
+            title: "دانلود $filename",
+            progress: percent.toDouble(),
+            channel: 'download_channel',
+          );
+
+          if (downloads[id]?.onProgress != null) {
+            downloads[id]!.onProgress!(downloads[id]!);
+          }
         },
         cancelToken: cancelToken,
         directory: directory.path,
@@ -284,13 +335,26 @@ class FileService extends GetxService {
       Services.notification.dismiss(id: id);
 
       downloads[id]!.percent = 100;
+
       if (result != null) {
         downloads[id]!.file = result;
         downloads[id]!.total = result.statSync().size;
         downloads[id]!.sentOrRecived = result.statSync().size;
+
+        // onDone
+        if (downloads[id]!.onDone != null) {
+          downloads[id]!.onDone!(downloads[id]!);
+        }
       }
     } catch (e) {
-      //
+      print(e);
+
+      // onError
+      var model = getDownloadByURL(url);
+
+      if (model?.onError != null) {
+        model!.onError!(model);
+      }
     }
   }
 }

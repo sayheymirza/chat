@@ -33,4 +33,6 @@ abstract class ChatAbstract extends GetxService {
   });
 
   Future<bool> deleteChatWithChatId({required String chatId});
+
+  Future<String?> createCallToken({required String chatId});
 }

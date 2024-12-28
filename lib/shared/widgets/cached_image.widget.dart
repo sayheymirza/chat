@@ -56,21 +56,32 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
     try {
       if (!url.startsWith('http')) {
         file = File(url);
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
         return;
       }
 
       loading = true;
       errored = false;
-      setState(() {});
+
+      if (mounted) {
+        setState(() {});
+      }
 
       var cache = await Services.cache.load(
-        url: url,
-        category: category,
-        onPercent: (int percent) {
-          downloading = percent;
-        },
-      );
+          url: url,
+          category: category,
+          onPercent: ({
+            required int percent,
+            required int recive,
+            required int total,
+          }) {
+            downloading = percent;
+            if (mounted) {
+              setState(() {});
+            }
+          });
 
       loading = false;
 

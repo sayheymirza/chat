@@ -10,7 +10,11 @@ class CacheService extends GetxService {
   Future<File?> load({
     required String url,
     String category = 'unknown',
-    Function(int precent)? onPercent,
+    Function({
+      required int percent,
+      required int total,
+      required int recive,
+    })? onPercent,
   }) async {
     try {
       var file = await get(url: url);
@@ -43,6 +47,8 @@ class CacheService extends GetxService {
         // check file exists or not
         var file = File(result.file);
 
+        print(file.path);
+
         if (file.existsSync()) {
           return file;
         } else {
@@ -62,7 +68,11 @@ class CacheService extends GetxService {
   Future<File?> put({
     required String url,
     String category = 'unknown',
-    Function(int precent)? onPercent,
+    Function({
+      required int percent,
+      required int total,
+      required int recive,
+    })? onPercent,
   }) async {
     try {
       var directory = Directory(
@@ -96,6 +106,21 @@ class CacheService extends GetxService {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<void> save({
+    required String url,
+    required String category,
+    required File file,
+  }) async {
+    await database.into(database.cacheTable).insert(
+          CacheTableCompanion.insert(
+            url: url,
+            file: file.path,
+            size: file.statSync().size,
+            category: category,
+          ),
+        );
   }
 
   Future<void> delete() async {

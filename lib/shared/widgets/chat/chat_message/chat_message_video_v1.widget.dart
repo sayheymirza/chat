@@ -33,7 +33,10 @@ class _ChatMessageVideoV1WidgetState extends State<ChatMessageVideoV1Widget> {
       }
     });
 
-    controller.load(url: widget.message.data['url']);
+    controller.load(
+      url: widget.message.data['url'],
+      message: widget.message,
+    );
 
     init();
   }

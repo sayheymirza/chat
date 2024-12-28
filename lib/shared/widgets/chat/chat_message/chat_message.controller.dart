@@ -26,6 +26,10 @@ class ChatMessageController extends GetxController {
       if (model != null) {
         model.cancelToken.cancel();
       }
+
+      // change message status to unuploaded
+      message.status = "unuploaded";
+      Services.message.update(message: message);
     }
   }
 

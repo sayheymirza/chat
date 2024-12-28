@@ -1,3 +1,4 @@
+import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/chat/chat_footer/chat_footer.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -222,7 +223,18 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
         minLines: 1,
         maxLines: 6,
         onChanged: (value) {
-          controller.changeMessageText(value);
+          var text = value;
+          // check if number is in the text
+          if (!permissions.contains('CAN_SEND_NUMBER')) {
+            text = CustomValidator.convertPN2EN(text);
+
+            if (RegExp(r'\d').hasMatch(text)) {
+              // replace all numbers with ''
+              text = text.replaceAll(RegExp(r'\d'), '');
+            }
+          }
+
+          controller.changeMessageText(text);
         },
         onSubmitted: (value) {
           controller.changeMessageText(value);

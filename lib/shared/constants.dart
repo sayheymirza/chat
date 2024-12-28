@@ -54,7 +54,9 @@ class CONSTANTS {
   static String STORAGE_TEXT_EARNING_INCOME = 'text:earning_income';
 
   static String STORAGE_LATEST_VERSION = 'version:latest';
-  static String STORAGE_DEPRECATED_VERION = 'version:deprecated';
+  static String STORAGE_DEPRECATED_VERSION = 'version:deprecated';
+
+  static String STORAGE_CALL_URL = 'call:URL';
 
   static String PAYMENT_CALLBACK = '';
   static String FLAVOR = '';

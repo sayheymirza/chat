@@ -173,7 +173,54 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
                     ),
                   ],
                 ),
-              // if visited
+              // if undownloaded
+              if(message.status == "undownloaded")
+                Row(
+                  children: [
+                    Icon(
+                      Icons.error_outline_rounded,
+                      size: 16,
+                      color: Colors.red,
+                    ),
+                    Gap(8),
+                    Text(
+                      'دانلود نشد',
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              // if downloading
+              if (message.status == "downloading")
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        value: double.parse(message.meta['percent'].toString()) /
+                            100,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    const Gap(8),
+                    Text(
+                      '${message.meta['percent']}%',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    const Gap(8),
+                    Text(
+                      '${formatBytes(message.meta['received'] ?? message.meta['recive'] ?? 0)}/${formatBytes(message.meta['total'])}',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               // if uploading
               if (message.status == "uploading")
                 Row(
@@ -227,6 +274,8 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
             PopupMenuItem(
               child: ListTile(
                 onTap: () {
+                  Get.back();
+
                   controller.send(message: message);
                 },
                 leading: Transform.flip(

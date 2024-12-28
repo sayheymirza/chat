@@ -36,6 +36,7 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
     });
     controller.load(
         url: widget.message.data['url'],
+        message: widget.message,
         onLoad: (file) async {
           try {
             var result = await Services.waveframe.process(path: file.path);

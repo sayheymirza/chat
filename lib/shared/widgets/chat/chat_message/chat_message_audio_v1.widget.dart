@@ -33,7 +33,10 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
         setState(() {});
       }
     });
-    controller.load(url: widget.message.data['url']);
+    controller.load(
+      url: widget.message.data['url'],
+      message: widget.message,
+    );
 
     init();
   }

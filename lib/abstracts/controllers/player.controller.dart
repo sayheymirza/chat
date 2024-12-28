@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as Math;
 
+import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
@@ -35,9 +36,78 @@ class PlayerController {
   Future<void> load({
     required String url,
     Function(File file)? onLoad,
+    ChatMessageModel? message,
   }) async {
+    // File? result;
+
     if (url.startsWith('https')) {
-      var result = await Services.cache.load(url: url);
+      // 1. check file is in cache storage
+      // var fileInCache = await Services.cache.get(url: url);
+
+      // if (fileInCache == null) {
+      //   // 2. start downloading
+      //   await Services.file.download(
+      //       url: url,
+      //       category: message?.type?.split('@').first ?? 'file',
+      //       meta: message?.toJson() ?? {},
+      //       onError: (result) {
+      //         if (result != null) {
+      //           var message = ChatMessageModel.fromJson(result.meta);
+      //
+      //           message.status = "undownloaded";
+      //           message.meta = {};
+      //
+      //           Services.message.update(message: message);
+      //         }
+      //       },
+      //       onProgress: (result) {
+      //         if (result != null) {
+      //           var message = ChatMessageModel.fromJson(result.meta);
+      //
+      //           message.status = "downloading";
+      //           message.meta = {
+      //             'percent': result.percent,
+      //             'total': message.data['size'] ?? 0,
+      //             'received': result.sentOrRecived,
+      //           };
+      //
+      //           Services.message.update(message: message);
+      //         }
+      //       },
+      //       onDone: (result) async {
+      //         if (result != null) {
+      //           var message = ChatMessageModel.fromJson(result.meta);
+      //
+      //           // sync that message
+      //           Services.message.syncAPIWithDatabase(
+      //             chatId: message.chatId!,
+      //             seq: message.seq!,
+      //             limit: 1,
+      //           );
+      //
+      //           // put to cache
+      //           await Services.cache.save(
+      //             url: url,
+      //             category: result.category,
+      //             file: result.file!,
+      //           );
+      //
+      //           // reload
+      //           load(
+      //             url: url,
+      //             onLoad: onLoad,
+      //             message: message,
+      //           );
+      //         }
+      //       });
+      // } else {
+      //   result = fileInCache;
+      // }
+
+      var result = await Services.cache.load(
+        url: url,
+        category: message?.type?.split('@').first ?? 'file',
+      );
 
       if (result == null) {
         try {

@@ -75,7 +75,11 @@ class HttpService extends GetxService {
   Future<File?> download({
     required String url,
     required String directory,
-    Function(int percent)? onPercent,
+    Function({
+      required int percent,
+      required int total,
+      required int recive,
+    })? onPercent,
     Function(dynamic info)? onInfo,
     Dio.CancelToken? cancelToken,
   }) async {
@@ -97,13 +101,13 @@ class HttpService extends GetxService {
           var progress = ((100 * sent) / total).ceil();
 
           if (onPercent != null) {
-            onPercent(progress);
+            onPercent(percent: progress, recive: sent, total: total);
           }
         },
       );
 
       if (onPercent != null) {
-        onPercent(100);
+        onPercent(percent: 100, recive: 0, total: 0);
       }
 
       return File(path);
