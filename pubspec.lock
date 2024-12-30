@@ -468,14 +468,62 @@ packages:
     source: hosted
     version: "9.4.1"
   flutter_inappwebview:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: a76ed7b1aafb4867517f2ed47dda9e9d15cf32d6
-      url: "https://github.com/rshrc/flutter_inappwebview"
-    source: git
-    version: "5.4.3+7"
+      path: "packages/flutter_inappwebview/flutter_inappwebview"
+      relative: true
+    source: path
+    version: "6.2.0-beta.3"
+  flutter_inappwebview_android:
+    dependency: transitive
+    description:
+      path: "packages/flutter_inappwebview/flutter_inappwebview_android"
+      relative: true
+    source: path
+    version: "1.2.0-beta.3"
+  flutter_inappwebview_internal_annotations:
+    dependency: transitive
+    description:
+      name: flutter_inappwebview_internal_annotations
+      sha256: "787171d43f8af67864740b6f04166c13190aa74a1468a1f1f1e9ee5b90c359cd"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.2.0"
+  flutter_inappwebview_ios:
+    dependency: transitive
+    description:
+      path: "packages/flutter_inappwebview/flutter_inappwebview_ios"
+      relative: true
+    source: path
+    version: "1.2.0-beta.3"
+  flutter_inappwebview_macos:
+    dependency: transitive
+    description:
+      path: "packages/flutter_inappwebview/flutter_inappwebview_macos"
+      relative: true
+    source: path
+    version: "1.2.0-beta.3"
+  flutter_inappwebview_platform_interface:
+    dependency: transitive
+    description:
+      path: "packages/flutter_inappwebview/flutter_inappwebview_platform_interface"
+      relative: true
+    source: path
+    version: "1.4.0-beta.3"
+  flutter_inappwebview_web:
+    dependency: transitive
+    description:
+      path: "packages/flutter_inappwebview/flutter_inappwebview_web"
+      relative: true
+    source: path
+    version: "1.2.0-beta.3"
+  flutter_inappwebview_windows:
+    dependency: transitive
+    description:
+      path: "packages/flutter_inappwebview/flutter_inappwebview_windows"
+      relative: true
+    source: path
+    version: "0.7.0-beta.3"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:

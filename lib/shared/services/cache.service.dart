@@ -46,9 +46,7 @@ class CacheService extends GetxService {
       if (result != null) {
         // check file exists or not
         var file = File(result.file);
-
-        print(file.path);
-
+        
         if (file.existsSync()) {
           return file;
         } else {

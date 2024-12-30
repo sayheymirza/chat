@@ -144,7 +144,12 @@ class PlayerController {
 
   void seek(Duration duration) async {
     await controller!.seekTo(duration);
+    playing = controller!.value.isPlaying;
+    onStateChange();
     durationing();
+    timer = Timer.periodic(Duration(milliseconds: 100), (_) {
+      durationing();
+    });
   }
 
   void toggle() {
@@ -282,10 +287,10 @@ class PlayerController {
                   opacity: waveframe.isEmpty ? 1 : 0,
                   child: Slider(
                     min: 0,
-                    max: totalDuration.inMilliseconds.toDouble(),
+                    max: totalDuration.inSeconds.toDouble(),
                     value: Math.min(
-                      passedDuration.inMilliseconds.toDouble(),
-                      totalDuration.inMilliseconds.toDouble(),
+                      passedDuration.inSeconds.toDouble(),
+                      totalDuration.inSeconds.toDouble(),
                     ),
                     onChanged: (value) {
                       var seconds = value.toInt();

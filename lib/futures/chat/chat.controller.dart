@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_delete_chat/dialog_delete_chat.view.dart';
 import 'package:chat/models/apis/chat.model.dart';
-import 'package:chat/models/apis/socket.model.dart';
 import 'package:chat/models/chat/chat.event.model.dart';
+import 'package:chat/models/chat/chat.message.call.v1.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
@@ -22,6 +22,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChatController extends GetxController {
+  RxBool makingCall = false.obs;
+
   Rx<ChatModel> chat = ChatModel().obs;
 
   List<Widget> children = [];
@@ -38,10 +40,10 @@ class ChatController extends GetxController {
   Timer? updateTimeout;
   Timer? syncTimeout;
 
-  int page = 0;
-  int limit = 20;
   bool ended = false;
   bool loading = false;
+
+  String? chatId;
 
   @override
   void onInit() {
@@ -52,6 +54,8 @@ class ChatController extends GetxController {
       key: CONSTANTS.CURRENT_CHAT,
       value: Get.parameters['id'],
     );
+
+    chatId = Get.parameters['id'];
 
     load();
 
@@ -147,7 +151,7 @@ class ChatController extends GetxController {
   }
 
   Future<void> sync() async {
-    var id = Get.parameters['id']!;
+    var id = chatId!;
 
     var last = await Services.message.lastByChatId(chatId: id);
     var page = 1;
@@ -195,7 +199,7 @@ class ChatController extends GetxController {
   }
 
   Future<void> markAllAsSeen() {
-    return Services.chat.see(chatId: Get.parameters['id']!);
+    return Services.chat.see(chatId: chatId!);
   }
 
   Future<void> fetch() async {
@@ -215,13 +219,13 @@ class ChatController extends GetxController {
   }
 
   Future<void> fetchChat() async {
-    var id = Get.parameters['id'];
+    var id = chatId;
 
     await Services.chat.one(chatId: id!);
   }
 
   void listenChat() async {
-    var id = Get.parameters['id'];
+    var id = chatId;
 
     var stream = await Services.chat.stream(chatId: id!);
 
@@ -270,7 +274,7 @@ class ChatController extends GetxController {
   void loadMessages() async {
     if (loading || ended) return;
 
-    var id = Get.parameters['id'];
+    var id = chatId;
     var last = messages.first;
 
     if (last == null) return;
@@ -421,7 +425,7 @@ class ChatController extends GetxController {
 
     if (result) {
       // delete all chats and delete chat
-      var id = Get.parameters['id']!;
+      var id = chatId!;
       var result = await ApiService.chat.deleteChatWithChatId(chatId: id);
       if (result) {
         Get.back();

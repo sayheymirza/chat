@@ -109,7 +109,7 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
     return ChatMessageWidget(
       message: widget.message,
       child: child(
-        waveforms: widget.message.data['waveforms'] ?? [],
+        waveforms: widget.message.data['waveform'] ?? widget.message.data['waveforms'] ?? [],
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_audio_v1.widget.dart';
+import 'package:chat/shared/widgets/chat/chat_message/chat_message_call_v1.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_deleted.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_image_v1.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message_map_v1.widget.dart';
@@ -50,6 +51,11 @@ Widget formatChatMessage(
       );
     case "map@v1":
       return ChatMessageMapV1Widget(
+        message: item,
+        key: key,
+      );
+    case "call@v1":
+      return ChatMessageCallV1Widget(
         message: item,
         key: key,
       );

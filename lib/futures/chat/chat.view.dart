@@ -1,5 +1,6 @@
 import 'package:chat/futures/chat/chat.controller.dart';
 import 'package:chat/shared/formats/date.format.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_body/chat_body.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
@@ -134,8 +135,11 @@ class ChatView extends GetView<ChatController> {
               // call buttons
               if (data.permission.contains('CAN_VOICE_CALL'))
                 IconButton(
-                  onPressed: data.permission.contains('ALLOW_VOICE_CALL')
-                      ? () {}
+                  onPressed: data.permission.contains('ALLOW_VOICE_CALL') &&
+                          !controller.makingCall.value
+                      ? () {
+                          Services.call.make(mode: 'audio');
+                        }
                       : null,
                   icon: Icon(
                     Icons.call_rounded,
@@ -146,8 +150,11 @@ class ChatView extends GetView<ChatController> {
                 ),
               if (data.permission.contains('CAN_VIDEO_CALL'))
                 IconButton(
-                  onPressed: data.permission.contains('ALLOW_VIDEO_CALL')
-                      ? () {}
+                  onPressed: data.permission.contains('ALLOW_VIDEO_CALL') &&
+                          !controller.makingCall.value
+                      ? () {
+                          Services.call.make(mode: 'video');
+                        }
                       : null,
                   icon: Icon(
                     Icons.videocam_rounded,

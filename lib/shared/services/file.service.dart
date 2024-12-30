@@ -69,11 +69,27 @@ class FileService extends GetxService {
     Function(DUModel result)? onError,
   }) async {
     try {
+      // copy file to cache storage
+      var directory = Directory(
+        '${(await getApplicationCacheDirectory()).path}/files/$category',
+      );
+
+      if (!directory.existsSync()) {
+        directory.createSync(recursive: true);
+      }
+
+      var filePath = '${directory.path}/${basename(file.path)}';
+
       // check file is uploading or not
-      if (uploads.values.any((element) => element.file?.path == file.path)) {
+      if (uploads.values.any((element) => element.file?.path == filePath)) {
         // return the current upload
         return getUploadByFile(file);
       }
+
+      // copy file to cache storage
+      file.copySync(filePath);
+
+      file = File(filePath);
 
       var id = uuid();
       var filename = basename(file.path);

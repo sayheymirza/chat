@@ -1,6 +1,7 @@
 import 'package:chat/futures/contact/contact.controller.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
+import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/contact_form/contact_form.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
@@ -233,7 +234,10 @@ class ContactView extends GetView<ContactController> {
                         width: 42,
                         height: 42,
                         margin: const EdgeInsets.all(4),
-                        child: Image.network(element['logo']),
+                        child: CachedImageWidget(
+                          url: element['logo'],
+                          background: Colors.white,
+                        ),
                       ),
                     )
                     .toList(),
@@ -298,7 +302,10 @@ class ContactView extends GetView<ContactController> {
                     leading: SizedBox(
                       width: 24,
                       height: 24,
-                      child: Image.network(element['logo']),
+                      child: CachedImageWidget(
+                        url: element['logo'],
+                        background: Colors.white,
+                      ),
                     ),
                     title: Text(
                       element['title'],

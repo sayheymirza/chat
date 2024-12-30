@@ -13,6 +13,7 @@ import 'package:chat/futures/auth_login/auth_login.view.dart';
 import 'package:chat/futures/auth_reigster/auth_register.view.dart';
 import 'package:chat/futures/blocks/blocks.view.dart';
 import 'package:chat/futures/cache_manager/cache_manager.view.dart';
+import 'package:chat/futures/call/call.view.dart';
 import 'package:chat/futures/chat/chat.view.dart';
 import 'package:chat/futures/contact/contact.view.dart';
 import 'package:chat/futures/cropper/cropper.view.dart';
@@ -124,5 +125,9 @@ List<GetPage> pages = [
   GetPage(
     name: '/dev/log',
     page: () => const LogView(),
+  ),
+  GetPage(
+    name: '/app/call',
+    page: () => const CallView(),
   ),
 ];
