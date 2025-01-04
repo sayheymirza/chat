@@ -13,7 +13,7 @@ class DialogImageView extends StatefulWidget {
   const DialogImageView({
     super.key,
     required this.url,
-    this.downloadable = true,
+    this.downloadable = false,
   });
 
   @override
@@ -38,6 +38,11 @@ class _DialogImageViewState extends State<DialogImageView> {
                 background: Colors.transparent,
               ),
             ),
+          ),
+          Positioned(
+            top: Get.mediaQuery.padding.top + 16,
+            right: 16,
+            child: IconButton(onPressed: () => Get.back(), icon: Icon(Icons.close_rounded, color: Colors.black,)),
           ),
           if (widget.downloadable)
             Positioned(

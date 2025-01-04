@@ -13,7 +13,17 @@ class DialogLogoutView extends GetView<DialogLogoutController> {
     return Obx(
       () => PopScope(
         canPop: !controller.disabled.value,
-        child: Dialog(
+        child: Container(
+          height: MediaQuery.of(context).padding.bottom + 200,
+          width: Get.width,
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            color: Get.theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(14),
+              topRight: Radius.circular(14),
+            ),
+          ),
           child: Container(
             height: 180,
             padding: const EdgeInsets.all(16),
@@ -27,9 +37,9 @@ class DialogLogoutView extends GetView<DialogLogoutController> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Gap(4),
+                const Gap(8),
                 const Text(
-                  'آیا واقعا می خواهید از حساب کاربری خود خارج شوید ؟',
+                  'آیا مطمئین هستید که می خواهید از حساب کاربری خود خارج شوید؟',
                 ),
                 const Spacer(),
                 Row(
@@ -66,7 +76,7 @@ class DialogLogoutView extends GetView<DialogLogoutController> {
                               ),
                             )
                           : Text(
-                              'تایید',
+                              'تایید و خروج',
                               style: TextStyle(
                                 color: Get.theme.colorScheme.onPrimary,
                               ),
@@ -74,6 +84,7 @@ class DialogLogoutView extends GetView<DialogLogoutController> {
                     ),
                   ],
                 ),
+                Gap(MediaQuery.of(context).padding.bottom),
               ],
             ),
           ),

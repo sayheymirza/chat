@@ -44,8 +44,6 @@ class HttpService extends GetxService {
 
       if (accessToken != null) {
         headers['Authorization'] = 'Bearer $accessToken';
-      } else {
-        return Future.error("Unauthorized");
       }
     }
 
@@ -98,9 +96,8 @@ class HttpService extends GetxService {
         path,
         cancelToken: cancelToken,
         onReceiveProgress: (int sent, int total) {
-          var progress = ((100 * sent) / total).ceil();
-
           if (onPercent != null) {
+            var progress = ((100 * sent) / total).ceil();
             onPercent(percent: progress, recive: sent, total: total);
           }
         },

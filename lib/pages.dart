@@ -1,6 +1,7 @@
 import 'package:chat/app/pages.dart' as app;
 import 'package:chat/futures/500/500.view.dart';
 import 'package:chat/futures/account_delete_leave/account_delete_leave.view.dart';
+import 'package:chat/futures/account_delete_leave_choose/account_delete_leave_choose.view.dart';
 import 'package:chat/futures/account_notification/account_notification.view.dart';
 import 'package:chat/futures/account_security/account_security.view.dart';
 import 'package:chat/futures/account_verify_phone/account_verify_phone.view.dart';
@@ -25,9 +26,11 @@ import 'package:chat/futures/page/page.view.dart';
 import 'package:chat/futures/payment/payment.view.dart';
 import 'package:chat/futures/profile/profile.view.dart';
 import 'package:chat/futures/profile_edit/profile_edit.view.dart';
+import 'package:chat/futures/profile_slim/profile.view.dart';
 import 'package:chat/futures/purchase/one-step.view.dart';
 import 'package:chat/futures/report/report.view.dart';
 import 'package:chat/futures/search/search.view.dart';
+import 'package:chat/futures/search_slim/search.view.dart';
 import 'package:chat/futures/send_default_message/send_default_message.view.dart';
 import 'package:chat/futures/splash/splash.view.dart';
 import 'package:chat/futures/transacrion/transaction.view.dart';
@@ -42,6 +45,8 @@ List<GetPage> pages = [
   GetPage(name: '/auth/login', page: () => const AuthLoginView()),
   GetPage(name: '/auth/forgot', page: () => const AuthForgotView()),
   GetPage(name: '/auth/register', page: () => const AuthRegisterView()),
+  GetPage(name: '/search', page: () => const SearchSlimView()),
+  GetPage(name: '/profile/:id', page: () => const ProfileSlimView()),
   GetPage(name: '/app', page: () => const AppView()),
   GetPage(
     name: '/app/search/:type',
@@ -81,6 +86,10 @@ List<GetPage> pages = [
     page: () => const AccountVerifyPhoneView(),
   ),
   GetPage(
+    name: '/app/account_delete_leave/choose',
+    page: () => const AccountDeleteLeaveChooseView(),
+  ),
+  GetPage(
     name: '/app/account_delete_leave/:type',
     page: () => const AccountDeleteLeaveView(),
   ),
@@ -92,7 +101,7 @@ List<GetPage> pages = [
     name: '/app/earning',
     page: () => const EarningIncomeView(),
   ),
-  GetPage(name: '/profile/:id', page: () => const ProfileView()),
+  GetPage(name: '/app/profile/:id', page: () => const ProfileView()),
   GetPage(
     name: '/page/plans',
     page: () => const PageView(

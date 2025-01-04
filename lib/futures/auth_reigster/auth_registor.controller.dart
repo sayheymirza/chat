@@ -54,6 +54,14 @@ class AuthRegisterController extends GetxController {
     'marriageType': [],
   }.obs;
   RxList cities = [].obs;
+  RxBool isSingle = false.obs;
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    loadDropdowns();
+  }
 
   Future<void> setCitiesByProvider(String value) async {
     var query = database.select(database.dropdownTable);

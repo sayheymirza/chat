@@ -60,6 +60,7 @@ dependencies:
 #  load flutter_inappwebview from ./packages/flutter_inappwebview
   flutter_inappwebview:
     path: ./packages/flutter_inappwebview/flutter_inappwebview
+  flutter_image_compress: ^2.4.0
 
 
 dev_dependencies:
@@ -91,4 +92,8 @@ flutter:
     - lib/app/assets/images/auth_hero.png
     - lib/app/assets/images/star.png
     - lib/app/assets/images/map_marker.png
-    - lib/assets/call/index.html
+    - lib/app/assets/images/logo-white.png
+    - lib/app/assets/images/pattern.png
+    - lib/app/assets/images/one.png
+    - lib/app/assets/images/two.png
+    - lib/app/assets/images/three.png

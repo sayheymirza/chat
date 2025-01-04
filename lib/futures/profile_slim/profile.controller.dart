@@ -8,7 +8,7 @@ import 'package:chat/shared/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ProfileController extends GetxController {
+class ProfileSlimController extends GetxController {
   Rx<Relation> relation = Relation.empty.obs;
 
   RxBool showOptions = false.obs;
@@ -17,6 +17,7 @@ class ProfileController extends GetxController {
 
   StreamController<List<ProfileModel>> profile =
       StreamController<List<ProfileModel>>();
+  bool streamed = false;
 
   @override
   void onInit() {
@@ -51,28 +52,30 @@ class ProfileController extends GetxController {
         showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
       }
     } else {
-      loadUser();
-      fetch();
-    }
-  }
+      if (streamed == false) {
+        try {
+          var result = await Services.user.stream(userId: id);
 
-  Future<void> loadUser() async {
-    try {
-      var id = Get.parameters['id']!;
-      var result = await Services.user.one(userId: id);
+          var sub = result.listen((data) {
+            if (!profile.isClosed && data.isNotEmpty) {
+              profile.add(data);
 
-      if (result != null) {
-        if (result.relation != null) {
-          relation.value = result.relation!;
+              // set relation
+              if (data.first.relation != null) {
+                relation.value = data.first.relation!;
+              }
+            }
+          });
+
+          profile.onCancel = () => sub.cancel();
+        } catch (e) {
+          print(e);
         }
 
-        profile.add([result]);
-      } else {
-        Get.back();
-        showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
+        streamed = true;
+
+        fetch();
       }
-    } catch (e) {
-      print(e);
     }
   }
 
@@ -80,8 +83,6 @@ class ProfileController extends GetxController {
     var id = Get.parameters['id']!;
 
     await Services.user.fetch(userId: id);
-
-    loadUser();
   }
 
   void block({required String id}) async {

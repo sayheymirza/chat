@@ -23,21 +23,35 @@ class ChatMessageVoiceV1Widget extends StatefulWidget {
 
 class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
   late PlayerController controller;
-  List<int>? waveforms;
+  List<dynamic>? waveforms;
 
   @override
   void initState() {
     super.initState();
+
+    var waveform = widget.message.data['waveforms'] ??
+        widget.message.data['waveform'] ??
+        [];
+
+    if (waveform.isNotEmpty) {
+      if (mounted) {
+        waveforms = waveform;
+        setState(() {});
+      }
+    }
 
     controller = PlayerController(onStateChange: () {
       if (mounted) {
         setState(() {});
       }
     });
+
     controller.load(
         url: widget.message.data['url'],
         message: widget.message,
         onLoad: (file) async {
+          if (waveforms != null && waveforms!.isNotEmpty) return;
+
           try {
             var result = await Services.waveframe.process(path: file.path);
 
@@ -79,6 +93,7 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
       file: File(widget.message.data['url']),
       category: 'voice',
       meta: widget.message.toJson(),
+      cache: true,
       onError: (result) {
         if (result != null) {
           var message = ChatMessageModel.fromJson(result.meta);
@@ -122,12 +137,15 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
     return ChatMessageWidget(
       message: widget.message,
       child: child(
-        waveforms: waveforms ?? widget.message.data['waveforms'] ?? [],
+        waveforms: waveforms ?? [],
       ),
     );
   }
 
-  Widget child({required List<int> waveforms}) {
+  Widget child({required List<dynamic> waveforms}) {
+    bool me = widget.message.senderId == Services.profile.profile.value.id! ||
+        widget.message.senderId!.isEmpty;
+
     return Container(
       padding: EdgeInsets.all(8),
       child: Row(
@@ -146,20 +164,30 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
                   onSeek: (duration) {
                     controller.seek(duration);
                   },
-                  inactiveColor: Colors.white.withAlpha(128),
+                  inactiveColor: me ? Colors.grey.shade400 : Colors.white70,
                   waveframe: waveforms,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                   ),
-                  child: Text(
-                    controller.passedTime == '00:00'
-                        ? controller.totalTime
-                        : controller.passedTime,
-                    style: TextStyle(
-                      fontSize: 10,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        controller.passedTime == '00:00'
+                            ? controller.totalTime
+                            : controller.passedTime,
+                        style: TextStyle(
+                          fontSize: 10,
+                        ),
+                      ),
+                      const Gap(4),
+                      Icon(
+                        Icons.mic_rounded,
+                        size: 14,
+                      ),
+                    ],
                   ),
                 ),
               ],

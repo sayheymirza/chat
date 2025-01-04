@@ -4,6 +4,7 @@ import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:restart_app/restart_app.dart';
 
 class AccountDeleteLeaveController extends GetxController {
   RxBool disabled = false.obs;
@@ -25,24 +26,26 @@ class AccountDeleteLeaveController extends GetxController {
 
     if (type == 'delete') {
       texts.value = {
-        'title': 'حذف حساب کاربری',
-        'placeholder': 'علت حذف حساب کاربری را وارد کنید',
-        'button': 'تایید و حذف حساب کاربری',
+        'placeholder': 'علت حذف پروفایل خود را بنویسید',
+        'button': 'تایید و حذف',
         'info_title': 'توضیحاتی در مورد حذف پروفایل:',
         'info_text':
             'در صورتی که پروفایل خود را حذف نمایید، پروفایل و پیام های ارسالی شما برای همیشه حذف خواهد شد و امکان بازگشت اطلاعات شما مقدور نیست\nدر ضمن امکان ثبت نام مجدد با این شماره موبایل امکان پذیر نخواهد بود',
         'info_color': Colors.red.shade100,
+        'gradient_from': Colors.red.shade500,
+        'gradient_to': Colors.red.shade700,
       } as Map<String, dynamic>;
     }
     if (type == 'leave') {
       texts.value = {
-        'title': 'غیر فعال سازی حساب کاربری',
-        'placeholder': 'علت غیر فعال سازی حساب کاربری را وارد کنید',
-        'button': 'تایید غیر فعال سازی حساب کاربری',
-        'info_title': 'توضیحاتی در مورد غیر فعال سازی حساب کاربری:',
+        'placeholder': 'علت انصراف خود را بنویسید',
+        'button': 'تایید و انصراف',
+        'info_title': 'توضیحاتی در مورد انصراف از عضویت:',
         'info_text':
-            'در صورتی که از عضویت خود انصراف دهید، پروفایل و پیام های ارسالی شما برای هیچ یک از کاربران قابل مشاهده نخواهد بود.\nچنانچه پس از انصراف اقدام به ورود به پروفایلتان نمایید، پروفایل شما مجددا به صورت خودکار فعال می گردد.\nمنتظر بازگشت مجدد شما بزودی هستیم',
+            'در صورتی که از عضویت خود انصراف دهید، پروفایل و پیام های ارسالی شما برای هیچ یک از کاربران قابل مشاهده نخواهد بود.\nچنانچه پس از انصراف اقدام به ورود به پروفایلتان نمایید، پروفایل شما مجددا به صورت خودکار فعال می گردد.\nمنتظر بازگشت مجدد شما بزودی هستیم.',
         'info_color': Colors.yellow.shade100,
+        'gradient_from': Colors.orange.shade500,
+        'gradient_to': Colors.orange.shade700,
       } as Map<String, dynamic>;
     }
   }
@@ -54,8 +57,8 @@ class AccountDeleteLeaveController extends GetxController {
       return;
     }
 
-    // if message length less than 10
-    if (description.length < 10) {
+    // if message length less than 5
+    if (description.length < 5) {
       showSnackbar(message: 'لطفا دلیل خود را به طور کامل وارد کنید');
       return;
     }
@@ -72,10 +75,9 @@ class AccountDeleteLeaveController extends GetxController {
 
       if (result) {
         // logout
-        // clear the storage
-        await Services.configs.unset(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
+        await Services.app.logout();
 
-        Get.offAllNamed('/');
+        Restart.restartApp();
       } else {
         showSnackbar(message: 'خطایی رخ داد');
       }

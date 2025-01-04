@@ -66,6 +66,7 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
       file: File(widget.message.data['url']),
       category: 'audio',
       meta: widget.message.toJson(),
+      cache: true,
       onError: (result) {
         if (result != null) {
           var message = ChatMessageModel.fromJson(result.meta);
@@ -140,13 +141,23 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
                   ),
-                  child: Text(
-                    controller.passedTime == '00:00'
-                        ? controller.totalTime
-                        : controller.passedTime,
-                    style: TextStyle(
-                      fontSize: 10,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        controller.passedTime == '00:00'
+                            ? controller.totalTime
+                            : controller.passedTime,
+                        style: TextStyle(
+                          fontSize: 10,
+                        ),
+                      ),
+                      const Gap(4),
+                      Icon(
+                        Icons.audiotrack_rounded,
+                        size: 14,
+                      ),
+                    ],
                   ),
                 ),
               ],

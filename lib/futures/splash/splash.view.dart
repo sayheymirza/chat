@@ -15,30 +15,30 @@ class SplashView extends GetView<SplashController> {
         fit: StackFit.expand,
         children: [
           Image.asset('lib/app/assets/images/splash_logo.png'),
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: Get.mediaQuery.padding.bottom + 50,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // linner loading
-                const SizedBox(
-                  width: 120,
-                  child: LinearProgressIndicator(),
-                ),
-                const Gap(20),
-                Obx(
-                  () => Text(
-                    controller.status.value,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Positioned(
+          //   left: 20,
+          //   right: 20,
+          //   bottom: Get.mediaQuery.padding.bottom + 50,
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     children: [
+          //       // linner loading
+          //       const SizedBox(
+          //         width: 120,
+          //         child: LinearProgressIndicator(),
+          //       ),
+          //       const Gap(20),
+          //       Obx(
+          //         () => Text(
+          //           controller.status.value,
+          //           textAlign: TextAlign.center,
+          //           style: const TextStyle(fontSize: 12),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

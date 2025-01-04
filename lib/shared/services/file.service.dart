@@ -36,6 +36,8 @@ class FileService extends GetxService {
   }
 
   DUModel? getUploadByFile(File file) {
+    if (uploads.isEmpty) return null;
+
     var model = uploads.values.where(
       (element) => element.file?.path == file.path,
     );
@@ -209,10 +211,21 @@ class FileService extends GetxService {
       if (result.success &&
           uploads[id]?.cache == true &&
           uploads[id]!.file!.existsSync()) {
+        // copy file to cache storage
+        var directory = Directory(
+          '${(await getApplicationCacheDirectory()).path}/files/$category',
+        );
+
+        if (!directory.existsSync()) {
+          directory.createSync(recursive: true);
+        }
+
+        var filePath = '${directory.path}/${basename(file.path)}';
+
         await database.into(database.cacheTable).insert(
               CacheTableCompanion.insert(
                 url: output.url!,
-                file: output.file!.path,
+                file: filePath,
                 size: output.file!.statSync().size,
                 category: output.category,
               ),

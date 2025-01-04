@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
 import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:vector_map_tiles/vector_map_tiles.dart';
 
@@ -31,8 +30,7 @@ class MapView extends GetView<MapViewController> {
           ),
         ),
         bottomNavigationBar: Container(
-          height:
-              MediaQuery.paddingOf(context).bottom + 16 + Get.bottomBarHeight,
+          height: MediaQuery.paddingOf(context).bottom + 16 + 56,
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 12,
@@ -63,12 +61,20 @@ class MapView extends GetView<MapViewController> {
                   onPressed: () {
                     controller.useCurrentLocation();
                   },
-                  icon: Icon(
-                    controller.gps.value == "ready"
-                        ? Icons.gps_fixed_rounded
-                        : Icons.gps_not_fixed_rounded,
-                    color: Colors.white,
-                  ),
+                  icon: controller.gps.value == "gpsing"
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+
+                          ),
+                        )
+                      : Icon(
+                          controller.gps.value == "ready"
+                              ? Icons.gps_fixed_rounded
+                              : Icons.gps_not_fixed_rounded,
+                          color: Colors.white,
+                        ),
                 ),
               const Spacer(),
               ElevatedButton(

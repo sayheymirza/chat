@@ -2,7 +2,8 @@ import 'package:shamsi_date/shamsi_date.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 String formatAgoChat(String? value) {
-  if(value == null) return '';
+  return formatAgo(value!);
+  if (value == null) return '';
 
   String format(int value) => value < 9 ? '0$value' : value.toString();
 
@@ -31,5 +32,7 @@ String formatAgoChatMessage(String value) {
 
 String formatAgo(String value) {
   timeago.setLocaleMessages('fa', timeago.FaMessages());
-  return timeago.format(DateTime.parse(value), locale: 'fa');
+  var output = timeago.format(DateTime.parse(value), locale: 'fa');
+  output = output.replaceAll('~', '');
+  return output;
 }

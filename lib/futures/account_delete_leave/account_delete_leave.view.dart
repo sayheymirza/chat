@@ -13,16 +13,51 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
     return Obx(
       () => Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text(
-            controller.texts['title']!,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
+        appBar: PreferredSize(
+          preferredSize: Size(Get.width, 250),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  controller.texts['gradient_from']!,
+                  controller.texts['gradient_to']!,
+                ],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Gap(16),
+                //   back button
+                IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                  ),
+                ),
+                const Spacer(),
+                const Gap(16),
+                Text(
+                  controller.texts['info_title']!,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const Gap(10),
+                Text(
+                  controller.texts['info_text']!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           ),
-          centerTitle: true,
         ),
         floatingActionButton: Container(
           width: Get.width - 32,
@@ -59,6 +94,7 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                 decoration: InputDecoration(
                   hintText: controller.texts['placeholder'],
                   border: const OutlineInputBorder(),
+                  helperText: "حداقل 5 حرف بنویسید"
                 ),
                 onChanged: (value) {
                   controller.description = value;
@@ -68,31 +104,6 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                   controller.disabled.value = false;
                 },
               ),
-              const Gap(16),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: controller.texts['info_color']!,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      controller.texts['info_title']!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Gap(10),
-                    Text(
-                      controller.texts['info_text']!,
-                    ),
-                  ],
-                ),
-              ),
-              Gap(Get.bottomBarHeight + 32 + 16),
             ],
           ),
         ),

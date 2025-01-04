@@ -18,16 +18,10 @@ class FavoritesView extends GetView<FavoritesController> {
       appBar: GradientAppBarWidget(
         back: true,
         title: 'علاقه مندی ها',
-        colors: [
-          Colors.pink.shade500,
-          Colors.pink.shade700,
-        ],
       ),
       body: Column(
         children: [
           TabBar(
-            labelColor: Colors.pink.shade600,
-            indicatorColor: Colors.pink.shade600,
             controller: controller.tab,
             onTap: (_) {
               controller.onTabChange();
@@ -66,10 +60,21 @@ class FavoritesView extends GetView<FavoritesController> {
           children: [
             if (!loading && profiles.isEmpty)
               const EmptyWidget(message: 'لیست خالی است'),
-            for (var item in controller.profiles) UserWidget(item: item),
+            for (var item in controller.profiles)
+              UserWidget(
+                item: item,
+                onTap: () {
+                  Get.toNamed(
+                    '/app/profile/${item.id}',
+                    arguments: {
+                      'id': item.id,
+                      'options': true,
+                    },
+                  );
+                },
+              ),
             if (controller.profiles.isNotEmpty)
               PaginationWidget(
-                color: Colors.pink.shade600,
                 last: controller.lastPage.value,
                 page: controller.page.value,
                 onChange: (page) {

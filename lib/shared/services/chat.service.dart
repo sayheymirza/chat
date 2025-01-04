@@ -178,10 +178,15 @@ class ChatService extends GetxService {
 
   // listen to unreaded chats
   Stream<int> listenToUnreadedChats() {
-    return (database.selectOnly(database.chatTable)
-          ..addColumns([database.chatTable.unread_count.sum()]))
-        .map((row) => row.read(database.chatTable.unread_count.sum()) ?? 0)
-        .watchSingle();
+    return (database.select(database.chatTable)
+          )
+        .watch()
+        .map((unreaded) {
+      return unreaded.fold(0, (previousValue, element) {
+        print(element.status);
+        return previousValue + (element.status != "deleted" ? (element.unread_count ?? 0) : 0);
+      });
+    });
   }
 
   // create a chat by user id and return new chat id
@@ -382,7 +387,6 @@ class ChatService extends GetxService {
           .watch()
           .map((chats) {
             var last = count ~/ limit;
-
             return ChatListModel(
               chats: chats,
               page: page,

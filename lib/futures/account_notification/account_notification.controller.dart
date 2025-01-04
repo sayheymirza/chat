@@ -29,6 +29,8 @@ class AccountNotificationController extends GetxController {
                 .get<bool>(key: CONSTANTS.STORAGE_SETTINGS_VIBRATION) ??
             false) !=
         false;
+
+    update();
   }
 
   void toggleSoundChat(bool value) {

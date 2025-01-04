@@ -11,6 +11,7 @@ class AccountSecurityController extends GetxController {
   RxBool permissionToNotification = false.obs;
   RxBool permissionToGPS = false.obs;
   RxBool permissionToMicrophone = false.obs;
+  RxBool permissionToCamera = false.obs;
 
   @override
   void onInit() {
@@ -23,10 +24,12 @@ class AccountSecurityController extends GetxController {
     var mic = await Services.permission.has("mic");
     var gps = await Services.permission.has("gps");
     var notification = await Services.permission.has("notification");
+    var camera = await Services.permission.has("camera");
 
     permissionToMicrophone.value = mic;
     permissionToGPS.value = gps;
     permissionToNotification.value = notification;
+    permissionToCamera.value = camera;
   }
 
   void submit() {

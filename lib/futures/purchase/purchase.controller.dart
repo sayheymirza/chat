@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/futures/dialog_connection/dialog_connection.view.dart';
 import 'package:chat/models/apis/purchase.model.dart';
 import 'package:chat/models/invoice.model.dart';
 import 'package:chat/models/plan.model.dart';
@@ -86,6 +87,8 @@ class PurchaseController extends GetxController {
 
   Future<void> submitWithPSP() async {
     try {
+      await Get.bottomSheet(DialogConnectionView(type: 'purchase'));
+
       disabled.value = true;
 
       var callback = CONSTANTS.PAYMENT_CALLBACK;
@@ -104,9 +107,12 @@ class PurchaseController extends GetxController {
 
       if (result != null) {
         Services.launch.launch(result, mode: "external");
+      } else {
+        showSnackbar(message: 'خطا در انتقال به درگاه پرداخت رخ داد');
       }
     } catch (e) {
       disabled.value = false;
+      showSnackbar(message: 'خطا در انتقال به درگاه پرداخت رخ داد');
     }
   }
 

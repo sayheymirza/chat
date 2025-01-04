@@ -6,20 +6,15 @@ import 'package:get/get.dart';
 
 class UserWidget extends StatelessWidget {
   final ProfileSearchModel item;
+  final Function onTap;
 
-  const UserWidget({super.key, required this.item});
+  const UserWidget({super.key, required this.item, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(
-          '/profile/${item.id}',
-          arguments: {
-            'id': item.id,
-            'options': true,
-          },
-        );
+        onTap();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(

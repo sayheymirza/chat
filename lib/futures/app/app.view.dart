@@ -94,7 +94,7 @@ class AppView extends GetView<AppController> {
                 },
                 items: [
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.home_rounded),
+                    icon: const Icon(Icons.dark_mode),
                     label: "app_name".tr,
                   ),
                   // chats

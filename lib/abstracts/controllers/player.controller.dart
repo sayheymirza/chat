@@ -255,18 +255,19 @@ class PlayerController {
       child: Stack(
         children: [
           if (waveframe.isNotEmpty)
-            SizedBox(
+            Container(
               width: width,
               height: 30,
+              padding: EdgeInsets.symmetric(horizontal: 8),
               child: RectangleWaveform(
                 samples:
                     waveframe.map((e) => double.parse(e.toString())).toList(),
                 height: 30,
-                width: width,
-                maxDuration: totalDuration,
+                width: width - 16,
+                maxDuration: totalDuration.inSeconds == 0 ? Duration(seconds: 1) : Duration(milliseconds: totalDuration.inMilliseconds + 1),
                 elapsedDuration: passedDuration,
-                inactiveColor: inactiveColor ?? Colors.grey.shade400,
-                inactiveBorderColor: inactiveColor ?? Colors.grey.shade400,
+                inactiveColor: inactiveColor ?? Colors.grey.shade600,
+                inactiveBorderColor: inactiveColor ?? Colors.grey.shade600,
                 activeColor: activeColor ?? Get.theme.primaryColor,
                 activeBorderColor: activeColor ?? Get.theme.primaryColor,
                 borderWidth: 1,

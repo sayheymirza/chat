@@ -1,5 +1,5 @@
 import 'package:chat/futures/dialog_image/dialog_image.view.dart';
-import 'package:chat/futures/profile/profile.controller.dart';
+import 'package:chat/futures/profile_slim/profile.controller.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/title.widget.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +7,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:glass/glass.dart';
 
-class ProfileView extends GetView<ProfileController> {
-  const ProfileView({super.key});
+class ProfileSlimView extends GetView<ProfileSlimController> {
+  const ProfileSlimView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(ProfileController());
+    Get.put(ProfileSlimController());
 
     return Scaffold(
       body: StreamBuilder(
@@ -292,26 +292,6 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 ),
               ),
-              //   if user blocked
-              if (controller.relation.value.blocked == true)
-                alert(
-                  title: 'کاربر بلاک شده',
-                  content:
-                      'شما این کاربر را بلاک کرده اید و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
-                  action: OutlinedButton(
-                    onPressed: () {
-                      controller.unblock(id: data.id!);
-                    },
-                    child: const Text('آنبلاک کردن'),
-                  ),
-                ),
-              // if user blocked me
-              if (controller.relation.value.blockedMe == true)
-                alert(
-                  title: 'بلاک شده اید',
-                  content:
-                      'این کاربر شما را بلاک کرده و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
-                ),
             ],
           );
         },
@@ -469,7 +449,7 @@ class ProfileView extends GetView<ProfileController> {
         const Spacer(),
         // menu button
         if (controller.showOptions.value)
-          GetBuilder<ProfileController>(
+          GetBuilder<ProfileSlimController>(
             builder: (context) {
               return PopupMenuButton(
                 child: Container(

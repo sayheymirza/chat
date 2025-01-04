@@ -38,10 +38,6 @@ class TransactionsView extends GetView<TransactionsController> {
               }
             },
             title: "تراکنش ها",
-            colors: [
-              Colors.green.shade500,
-              Colors.green.shade700,
-            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(20),

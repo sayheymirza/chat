@@ -41,12 +41,24 @@ class AccountSecurityView extends GetView<AccountSecurityController> {
                 },
               ),
               permission(
-                icon: Icons.gps_fixed,
+                icon: Icons.location_on_rounded,
                 text: "دسترسی به موقعیت مکانی",
                 access: controller.permissionToGPS.value,
                 onTap: () {
                   Services.permission.ask("gps").then(
                     (value) {
+                      controller.init();
+                    },
+                  );
+                },
+              ),
+              permission(
+                icon: Icons.camera_alt,
+                text: "دسترسی به دوربین",
+                access: controller.permissionToCamera.value,
+                onTap: () {
+                  Services.permission.ask("camera").then(
+                        (value) {
                       controller.init();
                     },
                   );
@@ -178,7 +190,7 @@ class AccountSecurityView extends GetView<AccountSecurityController> {
       trailing: Text(
         access ? "فعال" : "غیرفعال",
         style: TextStyle(
-          color: access ? Colors.green : Colors.red,
+          color: Get.theme.primaryColor,
           fontWeight: FontWeight.bold,
         ),
       ),

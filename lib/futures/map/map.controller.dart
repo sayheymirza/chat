@@ -38,6 +38,13 @@ class MapViewController extends GetxController {
     initMap();
   }
 
+  @override
+  void onClose() {
+    super.onClose();
+
+    Services.chrome.transparent();
+  }
+
   Future<void> initMap() async {
     try {
       type.value = Services.configs.get(key: CONSTANTS.STORAGE_MAP_TYPE);
@@ -84,7 +91,9 @@ class MapViewController extends GetxController {
         }
       }
 
+      gps.value = "gpsing";
       var position = await Services.permission.location();
+      gps.value = "ready";
 
       if (position != null) {
         mapController.move(position, 15);

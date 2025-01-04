@@ -159,7 +159,7 @@ class ChatFooterController extends GetxController {
         var tempDir = await getTemporaryDirectory();
 
         var output =
-            '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.m4a';
+            '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.wav';
 
         recordingDuration.value = '00:00';
 
@@ -177,7 +177,7 @@ class ChatFooterController extends GetxController {
 
         await record.start(
           const RecordConfig(
-            encoder: AudioEncoder.aacLc,
+            encoder: AudioEncoder.wav,
           ),
           path: output,
         );

@@ -21,9 +21,10 @@ class _Error500ViewState extends State<Error500View> {
       floatingActionButton: SizedBox(
         width: Get.width - 32,
         child: OutlinedButton(
-          onPressed: () {
+          onPressed: () async {
             if (tries >= 3) {
               showSnackbar(message: 'شما زیاد تلاش کردید');
+              await Services.app.logout();
               Get.offAllNamed('/auth');
             } else {
               loading = true;

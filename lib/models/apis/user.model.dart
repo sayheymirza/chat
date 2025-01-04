@@ -1,5 +1,24 @@
 import 'package:chat/models/profile.model.dart';
 
+class ApiUserSendSMSResponseModel {
+  final bool status;
+  final String message;
+  final int? remaining;
+
+  ApiUserSendSMSResponseModel({
+    required this.status,
+    required this.message,
+    this.remaining,
+  });
+
+  static get unhandledError {
+    return ApiUserSendSMSResponseModel(
+      status: false,
+      message: 'خطایی نامشخص رخ داده است',
+    );
+  }
+}
+
 class ApiUserChangeSettingsRequestModel {
   bool voiceCall;
   bool videoCall;

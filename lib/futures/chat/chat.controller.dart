@@ -407,6 +407,44 @@ class ChatController extends GetxController {
     });
   }
 
+  void favorite() async {
+    if (chat.value.userId == null) return;
+
+    await Services.user.relation(
+      userId: chat.value.userId!,
+      action: RELATION_ACTION.FAVORITE,
+    );
+
+    Services.queue.add(() async {
+      var result = await ApiService.user.react(
+        user: chat.value.userId!,
+        action: RELATION_ACTION.FAVORITE,
+      );
+      if (result) {
+        showSnackbar(message: 'کاربر به علاقه مندی ها اضافه شد');
+      }
+    });
+  }
+
+  void disfavorite() async {
+    if (chat.value.userId == null) return;
+
+    await Services.user.relation(
+      userId: chat.value.userId!,
+      action: RELATION_ACTION.DISFAVORITE,
+    );
+
+    Services.queue.add(() async {
+      var result = await ApiService.user.react(
+        user: chat.value.userId!,
+        action: RELATION_ACTION.DISFAVORITE,
+      );
+      if (result) {
+        showSnackbar(message: 'کاربر از علاقه مندی ها حذف شد');
+      }
+    });
+  }
+
   void report() {
     if (chat.value.userId == null) return;
 
@@ -421,9 +459,12 @@ class ChatController extends GetxController {
 
   void delete() async {
     // confirm
-    var result = await Get.dialog(DialogDeleteChatView());
+    var result = await Get.bottomSheet(
+      DialogDeleteChatView(),
+      isScrollControlled: true,
+    );
 
-    if (result) {
+    if (result == true) {
       // delete all chats and delete chat
       var id = chatId!;
       var result = await ApiService.chat.deleteChatWithChatId(chatId: id);

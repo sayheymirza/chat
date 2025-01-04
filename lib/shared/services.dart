@@ -7,6 +7,7 @@ import 'package:chat/shared/services/cache.service.dart';
 import 'package:chat/shared/services/call.service.dart';
 import 'package:chat/shared/services/chat.service.dart';
 import 'package:chat/shared/services/chrome.service.dart';
+import 'package:chat/shared/services/compress.service.dart';
 import 'package:chat/shared/services/configs.service.dart';
 import 'package:chat/shared/services/event.service.dart';
 import 'package:chat/shared/services/file.service.dart';
@@ -66,6 +67,8 @@ class Services {
 
   static LogService get log => Get.find(tag: 'log');
 
+  static CompressService get compress => Get.find(tag: 'compress');
+
   static put() async {
     developer.log('[services.dart] start put Get services');
     Get.put(HttpService(), tag: 'http');
@@ -89,6 +92,7 @@ class Services {
     Get.lazyPut(() => UserService(), tag: 'user');
     Get.lazyPut(() => SyncService(), tag: 'sync');
     Get.lazyPut(() => LogService(), tag: 'log');
+    Get.lazyPut(() => CompressService(), tag: 'compress');
     developer.log('[services.dart] end put Get services');
   }
 }

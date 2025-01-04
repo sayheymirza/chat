@@ -63,9 +63,7 @@ class ChatView extends GetView<ChatController> {
           back: true,
           right: GestureDetector(
             onTap: () {
-              if (Get.previousRoute == '/profile/${data.userId}') {
-                Get.back();
-              } else {
+              if (data.permission.contains('CAN_SEE_PROFILE')) {
                 Get.toNamed('/profile/${data.userId}', arguments: {
                   'options': true,
                 });
@@ -175,6 +173,12 @@ class ChatView extends GetView<ChatController> {
                   ),
                   onSelected: (value) {
                     switch (value) {
+                      case "favorite":
+                        controller.favorite();
+                        break;
+                      case "disfavorite":
+                        controller.disfavorite();
+                        break;
                       case "block":
                         controller.block();
                         break;
@@ -187,11 +191,59 @@ class ChatView extends GetView<ChatController> {
                       case "delete":
                         controller.delete();
                         break;
+                      case "profile":
+                        Get.toNamed('/profile/${data.userId}', arguments: {
+                          'options': true,
+                        });
+                        break;
                       default:
                     }
                   },
                   itemBuilder: (context) {
                     return [
+                      // open profile
+                      if (data.permission.contains('CAN_SEE_PROFILE'))
+                        const PopupMenuItem(
+                          value: "profile",
+                          child: Row(
+                            children: [
+                              Icon(Icons.person),
+                              SizedBox(width: 10),
+                              Text(
+                                "مشاهده پروفایل",
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (data.permission.contains('CAN_FAVORITE'))
+                        controller.chat.value.user?.relation?.favorited == true
+                            ? const PopupMenuItem(
+                                value: "disfavorite",
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "حذف از علاقه مندی ها",
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const PopupMenuItem(
+                                value: "favorite",
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.favorite),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "افزودن به علاقه مندی ها",
+                                    ),
+                                  ],
+                                ),
+                              ),
                       if (data.permission.contains('CAN_BLOCK'))
                         controller.chat.value.user?.relation?.blocked == false
                             ? const PopupMenuItem(

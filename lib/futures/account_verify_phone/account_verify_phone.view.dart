@@ -1,4 +1,5 @@
 import 'package:chat/futures/account_verify_phone/account_verify_phone.controller.dart';
+import 'package:chat/shared/widgets/card_numbers_blocked.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -10,62 +11,73 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
   Widget build(BuildContext context) {
     Get.put(AccountVerifyPhoneController());
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButton: footer(),
-      body: container(
-        children: [
-          IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: const Icon(Icons.arrow_back),
-          ),
-          const Gap(20),
-          const Text(
-            'تایید شماره موبایل',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return Obx(
+      () => Scaffold(
+        backgroundColor: Colors.white,
+        bottomNavigationBar: footer(),
+        body: container(
+          children: [
+            IconButton(
+              onPressed: () {
+                Get.back();
+              },
+              icon: const Icon(Icons.arrow_back),
             ),
-          ),
-          const Gap(20),
-          Text(
-            'کد تایید ۶ رقمی به شماره ${controller.profile.profile.value.phone} پیامک شده را وارد کنید.',
-          ),
-          const Gap(32),
-          TextFormField(
-            controller: controller.codeController,
-            decoration: const InputDecoration(
-              label: Text('کد تایید'),
-              hintText: '0000',
-              hintTextDirection: TextDirection.ltr,
+            const Gap(20),
+            const Text(
+              'تایید شماره موبایل',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            textDirection: TextDirection.ltr,
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.phone,
-            maxLength: 4,
-            onChanged: (String value) {
-              controller.code.value = value;
-            },
-            onFieldSubmitted: (_) {
-              controller.submit();
-            },
-          ),
-        ],
+            const Gap(20),
+            Text(
+              'کد تایید 4 رقمی به شماره ${controller.profile.profile.value.phone} پیامک شده را وارد کنید.',
+            ),
+            const Gap(32),
+            TextFormField(
+              controller: controller.codeController,
+              decoration: const InputDecoration(
+                label: Text('کد تایید'),
+                hintText: '0000',
+                hintTextDirection: TextDirection.ltr,
+              ),
+              textDirection: TextDirection.ltr,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.phone,
+              maxLength: 4,
+              onChanged: (String value) {
+                controller.code.value = value;
+              },
+              onFieldSubmitted: (_) {
+                controller.submit();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget footer() {
     return Obx(
-      () => SizedBox(
-        height: 120,
-        width: double.infinity,
+      () => Container(
+        height: 420,
+        padding: const EdgeInsets.only(
+          left: 32,
+          right: 32,
+          bottom: 40,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            SizedBox(
+              width: Get.width - 32,
+              child: CardNumbersBlockedWidget(),
+            ),
+            const Gap(10),
             if (controller.sent.value)
               SizedBox(
                 width: Get.width - 32,

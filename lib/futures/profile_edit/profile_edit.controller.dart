@@ -39,6 +39,7 @@ class ProfileEditController extends GetxController {
     'marriageType': [],
   }.obs;
   RxList cities = [].obs;
+  RxBool isSingle = false.obs;
 
   @override
   void onReady() {
@@ -81,6 +82,10 @@ class ProfileEditController extends GetxController {
     };
 
     formKey.currentState!.patchValue(value);
+
+    if (value['marital'] == '0') {
+      isSingle.value = true;
+    }
 
     setCitiesByProvider(profile.dropdowns!['province']).then((_) {
       return Future.delayed(const Duration(milliseconds: 100));
@@ -176,6 +181,9 @@ class ProfileEditController extends GetxController {
 
       showSnackbar(message: result.message);
       disabled.value = false;
+
+      await Services.profile.fetchMyProfile();
+      patchFormValueFromProfile();
     } catch (e) {
       disabled.value = false;
       //

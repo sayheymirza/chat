@@ -18,16 +18,10 @@ class BlocksView extends GetView<BlocksController> {
       appBar: GradientAppBarWidget(
         back: true,
         title: 'بلاکی ها',
-        colors: [
-          Colors.red.shade500,
-          Colors.red.shade700,
-        ],
       ),
       body: Column(
         children: [
           TabBar(
-            labelColor: Colors.red.shade600,
-            indicatorColor: Colors.red.shade600,
             controller: controller.tab,
             onTap: (_) {
               controller.onTabChange();
@@ -66,12 +60,23 @@ class BlocksView extends GetView<BlocksController> {
           children: [
             if (!loading && profiles.isEmpty)
               const EmptyWidget(message: 'لیست خالی است'),
-            for (var item in controller.profiles) UserWidget(item: item),
+            for (var item in controller.profiles)
+              UserWidget(
+                item: item,
+                onTap: () {
+                  Get.toNamed(
+                    '/app/profile/${item.id}',
+                    arguments: {
+                      'id': item.id,
+                      'options': true,
+                    },
+                  );
+                },
+              ),
             if (controller.profiles.isNotEmpty)
               PaginationWidget(
                 last: controller.lastPage.value,
                 page: controller.page.value,
-                color: Colors.red.shade600,
                 onChange: (page) {
                   controller.goToPage(page);
                 },

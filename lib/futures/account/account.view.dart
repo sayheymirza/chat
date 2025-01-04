@@ -172,7 +172,10 @@ class AccountView extends GetView<AccountController> {
                   icon: Icons.logout,
                   color: Colors.black,
                   onTap: () {
-                    Get.dialog(const DialogLogoutView());
+                    Get.bottomSheet(
+                      const DialogLogoutView(),
+                      isScrollControlled: true,
+                    );
                   },
                 ),
                 // disable or delete account (red)
@@ -393,68 +396,75 @@ class AccountView extends GetView<AccountController> {
         () => Stack(
           clipBehavior: Clip.none,
           children: [
-            AnimatedOpacity(
-              opacity: controller.avatarDisabled.value ? 0.4 : 1,
-              duration: const Duration(seconds: 1),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[300],
-                ),
-                child: controller.profile.profile.value.avatar == null
-                    ? const Icon(Icons.person)
-                    : GestureDetector(
-                        onTap: () {
-                          Get.dialog(
-                            DialogImageView(
-                              url: controller.profile.profile.value.avatar!,
-                            ),
-                            useSafeArea: false,
-                          );
-                        },
-                        child: CachedImageWidget(
+            GestureDetector(
+              onTap: () {
+                Get.dialog(
+                  DialogImageView(
+                    url: controller.profile.profile.value.avatar!,
+                  ),
+                  useSafeArea: false,
+                );
+              },
+              child: AnimatedOpacity(
+                opacity: controller.avatarDisabled.value ? 0.4 : 1,
+                duration: const Duration(seconds: 1),
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey[300],
+                  ),
+                  child: controller.profile.profile.value.avatar == null
+                      ? const Icon(Icons.person)
+                      : CachedImageWidget(
                           url: controller.profile.profile.value.avatar!,
                           category: "avatar",
                           fit: BoxFit.cover,
                           alignment: Alignment.topCenter,
                         ),
-                      ),
-              ),
-            ),
-            Positioned(
-              top: 10,
-              left: 10,
-              right: 10,
-              bottom: 10,
-              child: CircularProgressIndicator(
-                value: double.parse(
-                  controller.avatarUploadPercent.value.toString(),
                 ),
               ),
             ),
+            if (controller.avatarDisabled.value)
+              Positioned(
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 10,
+                child: CircularProgressIndicator(
+                  value:
+                      (controller.avatarUploadPercent.value / 100).toDouble(),
+                ),
+              ),
             if (controller.profile.profile.value.defaultAvatar == false)
               Positioned(
                 right: -10,
                 bottom: -8,
                 width: 36,
                 height: 36,
-                child: IconButton(
-                  onPressed: controller.avatarDisabled.value
+                child: GestureDetector(
+                  onTap: controller.avatarDisabled.value
                       ? null
                       : () {
                           controller.deleteAvatar();
                         },
-                  icon: Icon(
-                    Icons.delete,
-                    color: Get.theme.colorScheme.onError,
-                  ),
-                  iconSize: 18,
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Get.theme.colorScheme.error,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Get.theme.colorScheme.error,
+                      border: Border.all(
+                        width: 4,
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Icon(
+                      Icons.delete,
+                      color: Get.theme.colorScheme.onError,
+                      size: 16,
                     ),
                   ),
                 ),
@@ -464,20 +474,27 @@ class AccountView extends GetView<AccountController> {
               bottom: -8,
               width: 36,
               height: 36,
-              child: IconButton(
-                onPressed: controller.avatarDisabled.value
+              child: GestureDetector(
+                onTap: controller.avatarDisabled.value
                     ? null
                     : () {
                         controller.chooseAvatar();
                       },
-                icon: Icon(
-                  Icons.add_a_photo_rounded,
-                  color: Get.theme.colorScheme.onSecondaryContainer,
-                ),
-                iconSize: 18,
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    Get.theme.colorScheme.secondaryContainer,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Get.theme.primaryColor,
+                    border: Border.all(
+                      width: 4,
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Icon(
+                    Icons.camera_alt_rounded,
+                    color: Get.theme.colorScheme.onPrimary,
+                    size: 16,
                   ),
                 ),
               ),

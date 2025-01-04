@@ -17,11 +17,13 @@ class ApiSimpleResponseModel {
 
 class ApiUploadResponseModel {
   final bool success;
+  final String message;
   final String? url;
   final String? fileId;
 
   ApiUploadResponseModel({
     required this.success,
+    required this.message,
     required this.url,
     required this.fileId,
   });
@@ -29,6 +31,7 @@ class ApiUploadResponseModel {
   static get unhandledError {
     return ApiUploadResponseModel(
       success: false,
+      message: 'خطایی رخ داده است',
       url: null,
       fileId: null,
     );

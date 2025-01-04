@@ -63,7 +63,7 @@ class AccountVerifyPhoneController extends GetxController {
       timer!.cancel();
     }
 
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    void callback() {
       var now = DateTime.now().millisecondsSinceEpoch;
 
       if (now > end) {
@@ -81,10 +81,16 @@ class AccountVerifyPhoneController extends GetxController {
             .remainder(60); // ثانیه‌های باقیمانده را محاسبه می‌کنیم
 
         time.value =
-            '${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
+        '${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
 
         log('[account_verify_phone.controller.dart] ${time.value} remaning');
       }
+    }
+
+    callback();
+
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      callback();
     });
   }
 

@@ -157,52 +157,61 @@ class ProfileEditView extends GetView<ProfileEditController> {
                           decoration: const InputDecoration(
                             labelText: 'وضعیت تاهل',
                           ),
+                          onChange: (value) {
+                            controller.formKey.currentState!.patchValue({
+                              "children": '0',
+                              "maxAge": '0',
+                            });
+
+                            controller.isSingle.value = value == '0';
+                          },
                           validator: FormBuilderValidators.compose(
                             [
                               FormBuilderValidators.required(),
                             ],
                           ),
                         ),
-                        const Gap(16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: DropdownsWidget(
-                                group: 'ChildCount',
-                                name: 'children',
-                                items: controller.dropdownsItems['children']!
-                                    .map((e) => e as DropdownMenuItem<String>)
-                                    .toList(),
-                                decoration: const InputDecoration(
-                                  labelText: 'تعداد فرزندان',
-                                ),
-                                validator: FormBuilderValidators.compose(
-                                  [
-                                    FormBuilderValidators.required(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const Gap(8),
-                            Expanded(
-                              child: DropdownsWidget(
-                                group: 'OldestChildAge',
-                                name: 'maxAge',
-                                items: controller.dropdownsItems['maxAge']!
-                                    .map((e) => e as DropdownMenuItem<String>)
-                                    .toList(),
-                                decoration: const InputDecoration(
-                                  labelText: 'بزرگترین سن فرزند',
-                                ),
-                                validator: FormBuilderValidators.compose(
-                                  [
-                                    FormBuilderValidators.required(),
-                                  ],
+                        if (controller.isSingle.value == false) const Gap(16),
+                        if (controller.isSingle.value == false)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DropdownsWidget(
+                                  group: 'ChildCount',
+                                  name: 'children',
+                                  items: controller.dropdownsItems['children']!
+                                      .map((e) => e as DropdownMenuItem<String>)
+                                      .toList(),
+                                  decoration: const InputDecoration(
+                                    labelText: 'تعداد فرزندان',
+                                  ),
+                                  validator: FormBuilderValidators.compose(
+                                    [
+                                      FormBuilderValidators.required(),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                              const Gap(8),
+                              Expanded(
+                                child: DropdownsWidget(
+                                  group: 'OldestChildAge',
+                                  name: 'maxAge',
+                                  items: controller.dropdownsItems['maxAge']!
+                                      .map((e) => e as DropdownMenuItem<String>)
+                                      .toList(),
+                                  decoration: const InputDecoration(
+                                    labelText: 'بزرگترین سن فرزند',
+                                  ),
+                                  validator: FormBuilderValidators.compose(
+                                    [
+                                      FormBuilderValidators.required(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         const Gap(16),
                         DropdownsWidget(
                           group: 'Province',

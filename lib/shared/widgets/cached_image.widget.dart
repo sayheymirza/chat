@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,8 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
             required int recive,
             required int total,
           }) {
-            downloading = percent;
+            downloading = max(percent, downloading);
+            print(percent);
             if (mounted) {
               setState(() {});
             }
@@ -163,7 +165,7 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
         ),
         child: Center(
           child: CircularProgressIndicator(
-            value: downloading == 0 ? null : downloading.toDouble(),
+            value: downloading == 0 || downloading == 100 ? null : (downloading / 100).toDouble(),
           ),
         ),
       );

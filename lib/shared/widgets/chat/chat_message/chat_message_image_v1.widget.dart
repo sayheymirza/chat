@@ -47,6 +47,7 @@ class _ChatMessageImageV1WidgetState extends State<ChatMessageImageV1Widget> {
       file: File(widget.message.data['url']),
       category: 'image',
       meta: widget.message.toJson(),
+      cache: true,
       onError: (result) {
         if (result != null) {
           var message = ChatMessageModel.fromJson(result.meta);

@@ -17,8 +17,6 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
   Widget build(BuildContext context) {
     Get.put(AuthRegisterController());
 
-    controller.loadDropdowns();
-
     return Obx(
       () => PopScope(
         canPop: controller.step.value == 0,
@@ -261,6 +259,14 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               decoration: const InputDecoration(
                 labelText: 'وضعیت تاهل',
               ),
+              onChange: (value) {
+                controller.registerStep3FormKey.currentState!.patchValue({
+                  "children": '0',
+                  "maxAge": '0',
+                });
+
+                controller.isSingle.value = value == '0';
+              },
               validator: FormBuilderValidators.compose(
                 [
                   FormBuilderValidators.required(),
@@ -268,45 +274,46 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               ),
             ),
             const Gap(16),
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownsWidget(
-                    group: 'ChildCount',
-                    name: 'children',
-                    items: controller.dropdownsItems['children']!
-                        .map((e) => e as DropdownMenuItem<String>)
-                        .toList(),
-                    decoration: const InputDecoration(
-                      labelText: 'تعداد فرزندان',
-                    ),
-                    validator: FormBuilderValidators.compose(
-                      [
-                        FormBuilderValidators.required(),
-                      ],
-                    ),
-                  ),
-                ),
-                const Gap(8),
-                Expanded(
-                  child: DropdownsWidget(
-                    group: 'OldestChildAge',
-                    name: 'maxAge',
-                    items: controller.dropdownsItems['maxAge']!
-                        .map((e) => e as DropdownMenuItem<String>)
-                        .toList(),
-                    decoration: const InputDecoration(
-                      labelText: 'بزرگترین سن فرزند',
-                    ),
-                    validator: FormBuilderValidators.compose(
-                      [
-                        FormBuilderValidators.required(),
-                      ],
+            if (controller.isSingle.value == false)
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownsWidget(
+                      group: 'ChildCount',
+                      name: 'children',
+                      items: controller.dropdownsItems['children']!
+                          .map((e) => e as DropdownMenuItem<String>)
+                          .toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'تعداد فرزندان',
+                      ),
+                      validator: FormBuilderValidators.compose(
+                        [
+                          FormBuilderValidators.required(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const Gap(8),
+                  Expanded(
+                    child: DropdownsWidget(
+                      group: 'OldestChildAge',
+                      name: 'maxAge',
+                      items: controller.dropdownsItems['maxAge']!
+                          .map((e) => e as DropdownMenuItem<String>)
+                          .toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'بزرگترین سن فرزند',
+                      ),
+                      validator: FormBuilderValidators.compose(
+                        [
+                          FormBuilderValidators.required(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

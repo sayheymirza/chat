@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
 class CacheService extends GetxService {
+  List<String> downloading = [];
+
   Future<File?> load({
     required String url,
     String category = 'unknown',
@@ -46,7 +48,7 @@ class CacheService extends GetxService {
       if (result != null) {
         // check file exists or not
         var file = File(result.file);
-        
+
         if (file.existsSync()) {
           return file;
         } else {
@@ -81,11 +83,19 @@ class CacheService extends GetxService {
         directory.createSync(recursive: true);
       }
 
+      if (downloading.contains(url)) {
+        return null;
+      }
+
+      downloading.add(url);
+
       var result = await Services.http.download(
         url: url,
         directory: directory.path,
         onPercent: onPercent,
       );
+
+      downloading.remove(url);
 
       if (result != null && result.existsSync()) {
         await database.into(database.cacheTable).insert(
@@ -102,6 +112,8 @@ class CacheService extends GetxService {
 
       return result;
     } catch (e) {
+      downloading.remove(url);
+
       return null;
     }
   }

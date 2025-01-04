@@ -91,6 +91,10 @@ class ChatItemWidget extends StatelessWidget {
                 if (item.updatedAt != null)
                   Text(
                     formatAgoChat(item.updatedAt!.toString()),
+                    style: TextStyle(
+                      color: Colors.grey.shade700,
+                      fontSize: 12,
+                    ),
                   ),
               ],
             ),
@@ -131,6 +135,12 @@ class ChatItemWidget extends StatelessWidget {
     } else if (type.startsWith('map')) {
       icon = Icons.location_on;
       text = 'موقعیت مکانی';
+    } else if(type.startsWith('image')) {
+      icon = Icons.image_rounded;
+      text = 'تصویر';
+    } else if(type.startsWith('call')) {
+      icon = Icons.call_rounded;
+      text = 'تماس';
     }
 
     return Row(

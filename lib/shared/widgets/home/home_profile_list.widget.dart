@@ -27,7 +27,22 @@ class HomeProfileListWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
-              if (icon.isNotEmpty) Container(),
+              if (icon == "one-star")
+                const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+              if (icon == "two-star")
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Image.asset('lib/app/assets/images/star.png'),
+                ),
+              if (icon == "eye")
+                const Icon(
+                  Icons.remove_red_eye,
+                  color: Colors.green,
+                ),
               Text(
                 title,
                 style: const TextStyle(
@@ -39,10 +54,15 @@ class HomeProfileListWidget extends StatelessWidget {
                 onPressed: () {
                   Get.toNamed('/app/search/$buttonType');
                 },
-                style: const ButtonStyle(
+                style: ButtonStyle(
                   minimumSize: WidgetStatePropertyAll(Size(56, 32)),
                   padding: WidgetStatePropertyAll(
                     EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  side: WidgetStatePropertyAll(
+                    BorderSide(
+                      color: Colors.grey.shade400,
+                    ),
                   ),
                 ),
                 child: Text(
@@ -58,6 +78,15 @@ class HomeProfileListWidget extends StatelessWidget {
         for (var item in profiles)
           UserWidget(
             item: item,
+            onTap: () {
+              Get.toNamed(
+                '/app/profile/${item.id}',
+                arguments: {
+                  'id': item.id,
+                  'options': true,
+                },
+              );
+            },
           ),
       ],
     );

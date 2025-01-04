@@ -1,4 +1,5 @@
 import 'package:chat/futures/search/search.controller.dart';
+import 'package:chat/futures/search_slim/search.controller.dart';
 import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
@@ -6,16 +7,15 @@ import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchView extends GetView<SearchViewController> {
-  final String? type;
+class SearchSlimView extends GetView<SearchViewSlimController> {
 
-  const SearchView({super.key, this.type});
+  const SearchSlimView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(SearchViewController());
+    Get.put(SearchViewSlimController());
 
-    controller.init(type: type);
+    controller.init();
     controller.reset();
 
     return Obx(
@@ -50,7 +50,7 @@ class SearchView extends GetView<SearchViewController> {
                       item: item,
                       onTap: () {
                         Get.toNamed(
-                          '/app/profile/${item.id}',
+                          '/profile/${item.id}',
                           arguments: {
                             'id': item.id,
                             'options': true,

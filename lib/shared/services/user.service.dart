@@ -8,6 +8,36 @@ import 'package:get/get.dart';
 
 class UserService extends GetxService {
   // a user from database
+  Future<ProfileModel?> one({required String userId}) async {
+    try {
+      var query = database.select(database.userTable);
+
+      query.where((row) => row.id.equals(userId.toString()));
+
+      query.limit(1);
+
+      var result = await query.getSingle();
+
+      if (result != null) {
+        return ProfileModel.fromDatabase({
+          ...result.data,
+          'id': result.id,
+          'status': result.status,
+          'avatar': result.avatar,
+          'fullname': result.fullname,
+          'lastAt': result.last,
+          'seen': result.seen,
+          'verified': result.verified,
+        });
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // a user from database
   Future<Stream<List<ProfileModel>>> stream({required String userId}) async {
     try {
       log('[user.service.dart] selected user $userId');

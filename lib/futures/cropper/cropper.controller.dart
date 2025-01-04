@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:chat/shared/formats/byte.format.dart';
 import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
 import 'package:get/get.dart';
@@ -39,19 +40,16 @@ class CropperController extends GetxController {
       var path =
           "${tempDir.path}/cropped.${DateTime.now().millisecondsSinceEpoch}.${Get.arguments['path'].split(".").last}";
 
-      final tempFile = File(path);
-
-      if (tempFile.existsSync()) {
-        tempFile.deleteSync();
-      }
-
       var data = await bitmap.toByteData(
         format: ImageByteFormat.png,
       );
 
       var bytes = data!.buffer.asUint8List();
 
-      await tempFile.writeAsBytes(bytes);
+      var compressedBytes = await Services.compress.image(bytes: bytes);
+
+      // write file
+      await File(path).writeAsBytes(compressedBytes);
 
       Get.back(
         result: path,
@@ -59,6 +57,8 @@ class CropperController extends GetxController {
 
       cropping.value = false;
     } catch (e) {
+      print(e);
+
       cropping.value = false;
     }
   }

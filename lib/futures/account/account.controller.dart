@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/futures/dialog_confirm/dialog_confirm.view.dart';
 import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
@@ -10,7 +11,6 @@ import 'package:chat/shared/services.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AccountController extends GetxController {
@@ -71,18 +71,28 @@ class AccountController extends GetxController {
     );
     avatarDisabled.value = false;
 
+    showSnackbar(message: result.message);
+
     if (result.success) {
       avatarUploadPercent.value = 0;
       profile.profile.value.avatar = result.url!;
       profile.profile.value.defaultAvatar = false;
-      showSnackbar(message: 'تصویر پروفایل شما تغییر کرد');
     } else {
       avatarUploadPercent.value = 0;
-      showSnackbar(message: 'خطا در تغییر تصویر پروفایل رخ داد');
     }
   }
 
   Future<void> deleteAvatar() async {
+    var status = await Get.bottomSheet(
+      DialogConfirmView(
+        title: 'حذف تصویر پروفایل',
+        subtitle: 'آیا از حذف تصویر پروفایل خود مطمئن هستید؟',
+        submit: 'تایید و حذف',
+      ),
+    );
+
+    if (status != true) return;
+
     avatarDisabled.value = true;
     var result = await ApiService.user.deleteAvatar();
     avatarDisabled.value = false;
@@ -96,46 +106,7 @@ class AccountController extends GetxController {
   }
 
   void deleteOrLeaveAccount() {
-    Get.bottomSheet(
-      Container(
-        height: Get.bottomBarHeight + 120,
-        padding: EdgeInsets.only(bottom: Get.bottomBarHeight),
-        clipBehavior: Clip.hardEdge,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
-        ),
-        child: Column(
-          children: [
-            ListTile(
-              leading: const Icon(
-                Icons.delete_rounded,
-                color: Colors.red,
-              ),
-              title: const Text('حذف حساب کاربری'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/app/account_delete_leave/delete');
-              },
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.handshake_rounded,
-                color: Colors.amber,
-              ),
-              title: const Text('غیر فعال سازی حساب کاربری'),
-              onTap: () {
-                Get.back();
-                Get.toNamed('/app/account_delete_leave/leave');
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+    Get.toNamed('/app/account_delete_leave/choose');
   }
 
   void versioning() {

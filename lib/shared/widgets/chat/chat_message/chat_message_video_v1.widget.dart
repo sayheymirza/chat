@@ -66,6 +66,7 @@ class _ChatMessageVideoV1WidgetState extends State<ChatMessageVideoV1Widget> {
       file: File(widget.message.data['url']),
       category: 'video',
       meta: widget.message.toJson(),
+      cache: true,
       onError: (result) {
         if (result != null) {
           var message = ChatMessageModel.fromJson(result.meta);
