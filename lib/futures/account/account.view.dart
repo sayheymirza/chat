@@ -58,7 +58,7 @@ class AccountView extends GetView<AccountController> {
                     title: 'نمایش پروفایل من',
                     icon: Icons.visibility,
                     color: Colors.green,
-                    page: "/profile/me",
+                    page: "/app/profile/me",
                     arguments: {
                       "options": false,
                     },
@@ -188,12 +188,14 @@ class AccountView extends GetView<AccountController> {
                   },
                 ),
                 // dev log
-                item(
-                  title: 'لاگ ها',
-                  icon: Icons.bug_report,
-                  color: Colors.red,
-                  page: "/dev/log",
-                ),
+                if (controller.profile.profile.value.permissions
+                    .contains('DEBUG'))
+                  item(
+                    title: 'لاگ ها',
+                    icon: Icons.bug_report,
+                    color: Colors.red,
+                    page: "/dev/log",
+                  ),
                 version(),
               ],
             ),
@@ -222,6 +224,7 @@ class AccountView extends GetView<AccountController> {
               ),
             ),
             const Spacer(),
+            Text('${CONSTANTS.FLAVOR}-'),
             Text(
               controller.version.value,
               style: const TextStyle(

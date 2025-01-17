@@ -105,14 +105,14 @@ class AuthLoginView extends GetView<AuthLoginController> {
 
   Widget footer() {
     return Container(
-      height: 400,
+      height: 240,
       padding: const EdgeInsets.only(
         left: 32,
         right: 32,
         bottom: 40,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Obx(
             () => SizedBox(
@@ -149,7 +149,7 @@ class AuthLoginView extends GetView<AuthLoginController> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Get.offAndToNamed('/auth/forgot');
+                Get.toNamed('/auth/forgot');
               },
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.pink),
@@ -162,9 +162,7 @@ class AuthLoginView extends GetView<AuthLoginController> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const Gap(16),
         ],
       ),
     );

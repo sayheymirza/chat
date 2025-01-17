@@ -101,6 +101,7 @@ class ProfileModel {
   late Permission? permission;
   late Relation? relation;
   late Map<String, dynamic>? dropdowns;
+  late List<String> permissions;
 
   ProfileModel({
     this.id,
@@ -141,6 +142,7 @@ class ProfileModel {
     this.permission,
     this.relation,
     this.dropdowns,
+    this.permissions = const [],
   });
 
   factory ProfileModel.fromDatabase(Map<String, dynamic> value) {
@@ -183,6 +185,7 @@ class ProfileModel {
       permission: Permission.fromJson(value['permission']),
       relation: Relation.fromJson(value['relation']),
       dropdowns: value['dropdowns'],
+      permissions: value['permissions'].toString().split(','),
     );
   }
 
@@ -230,6 +233,9 @@ class ProfileModel {
           ? Relation.fromJson(value['relation'])
           : relation,
       dropdowns: value['dropdowns'] ?? dropdowns,
+      permissions: value['permissions'] != null
+          ? value['permissions'].toString().split(',')
+          : permissions,
     );
   }
 
@@ -271,6 +277,8 @@ class ProfileModel {
     data['plan'] = plan?.toJson();
     data['permission'] = permission?.toJson();
     data['relation'] = relation?.toJson();
+    data['dropdowns'] = dropdowns;
+    data['permissions'] = permissions.join(',');
     return data;
   }
 }

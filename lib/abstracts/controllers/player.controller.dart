@@ -29,6 +29,7 @@ class PlayerController {
 
   Future<void> unload() async {
     if (controller != null) {
+      await controller!.pause();
       await controller!.dispose();
     }
   }

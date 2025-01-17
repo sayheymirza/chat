@@ -20,7 +20,8 @@ class SendDefaultMessageView extends GetView<SendDefaultMessageController> {
         ),
         floatingActionButton: controller.selected.isEmpty
             ? null
-            : SizedBox(
+            : Container(
+                margin: EdgeInsets.only(bottom: 10),
                 width: Get.width - 32,
                 child: ElevatedButton(
                   onPressed: controller.disabled.value
@@ -28,12 +29,21 @@ class SendDefaultMessageView extends GetView<SendDefaultMessageController> {
                       : () {
                           controller.submit();
                         },
-                  child: Text(
-                    'ارسال پیام',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: controller.disabled.value
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : Text(
+                          'ارسال پیام',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
         body: SingleChildScrollView(

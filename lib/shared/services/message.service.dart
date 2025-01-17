@@ -178,8 +178,6 @@ class MessageService extends GetxService {
         // Services.chat.see(chatId: message.chatId!);
       }
 
-      print(message.senderId);
-
       // 1. check local id exists to update that
       if (message.localId != null && message.localId != '-1') {
         // update message with that local id

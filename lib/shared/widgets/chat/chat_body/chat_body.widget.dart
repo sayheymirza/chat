@@ -10,8 +10,8 @@ class ChatBodyWidget extends GetView<ChatBodyController> {
   final List<Widget> children;
   final Function onLoadMore;
   final Function onLoadLess;
-  final String? error;
   final List<String> permissions;
+  final bool action;
 
   const ChatBodyWidget({
     super.key,
@@ -20,7 +20,7 @@ class ChatBodyWidget extends GetView<ChatBodyController> {
     required this.onLoadLess,
     this.children = const [],
     this.permissions = const [],
-    this.error,
+    this.action = true,
   });
 
   @override
@@ -47,6 +47,7 @@ class ChatBodyWidget extends GetView<ChatBodyController> {
         // messages
         Obx(
           () => ChatMessagesWidget(
+            action: action,
             onLoadMore: onLoadMore,
             onLoadLess: onLoadLess,
             messages: messages,
@@ -56,8 +57,7 @@ class ChatBodyWidget extends GetView<ChatBodyController> {
             children: children,
           ),
         ),
-        if ((error == null || error!.isEmpty) &&
-            permissions.contains('CAN_SEE_FOOTER'))
+        if (permissions.contains('CAN_SEE_FOOTER'))
           // footer
           Positioned(
             left: 16,
@@ -68,29 +68,6 @@ class ChatBodyWidget extends GetView<ChatBodyController> {
               onPickEmoji: (bool value) {
                 controller.pickingEmoji.value = value;
               },
-            ),
-          ),
-        if (error != null && error!.isNotEmpty)
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: MediaQuery.of(context).padding.bottom + 16,
-            child: Container(
-              width: double.infinity,
-              height: 48,
-              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-              decoration: BoxDecoration(
-                color: Colors.white70,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Center(
-                child: Text(
-                  error!,
-                  style: TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              ),
             ),
           ),
       ],

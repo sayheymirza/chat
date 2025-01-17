@@ -83,11 +83,11 @@ class CacheService extends GetxService {
         directory.createSync(recursive: true);
       }
 
-      if (downloading.contains(url)) {
-        return null;
-      }
-
-      downloading.add(url);
+      // if (downloading.contains(url)) {
+      //   return null;
+      // }
+      //
+      // downloading.add(url);
 
       var result = await Services.http.download(
         url: url,
@@ -95,7 +95,7 @@ class CacheService extends GetxService {
         onPercent: onPercent,
       );
 
-      downloading.remove(url);
+      // downloading.remove(url);
 
       if (result != null && result.existsSync()) {
         await database.into(database.cacheTable).insert(

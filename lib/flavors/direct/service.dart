@@ -44,7 +44,10 @@ class FlavorDirect extends FlavorAbstract {
   }
 
   @override
-  Future<EventParchaseResultModel> purchase(EventParchaseParamsModel params) {
+  Future<EventParchaseResultModel> purchase(
+    EventParchaseParamsModel params,
+    Function(EventParchaseResultModel result) callback,
+  ) {
     throw UnimplementedError();
   }
 

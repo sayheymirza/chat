@@ -10,10 +10,12 @@ import 'package:get/get.dart';
 
 class ChatMessageImageV1Widget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
   const ChatMessageImageV1Widget({
     super.key,
     required this.message,
+    this.action = true,
   });
 
   @override
@@ -89,6 +91,7 @@ class _ChatMessageImageV1WidgetState extends State<ChatMessageImageV1Widget> {
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       child: child(
         url: widget.message.data['url'],

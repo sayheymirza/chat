@@ -43,6 +43,7 @@ class ChatMessagesWidget extends StatelessWidget {
   final Function onLoadMore;
   final Function onLoadLess;
   final double bottom;
+  final bool action;
 
   ChatMessagesWidget({
     super.key,
@@ -51,6 +52,7 @@ class ChatMessagesWidget extends StatelessWidget {
     required this.onLoadLess,
     this.children = const [],
     this.bottom = 0,
+    this.action = true,
   });
 
   final ChatMessagesController chatController =
@@ -96,7 +98,8 @@ class ChatMessagesWidget extends StatelessWidget {
                   //     return formatChatMessage(messages[index]);
                   //   },
                   // ),
-                  ...messages.map((message) => formatChatMessage(message)),
+                  ...messages.map(
+                      (message) => formatChatMessage(message, action: action)),
                   ...children,
                 ],
               ),

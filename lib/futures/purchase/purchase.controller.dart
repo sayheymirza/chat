@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_connection/dialog_connection.view.dart';
 import 'package:chat/models/apis/purchase.model.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/models/invoice.model.dart';
 import 'package:chat/models/plan.model.dart';
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/event.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +29,40 @@ class PurchaseController extends GetxController {
   RxBool disabled = false.obs;
 
   GlobalKey<FormBuilderState> cardByCardFormKey = GlobalKey<FormBuilderState>();
+
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.PURCHASE_RESULT) {
+        if (data.value != null) {
+          var result = data.value as EventParchaseResultModel;
+
+          consumeWithCafebazaar(
+            purchaseToken: result.token!,
+            sku: result.sku,
+          );
+
+          if (result.status == "success") {
+          } else if (result.status == "failed") {
+            showSnackbar(message: 'پرداخت ناموفق بود');
+          } else if (result.status == "close") {
+            showSnackbar(message: 'پرداخت توسط شما لغو شد');
+          }
+        }
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents?.cancel();
+  }
 
   void loadPlans() {
     var value = Services.configs.get<List<Map<String, dynamic>>>(
@@ -82,6 +119,63 @@ class PurchaseController extends GetxController {
       disabled.value = false;
 
       return null;
+    }
+  }
+
+  Future<void> submitWithCafebazaar() async {
+    try {
+      await Get.bottomSheet(DialogConnectionView(type: 'purchase'));
+
+      disabled.value = true;
+
+      var result = await ApiService.purchase.payInvoiceWithCafebazaar(
+        invoiceId: invoice.value.id,
+      );
+
+      disabled.value = false;
+
+      if (result == null) {
+        showSnackbar(message: 'خطا در انتقال به درگاه پرداخت رخ داد');
+        return;
+      }
+
+      Services.event.fire(
+        event: EVENTS.PURCHASE,
+        value: EventParchaseParamsModel(
+          sku: result.sku!,
+          jwt: result.jwt ?? '',
+          payload: result.payload!,
+        ),
+      );
+    } catch (e) {
+      //
+    }
+  }
+
+  Future<void> consumeWithCafebazaar({
+    required String purchaseToken,
+    required String sku,
+  }) async {
+    try {
+      disabled.value = true;
+
+      var packageInfo = await Services.access.generatePackageInfo();
+
+      var result = await ApiService.purchase.consumeInvoiceWithCafebazaar(
+        purchaseToken: purchaseToken,
+        sku: sku,
+        packageName: packageInfo.packageName,
+      );
+
+      disabled.value = false;
+
+      if (result.status) {
+        return Get.offAllNamed('/payment', parameters: {'status': 'ok'});
+      }
+
+      showSnackbar(message: result.message);
+    } catch (e) {
+      disabled.value = false;
     }
   }
 

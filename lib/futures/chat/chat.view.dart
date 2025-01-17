@@ -1,4 +1,5 @@
 import 'package:chat/futures/chat/chat.controller.dart';
+import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/shared/formats/date.format.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
@@ -7,6 +8,7 @@ import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:glass/glass.dart';
 
 class ChatView extends GetView<ChatController> {
   const ChatView({super.key});
@@ -15,35 +17,161 @@ class ChatView extends GetView<ChatController> {
   Widget build(BuildContext context) {
     Get.put(ChatController());
 
-    return Scaffold(
-      appBar: appBar(),
-      body: Obx(() {
-        var error = '';
+    return Obx(
+      () {
+        Widget error = Container();
 
-        if (controller.chat.value.user?.relation?.blocked == true) {
-          error = 'شما این کاربر را بلاک کرده اید';
+        if (controller.chat.value.user!.relation!.blocked == true) {
+          error = errorBlocked();
         }
 
-        if (controller.chat.value.user?.relation?.blockedMe == true) {
-          error = 'این کاربر شما را بلاک کرده است';
+        if (controller.chat.value.user!.relation!.blockedMe == true) {
+          error = errorBlockedMe();
         }
 
-        return ChatBodyWidget(
-          error: error,
-          permissions: controller.chat.value.permission,
-          messages: controller.messages.value
-            ..sort((a, b) {
-              return a.seq!.compareTo(b.seq!);
-            }),
-          children: controller.children,
-          onLoadMore: () {
-            controller.loadMessages();
-          },
-          onLoadLess: () {
-            // controller.loadMessages(pageValue: max(controller.page - 2, 0));
-          },
+        if (controller.chat.value.user!.status!.toLowerCase() ==
+            'unsubscribe') {
+          error = errorCanceled();
+        }
+
+        if (controller.chat.value.user!.status!.toLowerCase() ==
+            'left_for_ever') {
+          error = errorDeleted();
+        }
+
+        return Stack(
+          children: [
+            Scaffold(
+              appBar: appBar(),
+              body: ChatBodyWidget(
+                permissions: controller.chat.value.permission,
+                messages: controller.messages.value
+                  ..sort((a, b) {
+                    return a.seq!.compareTo(b.seq!);
+                  }),
+                children: controller.children,
+                onLoadMore: () {
+                  controller.loadMessages();
+                },
+                onLoadLess: () {
+                  // controller.loadMessages(pageValue: max(controller.page - 2, 0));
+                },
+              ),
+            ),
+            error,
+          ],
         );
-      }),
+      },
+    );
+  }
+
+  Widget errorBlocked() {
+    return alert(
+      title: 'کاربر بلاک شده',
+      content:
+          'شما این کاربر را بلاک کرده اید و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
+      action: OutlinedButton(
+        onPressed: () {
+          controller.unblock();
+        },
+        child: const Text('آنبلاک کردن'),
+      ),
+    );
+  }
+
+  Widget errorBlockedMe() {
+    return alert(
+      title: 'بلاک شده اید',
+      content:
+          'این کاربر شما را بلاک کرده و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
+    );
+  }
+
+  Widget errorCanceled() {
+    // کاربر از عضویت خود منصرف شده است ولی امکان بازگشت دارد
+    return alert(
+      title: 'کاربر از عضویت خود منصرف شده است',
+      content:
+          'این کاربر از عضویت خود انصراف داده است اما احتمال بازگشت مجدد او وجود دارد',
+    );
+  }
+
+  Widget errorDeleted() {
+    return alert(
+      title: 'کاربر حذف شده',
+      content: 'این کاربر حساب کاربری خودش را حذف کرده است',
+    );
+  }
+
+  Widget alert({
+    required String title,
+    required String content,
+    Widget? action,
+  }) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              width: Get.width,
+              // white background with 25% opacity
+              color: Colors.white.withOpacity(0.25),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  //   title
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const Gap(10),
+                  // content
+                  Text(
+                    content,
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ).asGlass(
+              blurX: 20,
+              blurY: 20,
+            ),
+            // back button on top right
+            Positioned(
+              top: Get.mediaQuery.padding.top + 10,
+              right: 10,
+              child: IconButton(
+                onPressed: () {
+                  Get.back();
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+            ),
+            //   if action exists Position to bottom and center
+            if (action != null)
+              Positioned(
+                bottom: Get.mediaQuery.padding.bottom + 20,
+                left: 20,
+                right: 20,
+                child: action,
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -64,7 +192,7 @@ class ChatView extends GetView<ChatController> {
           right: GestureDetector(
             onTap: () {
               if (data.permission.contains('CAN_SEE_PROFILE')) {
-                Get.toNamed('/profile/${data.userId}', arguments: {
+                Get.toNamed('/app/profile/${data.userId}', arguments: {
                   'options': true,
                 });
               }
@@ -136,7 +264,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: data.permission.contains('ALLOW_VOICE_CALL') &&
                           !controller.makingCall.value
                       ? () {
-                          Services.call.make(mode: 'audio');
+                          controller.makeCall(mode: 'audio');
                         }
                       : null,
                   icon: Icon(
@@ -151,7 +279,7 @@ class ChatView extends GetView<ChatController> {
                   onPressed: data.permission.contains('ALLOW_VIDEO_CALL') &&
                           !controller.makingCall.value
                       ? () {
-                          Services.call.make(mode: 'video');
+                          controller.makeCall(mode: 'video');
                         }
                       : null,
                   icon: Icon(
@@ -192,7 +320,7 @@ class ChatView extends GetView<ChatController> {
                         controller.delete();
                         break;
                       case "profile":
-                        Get.toNamed('/profile/${data.userId}', arguments: {
+                        Get.toNamed('/app/profile/${data.userId}', arguments: {
                           'options': true,
                         });
                         break;

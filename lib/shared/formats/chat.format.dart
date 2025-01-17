@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 Widget formatChatMessage(
   ChatMessageModel item, {
-  bool longPress = true,
+  bool action = true,
 }) {
   var key = ValueKey("${item.localId}");
 
@@ -20,6 +20,7 @@ Widget formatChatMessage(
     return ChatMessageDeletedWidget(
       message: item,
       key: key,
+      action: action,
     );
   }
 
@@ -28,41 +29,49 @@ Widget formatChatMessage(
       return ChatMessageVideoV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     case "audio@v1":
       return ChatMessageAudioV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     case "voice@v1":
       return ChatMessageVoiceV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     case "text@v1":
       return ChatMessageTextV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     case "image@v1":
       return ChatMessageImageV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     case "map@v1":
       return ChatMessageMapV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     case "call@v1":
       return ChatMessageCallV1Widget(
         message: item,
         key: key,
+        action: action,
       );
     default:
       return ChatMessageNotSupportWidget(
         message: item,
         key: key,
+        action: action,
       );
   }
 }

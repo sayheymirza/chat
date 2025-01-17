@@ -1,4 +1,5 @@
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/firebase.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:flutter/services.dart';
@@ -20,11 +21,15 @@ class AppService extends GetxService {
     }
   }
 
-  Future<void> logout() {
+  Future<void> logout() async {
     ApiService.socket.disconnect();
 
-    return Future.wait([
+    await Services.firebase.event(type: FIREBASE_EVENT_TYPE.LOGOUT);
+    await ApiService.user.logout();
+
+    await Future.wait([
       Services.configs.unset(key: CONSTANTS.STORAGE_ACCESS_TOKEN),
+      Services.configs.unset(key: CONSTANTS.STORAGE_FIREBASE_TOKEN),
       Services.chat.clear(),
       Services.adminChat.clear(),
       Services.message.clear(),

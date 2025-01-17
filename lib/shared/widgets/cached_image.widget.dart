@@ -79,7 +79,6 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
             required int total,
           }) {
             downloading = max(percent, downloading);
-            print(percent);
             if (mounted) {
               setState(() {});
             }
@@ -116,11 +115,18 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
         decoration: BoxDecoration(
           color: widget.background ?? Colors.grey.shade200,
         ),
-        child: Center(
-          child: Icon(
-            Icons.image_rounded,
-            color: Colors.grey.shade700,
-          ),
+        child: Image.network(
+          widget.url,
+          alignment: widget.alignment,
+          fit: widget.fit,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
+              child: Icon(
+                Icons.image_rounded,
+                color: Colors.grey.shade700,
+              ),
+            );
+          },
         ),
       );
     }
@@ -165,7 +171,9 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
         ),
         child: Center(
           child: CircularProgressIndicator(
-            value: downloading == 0 || downloading == 100 ? null : (downloading / 100).toDouble(),
+            value: downloading == 0 || downloading == 100
+                ? null
+                : (downloading / 100).toDouble(),
           ),
         ),
       );
@@ -177,11 +185,10 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
       decoration: BoxDecoration(
         color: widget.background ?? Colors.grey.shade200,
       ),
-      child: Center(
-        child: Icon(
-          Icons.image_rounded,
-          color: Colors.grey.shade700,
-        ),
+      child: Image.network(
+        widget.url,
+        alignment: widget.alignment,
+        fit: widget.fit,
       ),
     );
   }

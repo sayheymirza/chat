@@ -5,12 +5,18 @@ import 'package:gap/gap.dart';
 
 class ChatMessageDeletedWidget extends StatelessWidget {
   final ChatMessageModel message;
+  final bool action;
 
-  const ChatMessageDeletedWidget({super.key, required this.message});
+  const ChatMessageDeletedWidget({
+    super.key,
+    required this.message,
+    required this.action,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: action,
       message: message,
       color: Colors.red.withAlpha(64),
       child: Row(

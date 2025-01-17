@@ -8,10 +8,12 @@ import 'package:flutter/material.dart';
 
 class ChatMessageMapV1Widget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
   const ChatMessageMapV1Widget({
     super.key,
     required this.message,
+    this.action = true,
   });
 
   @override
@@ -44,6 +46,7 @@ class _ChatMessageMapV1WidgetState extends State<ChatMessageMapV1Widget> {
       file: File(widget.message.data['url']),
       category: 'image',
       meta: widget.message.toJson(),
+      cache: true,
       onError: (result) {
         if (result != null) {
           var message = ChatMessageModel.fromJson(result.meta);
@@ -85,6 +88,7 @@ class _ChatMessageMapV1WidgetState extends State<ChatMessageMapV1Widget> {
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       child: child(
         lat: widget.message.data['lat'],

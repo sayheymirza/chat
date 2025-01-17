@@ -124,10 +124,11 @@ class TransactionView extends GetView<TransactionController> {
             right: 'روش پرداخت',
             left: controller.invoice.value.paymentMethod,
           ),
-          row(
-            right: 'تاریخ پرداخت',
-            left: controller.invoice.value.paidAt,
-          ),
+          if (controller.invoice.value.isPaid)
+            row(
+              right: 'تاریخ پرداخت',
+              left: controller.invoice.value.paidAt,
+            ),
           if (controller.invoice.value.additional?['card'] != null)
             row(
               right: '4 شماره آخر کارت',

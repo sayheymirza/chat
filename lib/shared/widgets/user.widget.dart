@@ -1,8 +1,8 @@
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get.dart';
 
 class UserWidget extends StatelessWidget {
   final ProfileSearchModel item;
@@ -12,6 +12,8 @@ class UserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var opacity = Services.user.seen(userId: item.id!);
+
     return GestureDetector(
       onTap: () {
         onTap();
@@ -90,8 +92,8 @@ class UserWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Opacity(
-                          opacity: 0,
+                        Opacity(
+                          opacity: opacity,
                           child: Icon(
                             Icons.visibility,
                             color: Colors.green,

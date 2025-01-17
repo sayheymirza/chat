@@ -1,5 +1,4 @@
 import 'package:chat/models/apis/chat.model.dart';
-import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:get/get.dart';
 
@@ -34,5 +33,10 @@ abstract class ChatAbstract extends GetxService {
 
   Future<bool> deleteChatWithChatId({required String chatId});
 
-  Future<String?> createCallToken({required String chatId});
+  Future<ApiChatCallResponse> createCallToken({
+    required String chatId,
+    required String userId,
+    required String mode,
+    required String type,
+  });
 }

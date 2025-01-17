@@ -74,3 +74,15 @@ class ApiPurchaseInvoicesResponseModel {
     );
   }
 }
+
+class ApiPurchaseInvoiceWithCafebazaarResponseModel {
+  final String? sku;
+  final String? jwt;
+  final String? payload;
+
+  ApiPurchaseInvoiceWithCafebazaarResponseModel({
+    this.sku,
+    this.jwt,
+    this.payload,
+  });
+}

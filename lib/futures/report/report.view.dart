@@ -21,7 +21,9 @@ class ReportView extends GetView<ReportController> {
           back: true,
           title: 'گزارش تخلف',
         ),
-        floatingActionButton: SizedBox(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: 20),
           width: Get.width - 32,
           child: ElevatedButton(
             onPressed: controller.disabled.value

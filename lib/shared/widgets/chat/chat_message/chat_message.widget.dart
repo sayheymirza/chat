@@ -13,12 +13,14 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
   ChatMessageModel message;
   Widget child;
   Color? color;
+  bool action;
 
   ChatMessageWidget({
     super.key,
     required this.message,
     required this.child,
     this.color,
+    this.action = true,
   });
 
   @override
@@ -65,7 +67,7 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
             mainAxisAlignment:
                 me ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: [
-              if (!me) options(),
+              if (!me && action) options(),
               Container(
                 clipBehavior: Clip.hardEdge,
                 padding: padding,
@@ -75,7 +77,7 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
                 ),
                 child: child,
               ),
-              if (me) options(),
+              if (me && action) options(),
             ],
           ),
           const Gap(4),

@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:chat/app/apis/api.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 
@@ -24,13 +26,24 @@ class NotificationService extends GetxService {
           channelDescription: 'فایل های در حال آپلود',
           locked: true,
         ),
+        NotificationChannel(
+          channelGroupKey: 'notification',
+          channelKey: 'notification_channel',
+          channelName: 'اعلان ها',
+          channelDescription: 'اعلان های اپلیکیشن',
+          locked: true,
+        ),
       ],
       // Channel groups are only visual and are not required
       channelGroups: [
         NotificationChannelGroup(
           channelGroupKey: 'download_upload_group',
           channelGroupName: 'دانلود و آپلود',
-        )
+        ),
+        NotificationChannelGroup(
+          channelGroupKey: 'notification',
+          channelGroupName: 'اعلان ها',
+        ),
       ],
     );
 
@@ -49,6 +62,32 @@ class NotificationService extends GetxService {
     }
 
     return AwesomeNotifications().requestPermissionToSendNotifications();
+  }
+
+  Future<void> make({
+    required int id,
+    required String title,
+    String? body,
+  }) {
+    return AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
+      if (isAllowed) {
+        try {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: id,
+              channelKey: 'notification_channel',
+              actionType: ActionType.Default,
+              title: title,
+              body: body,
+              notificationLayout: NotificationLayout.Default,
+              autoDismissible: true,
+            ),
+          );
+        } catch(e) {
+          //
+        }
+      }
+    });
   }
 
   Future<void> progress({
@@ -90,6 +129,35 @@ class NotificationService extends GetxService {
     AwesomeNotifications().dismiss(id);
     log('[notification.service.dart] canceled with id $id');
     AwesomeNotifications().cancel(id);
+  }
+
+  Future<void> join() async {
+    // check firebase token is in storage
+    var token = Services.configs.get(key: CONSTANTS.STORAGE_FIREBASE_TOKEN);
+
+    log('[notification.service.dart] firebase token from storage: $token');
+
+    if (token == null) {
+      // generate new token
+      var firebase_token = await Services.firebase.token;
+
+      log('[notification.service.dart] firebase token: $firebase_token');
+
+      if (firebase_token != null) {
+        var result = await ApiService.user.joinToNotification(
+          token: firebase_token,
+        );
+
+        log('[notification.service.dart] join result: ${result.status}');
+
+        if (result.status) {
+          Services.configs.set(
+            key: CONSTANTS.STORAGE_FIREBASE_TOKEN,
+            value: firebase_token,
+          );
+        }
+      }
+    }
   }
 }
 

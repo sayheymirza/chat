@@ -1,5 +1,6 @@
 import 'package:chat/futures/cache_manager/cache_manager.controller.dart';
 import 'package:chat/shared/formats/byte.format.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,8 @@ class CacheManagerView extends GetView<CacheManagerController> {
             ),
           ),
           const Divider(),
+          if (Services.profile.profile.value.permissions
+              .contains('CLEAR_CACHE_DATABASE'))
           ListTile(
             onTap: () {
               controller.deleteAll();
@@ -84,6 +87,8 @@ class CacheManagerView extends GetView<CacheManagerController> {
             title: const Text('پاک کردن فضای ذخیره سازی'),
             trailing: Text(formatBytes(controller.total.value)),
           ),
+          if (Services.profile.profile.value.permissions
+              .contains('CLEAR_USER_DATABASE'))
           ListTile(
             onTap: () {
               controller.deleteUsers();
@@ -94,6 +99,8 @@ class CacheManagerView extends GetView<CacheManagerController> {
             ),
             title: const Text('پاک کردن دیتابیس کاربران'),
           ),
+          if (Services.profile.profile.value.permissions
+              .contains('CLEAR_CHAT_DATABASE'))
           ListTile(
             onTap: () {
               controller.deleteChats();

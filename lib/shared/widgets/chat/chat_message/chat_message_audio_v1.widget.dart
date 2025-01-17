@@ -10,10 +10,12 @@ import 'package:get/get.dart';
 
 class ChatMessageAudioV1Widget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
   const ChatMessageAudioV1Widget({
     super.key,
     required this.message,
+    this.action = true,
   });
 
   @override
@@ -108,6 +110,7 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       child: child(
         waveforms: widget.message.data['waveform'] ?? widget.message.data['waveforms'] ?? [],

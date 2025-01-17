@@ -12,7 +12,7 @@ class AdminChatTable extends Table {
   TextColumn get subtitle => text()();
   TextColumn get message =>
       text().withDefault(Constant("{}")).map(JsonConverter())();
-  TextColumn get permissions => text()();
+  TextColumn get permissions => text().withDefault(Constant(''))();
   TextColumn get status => text().withDefault(Constant('normal'))();
   IntColumn get unread_count => integer().withDefault(Constant(0))();
   DateTimeColumn get updated_at =>

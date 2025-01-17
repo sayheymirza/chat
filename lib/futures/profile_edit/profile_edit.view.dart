@@ -23,7 +23,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: Container(
         width: Get.width - 32,
-        margin: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 24),
         child: Obx(
           () => ElevatedButton(
             onPressed: controller.disabled.value

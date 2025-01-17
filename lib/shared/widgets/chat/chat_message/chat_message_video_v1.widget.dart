@@ -9,10 +9,12 @@ import 'package:video_player_control_panel/video_player_control_panel.dart';
 
 class ChatMessageVideoV1Widget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
   const ChatMessageVideoV1Widget({
     super.key,
     required this.message,
+    this.action = true,
   });
 
   @override
@@ -108,6 +110,7 @@ class _ChatMessageVideoV1WidgetState extends State<ChatMessageVideoV1Widget> {
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       child: child(url: widget.message.data['url']),
     );

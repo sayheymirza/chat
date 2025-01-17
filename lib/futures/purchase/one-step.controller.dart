@@ -41,6 +41,9 @@ class PurchaseOneStepController extends PurchaseController {
       if (selectedPaymentMethod.value == "psp") {
         await submitWithPSP();
       }
+      if(selectedPaymentMethod.value == "cafebazaar") {
+        await submitWithCafebazaar();
+      }
       if (selectedPaymentMethod.value == "card-by-card") {
         index.value = 2;
         title.value = 'کارت به کارت';

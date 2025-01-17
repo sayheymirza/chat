@@ -1,13 +1,16 @@
-import 'package:chat/models/chat/chat.model.dart';
+import 'dart:async';
+
+import 'package:chat/models/chat/admin.model.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 
 class AdminChatsController extends GetxController {
-  RxList<ChatModel> chats = List<ChatModel>.empty(growable: true).obs;
+  RxList<AdminModel> chats = List<AdminModel>.empty(growable: true).obs;
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxInt limit = 12.obs;
   RxBool loading = false.obs;
+  StreamSubscription<AdminListModel>? stream;
 
   void goToPage(int value) {
     if (loading.value == true) return;
@@ -20,10 +23,29 @@ class AdminChatsController extends GetxController {
   }
 
   void load() async {
-    var result = await Services.adminChat.select(
-      page: page.value,
-    );
+    // if page is 1 use stream to get data
+    if (page.value == 1) {
+      if (stream != null) return;
 
-    chats.value = result.chats ?? [];
+      var result = await Services.adminChat.list(
+        page: page.value,
+      );
+
+      stream = result.listen((event) {
+        chats.value = event.chats ?? [];
+        lastPage.value = event.last ?? 0;
+      });
+    } else {
+      // close stream
+      stream?.cancel();
+      stream = null;
+
+      var result = await Services.adminChat.select(
+        page: page.value,
+      );
+
+      chats.value = result.chats ?? [];
+      lastPage.value = result.last ?? 0;
+    }
   }
 }

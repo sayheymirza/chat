@@ -11,6 +11,7 @@ import 'package:chat/shared/services/compress.service.dart';
 import 'package:chat/shared/services/configs.service.dart';
 import 'package:chat/shared/services/event.service.dart';
 import 'package:chat/shared/services/file.service.dart';
+import 'package:chat/shared/services/firebase.service.dart';
 import 'package:chat/shared/services/http.service.dart';
 import 'package:chat/shared/services/launch_instance.service.dart';
 import 'package:chat/shared/services/log.service.dart';
@@ -19,6 +20,7 @@ import 'package:chat/shared/services/notification.service.dart';
 import 'package:chat/shared/services/permission.service.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/services/queue.service.dart';
+import 'package:chat/shared/services/sound.service.dart';
 import 'package:chat/shared/services/sync.service.dart';
 import 'package:chat/shared/services/user.service.dart';
 import 'package:chat/shared/services/waveframe.service.dart';
@@ -69,10 +71,15 @@ class Services {
 
   static CompressService get compress => Get.find(tag: 'compress');
 
+  static FirebaseService get firebase => Get.find(tag: 'firebase');
+
+  static SoundService get sound => Get.find(tag: 'sound');
+
   static put() async {
     developer.log('[services.dart] start put Get services');
     Get.put(HttpService(), tag: 'http');
-    Get.put(QueueService(), tag: 'queue');
+    Get.put(FirebaseService(), tag: 'firebase');
+    Get.lazyPut(() => QueueService(), tag: 'queue');
     Get.lazyPut(() => ChromeService(), tag: 'chrome');
     Get.lazyPut(() => LaunchInstanceService(), tag: 'launch');
     Get.lazyPut(() => ProfileService(), tag: 'profile');
@@ -93,6 +100,7 @@ class Services {
     Get.lazyPut(() => SyncService(), tag: 'sync');
     Get.lazyPut(() => LogService(), tag: 'log');
     Get.lazyPut(() => CompressService(), tag: 'compress');
+    Get.lazyPut(() => SoundService(), tag: 'sound');
     developer.log('[services.dart] end put Get services');
   }
 }

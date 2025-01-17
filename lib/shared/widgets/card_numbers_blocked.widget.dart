@@ -1,3 +1,5 @@
+import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
 
 class CardNumbersBlockedWidget extends StatelessWidget {
@@ -11,8 +13,8 @@ class CardNumbersBlockedWidget extends StatelessWidget {
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: const Text(
-        'کاربر گرامی اگر رمز جدید و تاییدیه موبایل دریافت نمی‌کنید عدد ۱۲ را به این سر شماره پیامک کنید\n\n300059111112\n9830002659666661\n98100010007700',
+      child: Text(
+        Services.configs.get(key: CONSTANTS.STORAGE_VERIFY_PHONE_DESCRIPTION),
       ),
     );
   }

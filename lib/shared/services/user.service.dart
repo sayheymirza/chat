@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
+import 'package:chat/shared/services.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:get/get.dart';
 
@@ -169,5 +171,51 @@ class UserService extends GetxService {
         );
       }
     });
+  }
+
+  Future<void> see({required String userId}) async {
+    var seened = await seen(userId: userId);
+
+    if (seened > 0) {
+      return;
+    }
+
+    var time = int.parse(
+        Services.configs.get(key: CONSTANTS.STORAGE_EYE_TIME).toString());
+    var now = DateTime.now();
+
+    // add time (hours) to now
+    var end_at = now.add(Duration(hours: time));
+
+    Services.configs.set(
+      key: 'user:$userId',
+      value: {'end_at': end_at.toString(), 'start_at': now.toString()},
+    );
+
+    log('[user.service.dart] user $userId seen for $time hours');
+  }
+
+  double seen({required String userId}) {
+    var now = DateTime.now();
+    var expire_at = Services.configs.get(key: 'user:$userId');
+
+    if (expire_at == null) {
+      return 0;
+    }
+
+    var start_at = DateTime.parse(expire_at['start_at']);
+    var end_at = DateTime.parse(expire_at['end_at']);
+
+    if (now.isAfter(end_at)) {
+      Services.configs.unset(key: 'user:$userId');
+
+      return 0;
+    }
+
+    //   how much percent of time has passed in hours
+    var percent = (100 * now.microsecondsSinceEpoch) /
+        end_at.microsecondsSinceEpoch;
+
+    return percent / 100;
   }
 }

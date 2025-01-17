@@ -47,6 +47,7 @@ class PurchaseInvoiceView extends StatelessWidget {
               id: e['key'],
               text: e['text'],
               icon: e['icon'],
+              image: e['image'],
               selected: selectedPaymentMethod == e['key'],
             );
           }),
@@ -58,8 +59,9 @@ class PurchaseInvoiceView extends StatelessWidget {
   Widget method({
     required String id,
     required String text,
-    required IconData icon,
     required bool selected,
+    IconData? icon,
+    String? image,
   }) {
     return GestureDetector(
       onTap: () {
@@ -79,18 +81,28 @@ class PurchaseInvoiceView extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             color: selected ? Get.theme.primaryColor : Colors.grey.shade400,
+            width: selected ? 2 : 1,
+            strokeAlign: BorderSide.strokeAlignInside,
           ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: selected ? Get.theme.primaryColor : Colors.black,
-            ),
-            const SizedBox(
-              width: 12,
-            ),
+            if (icon != null)
+              Icon(
+                icon,
+                color: selected ? Get.theme.primaryColor : Colors.black,
+              ),
+            if (image != null)
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: Image.asset(
+                  'lib/app/assets/images/$image.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            const Gap(12),
             Text(
               text,
               style: TextStyle(

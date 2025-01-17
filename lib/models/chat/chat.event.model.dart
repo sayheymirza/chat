@@ -18,3 +18,7 @@ class MESSAGE_EVENTS {
   static String UPDATE_MESSAGE = "message:update-message";
   static String ADD_MESSAGE = "message:add-message";
 }
+
+class CALL_EVENTS {
+  static String ACTION = "call:action";
+}

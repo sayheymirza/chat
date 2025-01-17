@@ -53,7 +53,6 @@ class TransactionsView extends GetView<TransactionsController> {
                   PaginationWidget(
                     last: controller.lastPage.value,
                     page: controller.page.value,
-                    color: Colors.green.shade500,
                     onChange: (page) {
                       controller.goToPage(page);
                     },

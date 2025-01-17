@@ -19,11 +19,13 @@ class PaymentView extends GetView<PaymentController> {
           body: {
         'loading': loading(),
         'ok': result(
+          context,
           icon: Icons.done_rounded,
           color: Colors.green,
           text: 'پرداخت شما موفق بود',
         ),
         'nok': result(
+          context,
           icon: Icons.close_rounded,
           color: Colors.red,
           text: 'پرداخت شما ناموفق بود',
@@ -38,7 +40,8 @@ class PaymentView extends GetView<PaymentController> {
     );
   }
 
-  Widget result({
+  Widget result(
+    BuildContext context, {
     required IconData icon,
     required Color color,
     required String text,
@@ -68,7 +71,7 @@ class PaymentView extends GetView<PaymentController> {
         Positioned(
           left: 50,
           right: 50,
-          bottom: 50,
+          bottom: MediaQuery.of(context).padding.bottom + 50,
           child: OutlinedButton.icon(
             onPressed: () {
               controller.home();

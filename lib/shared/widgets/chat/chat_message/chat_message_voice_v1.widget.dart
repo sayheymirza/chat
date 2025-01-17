@@ -10,10 +10,12 @@ import 'package:get/get.dart';
 
 class ChatMessageVoiceV1Widget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
   const ChatMessageVoiceV1Widget({
     super.key,
     required this.message,
+    this.action = true,
   });
 
   @override
@@ -135,6 +137,7 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       child: child(
         waveforms: waveforms ?? [],

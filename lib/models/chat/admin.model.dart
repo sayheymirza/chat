@@ -2,14 +2,14 @@ import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/database/database.dart';
 
-class ChatListModel {
-  List<ChatModel>? chats;
+class AdminListModel {
+  List<AdminModel>? chats;
   int? page;
   int? limit;
   int? last;
   int? total;
 
-  ChatListModel({
+  AdminListModel({
     this.chats = const [],
     this.page = 0,
     this.limit = 0,
@@ -18,20 +18,22 @@ class ChatListModel {
   });
 }
 
-class ChatModel {
+class AdminModel {
   String? chatId;
-  String? userId;
-  ProfileModel? user;
+  String? title;
+  String? subtitle;
+  String? image;
   ChatMessageModel? message;
   String? permissions;
   String? status;
   int? unreadCount;
   DateTime? updatedAt;
 
-  ChatModel({
+  AdminModel({
     this.chatId,
-    this.userId,
-    this.user,
+    this.title,
+    this.subtitle,
+    this.image,
     this.message,
     this.permissions,
     this.status,
@@ -41,11 +43,12 @@ class ChatModel {
 
   List<String> get permission => (permissions?.split(',') ?? []);
 
-  factory ChatModel.fromDatabase(ChatTableData data, {ProfileModel? user}) {
-    return ChatModel(
+  factory AdminModel.fromDatabase(AdminChatTableData data) {
+    return AdminModel(
       chatId: data.chat_id,
-      userId: data.user_id,
-      user: user,
+      title: data.title,
+      subtitle: data.subtitle,
+      image: data.image,
       message: ChatMessageModel.fromJson(data.message as Map<String, dynamic>),
       permissions: data.permissions,
       status: 'normal',
@@ -54,11 +57,11 @@ class ChatModel {
     );
   }
 
-  ChatModel.fromJson(Map<String, dynamic> json) {
+  AdminModel.fromJson(Map<String, dynamic> json) {
     chatId = json['chat_id'];
-    userId = json['user_id'];
-    user =
-        json['user'] != null ? ProfileModel.fromDatabase(json['user']) : null;
+    title = json['title'];
+    subtitle = json['subtitle'];
+    image = json['image'];
     message = json['message'] != null
         ? ChatMessageModel.fromJson(json['message'])
         : null;
@@ -81,10 +84,9 @@ class ChatModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['chat_id'] = chatId;
-    data['user_id'] = userId;
-    if (user != null) {
-      data['user'] = user!.toJson();
-    }
+    data['title'] = title;
+    data['subtitle'] = subtitle;
+    data['image'] = image;
     if (message != null) {
       data['message'] = message!.toJson();
     }

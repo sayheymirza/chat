@@ -5,5 +5,8 @@ abstract class FlavorAbstract {
   void feedback();
   void showAppInStore();
   void update();
-  Future<EventParchaseResultModel> purchase(EventParchaseParamsModel params);
+  void purchase(
+    EventParchaseParamsModel params,
+    Function(EventParchaseResultModel result) callback,
+  );
 }

@@ -9,27 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
-  Rx<Relation> relation = Relation.empty.obs;
-
   RxBool showOptions = false.obs;
-
   RxBool openingChat = false.obs;
+  RxBool loading = true.obs;
 
-  StreamController<List<ProfileModel>> profile =
-      StreamController<List<ProfileModel>>();
+  Rx<ProfileModel> profile = ProfileModel().obs;
 
   @override
   void onInit() {
     super.onInit();
 
     load();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-
-    profile.close();
   }
 
   Future<void> load() async {
@@ -42,17 +32,15 @@ class ProfileController extends GetxController {
       var result = await ApiService.user.me();
 
       if (result != null) {
-        if (result.relation != null) {
-          relation.value = result.relation!;
-        }
-
-        profile.add([result]);
+        profile.value = result;
+        loading.value = false;
       } else {
         showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
       }
     } else {
       loadUser();
       fetch();
+      Services.user.see(userId: id);
     }
   }
 
@@ -62,14 +50,8 @@ class ProfileController extends GetxController {
       var result = await Services.user.one(userId: id);
 
       if (result != null) {
-        if (result.relation != null) {
-          relation.value = result.relation!;
-        }
-
-        profile.add([result]);
-      } else {
-        Get.back();
-        showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
+        profile.value = result;
+        loading.value = false;
       }
     } catch (e) {
       print(e);

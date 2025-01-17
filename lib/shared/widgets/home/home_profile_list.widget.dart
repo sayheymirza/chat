@@ -1,6 +1,7 @@
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class HomeProfileListWidget extends StatelessWidget {
@@ -38,11 +39,18 @@ class HomeProfileListWidget extends StatelessWidget {
                   height: 24,
                   child: Image.asset('lib/app/assets/images/star.png'),
                 ),
+              if (icon == "fire")
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Image.asset('lib/app/assets/images/fire.png'),
+                ),
               if (icon == "eye")
                 const Icon(
                   Icons.remove_red_eye,
                   color: Colors.green,
                 ),
+              const Gap(8),
               Text(
                 title,
                 style: const TextStyle(

@@ -14,6 +14,10 @@ class SplashController extends GetxController {
   void onInit() async {
     super.onInit();
 
+    await firebase();
+
+    await updateEndpointFromRemoveConfig();
+
     await handshake();
 
     await fetchAndSaveDropdowns();
@@ -34,6 +38,21 @@ class SplashController extends GetxController {
     }
   }
 
+  Future<void> firebase() async {
+    status.value = 'در حال ارتباط با فایربیس';
+
+    await Services.firebase.init();
+  }
+
+  Future<void> updateEndpointFromRemoveConfig() async {
+    var value =
+        await Services.firebase.getStringFromRemote(key: 'ENDPOINT_API');
+
+    if (value != null && value.isNotEmpty) {
+      CONSTANTS.DEFAULT_ENDPOINT_API = value;
+    }
+  }
+
   Future<void> handshake() async {
     try {
       status.value = 'در حال دریافت اطلاعات اپلیکیشن';
@@ -45,7 +64,7 @@ class SplashController extends GetxController {
 
   Future<void> fetchAndSaveDropdowns() async {
     try {
-      // check dropdowns hash to reload @TODO: now i check the count
+      // check dropdowns hash to reload
       if ((await database.select(database.dropdownTable).get()).isNotEmpty) {
         return;
       }

@@ -44,8 +44,6 @@ class FavoritesController extends GetxController
             : RELATION_ACTION.FAVORITED,
       );
 
-      print(result.profiles.length);
-
       lastPage.value = result.lastPage;
       profiles.value = result.profiles;
 

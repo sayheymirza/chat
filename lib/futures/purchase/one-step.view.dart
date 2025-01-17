@@ -236,7 +236,8 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                             },
                       style: ButtonStyle(
                         elevation: const WidgetStatePropertyAll(0),
-                        minimumSize: const WidgetStatePropertyAll(
+                        minimumSize: WidgetStatePropertyAll(
+                          controller.disabled.value ? Size(48, 48) :
                           Size(160, 48),
                         ),
                         backgroundColor: controller.disabled.value
@@ -244,11 +245,11 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                             : WidgetStatePropertyAll(Get.theme.primaryColor),
                       ),
                       child: controller.disabled.value
-                          ? const SizedBox(
+                          ?  SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                color: Colors.white,
+                                color: Get.theme.primaryColor,
                                 strokeWidth: 3,
                               ),
                             )

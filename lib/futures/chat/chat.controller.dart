@@ -5,7 +5,6 @@ import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_delete_chat/dialog_delete_chat.view.dart';
 import 'package:chat/models/apis/chat.model.dart';
 import 'package:chat/models/chat/chat.event.model.dart';
-import 'package:chat/models/chat/chat.message.call.v1.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
@@ -222,6 +221,8 @@ class ChatController extends GetxController {
     var id = chatId;
 
     await Services.chat.one(chatId: id!);
+
+    fetchUser();
   }
 
   void listenChat() async {
@@ -252,23 +253,6 @@ class ChatController extends GetxController {
     );
 
     handleMessages(data);
-
-    // var limit = 50;
-    //
-    // var stream = Services.message.stream(chatId: id!, limit: limit);
-    //
-    // var submessages = stream.listen((value) {
-    //   print(value.length);
-    //   if (limit == 0) {
-    //     messageStream.add(
-    //       value.map((elem) => ChatMessageModel.fromDatabase(elem)).toList(),
-    //     );
-    //   } else {
-    //     handleMessages(value);
-    //   }
-    // });
-    //
-    // subsending = Services.message.listenToSending(chatId: id);
   }
 
   void loadMessages() async {
@@ -342,7 +326,6 @@ class ChatController extends GetxController {
 
     updateTimeout = Timer(Duration(milliseconds: 100), () {
       log('[chat.controller.dart] update message stream');
-      // messageStream.add(messages..sort((a, b) => a.seq!.compareTo(b.seq!)));
       messages = messages..sort((a, b) => a.seq!.compareTo(b.seq!));
       update();
     });
@@ -366,7 +349,6 @@ class ChatController extends GetxController {
   void block() async {
     if (chat.value.userId == null) return;
 
-    // relation.value = relation.value.copyWith({"blocked": true});
     await Services.user.relation(
       userId: chat.value.userId!,
       action: RELATION_ACTION.BLOCK,
@@ -475,5 +457,17 @@ class ChatController extends GetxController {
         showSnackbar(message: 'خطا در حذف چت رخ داد');
       }
     }
+  }
+
+  void makeCall({required String mode}) async {
+    if (makingCall.value) return;
+
+    var userId = chat.value.userId!;
+
+    makingCall.value = true;
+
+    Services.call.make(mode: mode, chatId: chatId!, userId: userId);
+
+    makingCall.value = false;
   }
 }

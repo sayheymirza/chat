@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 
 class ChatMessageTextV1Widget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
   const ChatMessageTextV1Widget({
     super.key,
     required this.message,
+    this.action = true,
   });
 
   @override
@@ -40,6 +42,7 @@ class _ChatMessageTextV1WidgetState extends State<ChatMessageTextV1Widget> {
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       child: Container(
         constraints: BoxConstraints(

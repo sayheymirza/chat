@@ -58,8 +58,27 @@ class CONSTANTS {
 
   static String STORAGE_CALL_URL = 'call:URL';
 
+  static String STORAGE_VERIFY_PHONE_DESCRIPTION = 'app:verify_phone_description';
+
+  static String STORAGE_EYE_TIME = 'app:eye_time';
+
+  static String STORAGE_INVITE_LINK = 'app:invite_link';
+
+  static String STORAGE_FIREBASE_TOKEN = 'firebase:token';
+
   static String PAYMENT_CALLBACK = '';
   static String FLAVOR = '';
+
+  static String CAFEBAZAAR_RSA = "app:cafebazaar-rsa";
+  static String MYKET_RSA = "app:myket-rsa";
+
+  static String AUDIO_BEEP_BEEP = "audio:beep_beep";
+  static String AUDIO_DIALING = "audio:dialing";
+  static String AUDIO_MESSAGE = "audio:message_incoming";
+  static String AUDIO_RINGTONE = "audio:ringtone";
+
+  static String CALL_INCALL = "call:incall";
+  static String CALL_INCOMMING = "call:incoming";
 
   static List<Map<String, dynamic>> PAYMENT_METHODS = [
     {
@@ -72,6 +91,11 @@ class CONSTANTS {
       'text': 'کارت به کارت',
       'icon': Icons.payments,
     },
+    {
+      'key': 'cafebazaar',
+      'text': 'کافه بازار',
+      'image': 'cafebazaar'
+    }
   ];
 
   static Future<void> Load() async {

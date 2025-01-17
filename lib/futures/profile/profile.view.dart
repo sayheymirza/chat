@@ -15,27 +15,33 @@ class ProfileView extends GetView<ProfileController> {
     Get.put(ProfileController());
 
     return Scaffold(
-      body: StreamBuilder(
-        stream: controller.profile.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print(snapshot.error);
-
-            return Container(
-              padding: EdgeInsets.all(16),
-              child: Text("خطایی رخ داد"),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              snapshot.data == null ||
-              snapshot.data!.isEmpty) {
+      body: Obx(
+        () {
+          if (controller.loading.value) {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          var data = snapshot.data!.last;
+          var data = controller.profile.value;
+
+          Widget error = Container();
+
+          if (data.relation!.blocked == true) {
+            error = errorBlocked();
+          }
+
+          if (data.relation!.blockedMe == true) {
+            error = errorBlockedMe();
+          }
+
+          if (data.status!.toLowerCase() == 'unsubscribe') {
+            error = errorCanceled();
+          }
+
+          if (data.status!.toLowerCase() == 'left_for_ever') {
+            error = errorDeleted();
+          }
 
           return Stack(
             children: [
@@ -43,7 +49,6 @@ class ProfileView extends GetView<ProfileController> {
                 onRefresh: controller.load,
                 child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       header(
                         fullname: data.fullname!,
@@ -78,7 +83,10 @@ class ProfileView extends GetView<ProfileController> {
                         ],
                       ),
                       const Divider(),
-                      const TitleWidget(text: "وضعیت حساب کاربری"),
+                      SizedBox(
+                        width: double.infinity,
+                        child: const TitleWidget(text: "وضعیت حساب کاربری"),
+                      ),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(
@@ -100,9 +108,7 @@ class ProfileView extends GetView<ProfileController> {
                                   ? Colors.blue
                                   : Colors.red,
                             ),
-                            const SizedBox(
-                              width: 6,
-                            ),
+                            const Gap(6),
                             // has an active ad
                             badge(
                                 text: 'account_ad_title'.tr,
@@ -115,9 +121,7 @@ class ProfileView extends GetView<ProfileController> {
                                     ? Image.asset(
                                         'lib/app/assets/images/star.png')
                                     : null),
-                            const SizedBox(
-                              width: 6,
-                            ),
+                            const Gap(6),
                             badge(
                               text: "عضویت ویژه",
                               icon: data.plan?.special == true
@@ -292,26 +296,7 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 ),
               ),
-              //   if user blocked
-              if (controller.relation.value.blocked == true)
-                alert(
-                  title: 'کاربر بلاک شده',
-                  content:
-                      'شما این کاربر را بلاک کرده اید و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
-                  action: OutlinedButton(
-                    onPressed: () {
-                      controller.unblock(id: data.id!);
-                    },
-                    child: const Text('آنبلاک کردن'),
-                  ),
-                ),
-              // if user blocked me
-              if (controller.relation.value.blockedMe == true)
-                alert(
-                  title: 'بلاک شده اید',
-                  content:
-                      'این کاربر شما را بلاک کرده و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
-                ),
+              error,
             ],
           );
         },
@@ -325,13 +310,12 @@ class ProfileView extends GetView<ProfileController> {
     Widget? action,
   }) {
     return Positioned(
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        width: Get.width,
+        height: Get.height,
         child: Stack(
           children: [
             Container(
+              width: Get.width,
               padding: const EdgeInsets.all(20),
               // white background with 25% opacity
               color: Colors.white.withOpacity(0.25),
@@ -503,7 +487,7 @@ class ProfileView extends GetView<ProfileController> {
                 },
                 itemBuilder: (context) {
                   return [
-                    controller.relation.value.favorited == true
+                    controller.profile.value.relation!.favorited == true
                         ? const PopupMenuItem(
                             value: "disfavorite",
                             child: Row(
@@ -531,7 +515,7 @@ class ProfileView extends GetView<ProfileController> {
                               ],
                             ),
                           ),
-                    controller.relation.value.blocked == false
+                    controller.profile.value.relation!.blocked == false
                         ? const PopupMenuItem(
                             value: "block",
                             child: Row(
@@ -818,6 +802,44 @@ class ProfileView extends GetView<ProfileController> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget errorBlocked() {
+    return alert(
+      title: 'کاربر بلاک شده',
+      content:
+          'شما این کاربر را بلاک کرده اید و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
+      action: OutlinedButton(
+        onPressed: () {
+          controller.unblock(id: controller.profile.value.id!);
+        },
+        child: const Text('آنبلاک کردن'),
+      ),
+    );
+  }
+
+  Widget errorBlockedMe() {
+    return alert(
+      title: 'بلاک شده اید',
+      content:
+          'این کاربر شما را بلاک کرده و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
+    );
+  }
+
+  Widget errorCanceled() {
+    // کاربر از عضویت خود منصرف شده است ولی امکان بازگشت دارد
+    return alert(
+      title: 'کاربر از عضویت خود منصرف شده است',
+      content:
+          'این کاربر از عضویت خود انصراف داده است اما احتمال بازگشت مجدد او وجود دارد',
+    );
+  }
+
+  Widget errorDeleted() {
+    return alert(
+      title: 'کاربر حذف شده',
+      content: 'این کاربر حساب کاربری خودش را حذف کرده است',
     );
   }
 }

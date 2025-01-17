@@ -36,6 +36,8 @@ class HttpService extends GetxService {
 
     Map<String, String> headers = {
       'Content-Type': 'application/json',
+      'x-app-time': DateTime.now().toIso8601String(),
+      'x-flavor': CONSTANTS.FLAVOR,
     };
 
     if (auth) {

@@ -23,6 +23,7 @@ class PageView extends GetView<PageViewController> {
 
     return Obx(
       () => Scaffold(
+        backgroundColor: Colors.white,
         appBar: GradientAppBarWidget(
           back: true,
           title: title,

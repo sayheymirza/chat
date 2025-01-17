@@ -718,14 +718,14 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
 
   Widget footer() {
     return Container(
-      height: 100,
+      height: 130,
       padding: const EdgeInsets.only(
         left: 32,
         right: 32,
         bottom: 40,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Obx(
             () => Row(
@@ -777,9 +777,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const Gap(16),
         ],
       ),
     );

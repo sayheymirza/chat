@@ -6,8 +6,13 @@ import 'package:gap/gap.dart';
 
 class ChatMessageNotSupportWidget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool action;
 
-  const ChatMessageNotSupportWidget({super.key, required this.message});
+  const ChatMessageNotSupportWidget({
+    super.key,
+    required this.message,
+    this.action = true,
+  });
 
   @override
   State<ChatMessageNotSupportWidget> createState() =>
@@ -39,6 +44,7 @@ class _ChatMessageNotSupportWidgetState
   @override
   Widget build(BuildContext context) {
     return ChatMessageWidget(
+      action: widget.action,
       message: widget.message,
       color: Colors.red.withAlpha(64),
       child: Row(

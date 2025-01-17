@@ -50,11 +50,23 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                         verified: data.verified!,
                         age: data.age!.toString(),
                         id: data.id!,
-                        last: data.last!,
                         avatar: data.avatar!,
                       ),
-                      if (controller.showOptions.value) buttons(id: data.id!),
-                      if (controller.showOptions.value) const Divider(),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(10),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed('/auth/login');
+                          },
+                          child: Text(
+                            'ارسال پیام',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                       Row(
                         children: [
                           item(
@@ -76,59 +88,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                             ),
                           ),
                         ],
-                      ),
-                      const Divider(),
-                      const TitleWidget(text: "وضعیت حساب کاربری"),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 10,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            badge(
-                              text: data.verified == true
-                                  ? "تایید شده"
-                                  : "تایید نشده",
-                              icon: data.verified == true
-                                  ? Icons.done_all
-                                  : Icons.close,
-                              iconColor: data.verified == true
-                                  ? Colors.blue
-                                  : Colors.red,
-                            ),
-                            const SizedBox(
-                              width: 6,
-                            ),
-                            // has an active ad
-                            badge(
-                                text: 'account_ad_title'.tr,
-                                icon:
-                                    data.plan?.ad == true ? null : Icons.close,
-                                iconColor: data.plan?.ad == true
-                                    ? Colors.yellow
-                                    : Colors.red,
-                                image: data.plan?.ad == true
-                                    ? Image.asset(
-                                        'lib/app/assets/images/star.png')
-                                    : null),
-                            const SizedBox(
-                              width: 6,
-                            ),
-                            badge(
-                              text: "عضویت ویژه",
-                              icon: data.plan?.special == true
-                                  ? Icons.star_rate
-                                  : Icons.close,
-                              iconColor: data.plan?.special == true
-                                  ? Colors.yellow
-                                  : Colors.red,
-                            ),
-                          ],
-                        ),
                       ),
                       br(
                         text: "ویژگی های ظاهری",
@@ -158,52 +117,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                       const Divider(),
                       Row(
                         children: [
-                          // height
-                          item(
-                            title: "رنگ پوست",
-                            value: data.color ?? '',
-                          ),
-                          // weight
-                          item(
-                            title: "وضعیت سلامتی",
-                            value: data.health ?? '',
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          // height
-                          item(
-                            title: "امتیاز زیبایی (1 کمترین)",
-                            value: data.beauty ?? '',
-                          ),
-                          // weight
-                          item(
-                            title: "امتیاز خوشتیپی (1 کمترین)",
-                            value: data.shape ?? '',
-                          ),
-                        ],
-                      ),
-                      br(
-                        text: "اطلاعات تکمیلی",
-                      ),
-                      // birthday
-                      Row(
-                        children: [
-                          item(
-                            title: "تاریخ تولد",
-                            value: data.birthDate ?? '',
-                          ),
-                          item(
-                            title: "تاریخ عضویت",
-                            value: data.registerDate ?? '',
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
                           // وضعیت تاهل
                           item(
                             title: "وضعیت تاهل",
@@ -211,68 +124,8 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                           ),
                           // میزان تحصیلات
                           item(
-                            title: "میزان تحصیلات",
-                            value: data.education ?? '',
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          // height
-                          item(
-                            title: "تعداد فرزندان",
-                            value: data.children ?? '',
-                          ),
-                          // weight
-                          item(
-                            title: "سن بزرگترین فرزند",
-                            value: data.childMaxAge ?? '',
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          // height
-                          item(
-                            title: "شغل",
-                            value: data.job ?? '',
-                          ),
-                          // weight
-                          item(
                             title: "سبک زندگی",
                             value: data.living ?? '',
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          // height
-                          item(
-                            title: "میزان حقوق دریافتی",
-                            value: data.salary ?? '',
-                          ),
-                          // weight
-                          item(
-                            title: "میزان مذهبی بودن",
-                            value: data.religion ?? '',
-                          ),
-                        ],
-                      ),
-                      const Divider(),
-                      Row(
-                        children: [
-                          // height
-                          item(
-                            title: "وضعیت اتومبیل",
-                            value: data.car ?? '',
-                          ),
-                          // weight
-                          item(
-                            title: "وضعیت مسکن",
-                            value: data.house ?? '',
                           ),
                         ],
                       ),
@@ -371,7 +224,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
     required bool verified,
     required String age,
     required String id,
-    required String last,
     required String avatar,
   }) {
     return SizedBox(
@@ -415,7 +267,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
               id: id,
               fullname: fullname,
               verified: verified,
-              last: last,
               age: age,
             ),
           ),
@@ -446,118 +297,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
             clipBorderRadius: BorderRadius.circular(50),
           ),
         ),
-        const Spacer(),
-        // menu button
-        if (controller.showOptions.value)
-          GetBuilder<ProfileSlimController>(
-            builder: (context) {
-              return PopupMenuButton(
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  child: Icon(
-                    Icons.more_vert_rounded,
-                  ),
-                ).asGlass(
-                  clipBorderRadius: BorderRadius.circular(50),
-                ),
-                onSelected: (value) {
-                  switch (value) {
-                    case "favorite":
-                      controller.favorite(id: id);
-                      break;
-                    case "disfavorite":
-                      controller.disfavorite(id: id);
-                      break;
-                    case "block":
-                      controller.block(id: id);
-                      break;
-                    case "unblock":
-                      controller.unblock(id: id);
-                      break;
-                    case "report":
-                      controller.report(id: id, fullname: fullname);
-                      break;
-                    default:
-                  }
-                },
-                itemBuilder: (context) {
-                  return [
-                    controller.relation.value.favorited == true
-                        ? const PopupMenuItem(
-                            value: "disfavorite",
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  "حذف از علاقه مندی ها",
-                                ),
-                              ],
-                            ),
-                          )
-                        : const PopupMenuItem(
-                            value: "favorite",
-                            child: Row(
-                              children: [
-                                Icon(Icons.favorite),
-                                SizedBox(width: 10),
-                                Text(
-                                  "افزودن به علاقه مندی ها",
-                                ),
-                              ],
-                            ),
-                          ),
-                    controller.relation.value.blocked == false
-                        ? const PopupMenuItem(
-                            value: "block",
-                            child: Row(
-                              children: [
-                                Icon(Icons.block),
-                                SizedBox(width: 10),
-                                Text(
-                                  "بلاک کردن",
-                                ),
-                              ],
-                            ),
-                          )
-                        : const PopupMenuItem(
-                            value: "unblock",
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.block,
-                                  color: Colors.blue,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  "آنبلاک کردن",
-                                ),
-                              ],
-                            ),
-                          ),
-                    // report
-                    const PopupMenuItem(
-                      value: "report",
-                      child: Row(
-                        children: [
-                          Icon(Icons.report),
-                          SizedBox(width: 10),
-                          Text(
-                            "گزارش تخلف",
-                          ),
-                        ],
-                      ),
-                    ),
-                  ];
-                },
-              );
-            },
-          ),
-        const Gap(8),
       ],
     );
   }
@@ -567,7 +306,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
     required bool verified,
     required String age,
     required String id,
-    required String last,
   }) {
     return Container(
       width: double.infinity,
@@ -625,13 +363,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
               ),
             ],
           ),
-          const Gap(10),
-          Text(
-            'آخرین بازدید $last',
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
         ],
       ),
     );
@@ -645,11 +376,7 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: controller.openingChat.value
-                  ? null
-                  : () {
-                      controller.startChat(id: id);
-                    },
+              onPressed: controller.openingChat.value ? null : () {},
               style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(
                   controller.openingChat.value ? Colors.grey.shade200 : null,
@@ -662,28 +389,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                 ),
               ),
             ),
-          ),
-          const Gap(10),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    controller.sendDefaultMessage(id: id);
-                  },
-                  child: const Text('ارسال علاقه مندی'),
-                ),
-              ),
-              const Gap(10),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    controller.sendSMS(id: id);
-                  },
-                  child: const Text('دعوت به گفتگو'),
-                ),
-              ),
-            ],
           ),
         ],
       ),

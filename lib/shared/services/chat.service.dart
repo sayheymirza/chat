@@ -183,7 +183,6 @@ class ChatService extends GetxService {
         .watch()
         .map((unreaded) {
       return unreaded.fold(0, (previousValue, element) {
-        print(element.status);
         return previousValue + (element.status != "deleted" ? (element.unread_count ?? 0) : 0);
       });
     });

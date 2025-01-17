@@ -2819,6 +2819,516 @@ class LogTableCompanion extends UpdateCompanion<LogTableData> {
   }
 }
 
+class $AdminChatTableTable extends AdminChatTable
+    with TableInfo<$AdminChatTableTable, AdminChatTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AdminChatTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _chat_idMeta =
+      const VerificationMeta('chat_id');
+  @override
+  late final GeneratedColumn<String> chat_id = GeneratedColumn<String>(
+      'chat_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _imageMeta = const VerificationMeta('image');
+  @override
+  late final GeneratedColumn<String> image = GeneratedColumn<String>(
+      'image', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _subtitleMeta =
+      const VerificationMeta('subtitle');
+  @override
+  late final GeneratedColumn<String> subtitle = GeneratedColumn<String>(
+      'subtitle', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _messageMeta =
+      const VerificationMeta('message');
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<dynamic, dynamic>, String>
+      message = GeneratedColumn<String>('message', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: Constant("{}"))
+          .withConverter<Map<dynamic, dynamic>>(
+              $AdminChatTableTable.$convertermessage);
+  static const VerificationMeta _permissionsMeta =
+      const VerificationMeta('permissions');
+  @override
+  late final GeneratedColumn<String> permissions = GeneratedColumn<String>(
+      'permissions', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: Constant(''));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: Constant('normal'));
+  static const VerificationMeta _unread_countMeta =
+      const VerificationMeta('unread_count');
+  @override
+  late final GeneratedColumn<int> unread_count = GeneratedColumn<int>(
+      'unread_count', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: Constant(0));
+  static const VerificationMeta _updated_atMeta =
+      const VerificationMeta('updated_at');
+  @override
+  late final GeneratedColumn<DateTime> updated_at = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        chat_id,
+        image,
+        title,
+        subtitle,
+        message,
+        permissions,
+        status,
+        unread_count,
+        updated_at
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'admin_chat_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<AdminChatTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('chat_id')) {
+      context.handle(_chat_idMeta,
+          chat_id.isAcceptableOrUnknown(data['chat_id']!, _chat_idMeta));
+    } else if (isInserting) {
+      context.missing(_chat_idMeta);
+    }
+    if (data.containsKey('image')) {
+      context.handle(
+          _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
+    } else if (isInserting) {
+      context.missing(_imageMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('subtitle')) {
+      context.handle(_subtitleMeta,
+          subtitle.isAcceptableOrUnknown(data['subtitle']!, _subtitleMeta));
+    } else if (isInserting) {
+      context.missing(_subtitleMeta);
+    }
+    context.handle(_messageMeta, const VerificationResult.success());
+    if (data.containsKey('permissions')) {
+      context.handle(
+          _permissionsMeta,
+          permissions.isAcceptableOrUnknown(
+              data['permissions']!, _permissionsMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('unread_count')) {
+      context.handle(
+          _unread_countMeta,
+          unread_count.isAcceptableOrUnknown(
+              data['unread_count']!, _unread_countMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+          _updated_atMeta,
+          updated_at.isAcceptableOrUnknown(
+              data['updated_at']!, _updated_atMeta));
+    } else if (isInserting) {
+      context.missing(_updated_atMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AdminChatTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AdminChatTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      chat_id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}chat_id'])!,
+      image: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      subtitle: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}subtitle'])!,
+      message: $AdminChatTableTable.$convertermessage.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}message'])!),
+      permissions: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}permissions'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      unread_count: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}unread_count'])!,
+      updated_at: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $AdminChatTableTable createAlias(String alias) {
+    return $AdminChatTableTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<Map<dynamic, dynamic>, String, String>
+      $convertermessage = JsonConverter();
+}
+
+class AdminChatTableData extends DataClass
+    implements Insertable<AdminChatTableData> {
+  final int id;
+  final String chat_id;
+  final String image;
+  final String title;
+  final String subtitle;
+  final Map<dynamic, dynamic> message;
+  final String permissions;
+  final String status;
+  final int unread_count;
+  final DateTime updated_at;
+  const AdminChatTableData(
+      {required this.id,
+      required this.chat_id,
+      required this.image,
+      required this.title,
+      required this.subtitle,
+      required this.message,
+      required this.permissions,
+      required this.status,
+      required this.unread_count,
+      required this.updated_at});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['chat_id'] = Variable<String>(chat_id);
+    map['image'] = Variable<String>(image);
+    map['title'] = Variable<String>(title);
+    map['subtitle'] = Variable<String>(subtitle);
+    {
+      map['message'] = Variable<String>(
+          $AdminChatTableTable.$convertermessage.toSql(message));
+    }
+    map['permissions'] = Variable<String>(permissions);
+    map['status'] = Variable<String>(status);
+    map['unread_count'] = Variable<int>(unread_count);
+    map['updated_at'] = Variable<DateTime>(updated_at);
+    return map;
+  }
+
+  AdminChatTableCompanion toCompanion(bool nullToAbsent) {
+    return AdminChatTableCompanion(
+      id: Value(id),
+      chat_id: Value(chat_id),
+      image: Value(image),
+      title: Value(title),
+      subtitle: Value(subtitle),
+      message: Value(message),
+      permissions: Value(permissions),
+      status: Value(status),
+      unread_count: Value(unread_count),
+      updated_at: Value(updated_at),
+    );
+  }
+
+  factory AdminChatTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AdminChatTableData(
+      id: serializer.fromJson<int>(json['id']),
+      chat_id: serializer.fromJson<String>(json['chat_id']),
+      image: serializer.fromJson<String>(json['image']),
+      title: serializer.fromJson<String>(json['title']),
+      subtitle: serializer.fromJson<String>(json['subtitle']),
+      message: $AdminChatTableTable.$convertermessage
+          .fromJson(serializer.fromJson<String>(json['message'])),
+      permissions: serializer.fromJson<String>(json['permissions']),
+      status: serializer.fromJson<String>(json['status']),
+      unread_count: serializer.fromJson<int>(json['unread_count']),
+      updated_at: serializer.fromJson<DateTime>(json['updated_at']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'chat_id': serializer.toJson<String>(chat_id),
+      'image': serializer.toJson<String>(image),
+      'title': serializer.toJson<String>(title),
+      'subtitle': serializer.toJson<String>(subtitle),
+      'message': serializer.toJson<String>(
+          $AdminChatTableTable.$convertermessage.toJson(message)),
+      'permissions': serializer.toJson<String>(permissions),
+      'status': serializer.toJson<String>(status),
+      'unread_count': serializer.toJson<int>(unread_count),
+      'updated_at': serializer.toJson<DateTime>(updated_at),
+    };
+  }
+
+  AdminChatTableData copyWith(
+          {int? id,
+          String? chat_id,
+          String? image,
+          String? title,
+          String? subtitle,
+          Map<dynamic, dynamic>? message,
+          String? permissions,
+          String? status,
+          int? unread_count,
+          DateTime? updated_at}) =>
+      AdminChatTableData(
+        id: id ?? this.id,
+        chat_id: chat_id ?? this.chat_id,
+        image: image ?? this.image,
+        title: title ?? this.title,
+        subtitle: subtitle ?? this.subtitle,
+        message: message ?? this.message,
+        permissions: permissions ?? this.permissions,
+        status: status ?? this.status,
+        unread_count: unread_count ?? this.unread_count,
+        updated_at: updated_at ?? this.updated_at,
+      );
+  AdminChatTableData copyWithCompanion(AdminChatTableCompanion data) {
+    return AdminChatTableData(
+      id: data.id.present ? data.id.value : this.id,
+      chat_id: data.chat_id.present ? data.chat_id.value : this.chat_id,
+      image: data.image.present ? data.image.value : this.image,
+      title: data.title.present ? data.title.value : this.title,
+      subtitle: data.subtitle.present ? data.subtitle.value : this.subtitle,
+      message: data.message.present ? data.message.value : this.message,
+      permissions:
+          data.permissions.present ? data.permissions.value : this.permissions,
+      status: data.status.present ? data.status.value : this.status,
+      unread_count: data.unread_count.present
+          ? data.unread_count.value
+          : this.unread_count,
+      updated_at:
+          data.updated_at.present ? data.updated_at.value : this.updated_at,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdminChatTableData(')
+          ..write('id: $id, ')
+          ..write('chat_id: $chat_id, ')
+          ..write('image: $image, ')
+          ..write('title: $title, ')
+          ..write('subtitle: $subtitle, ')
+          ..write('message: $message, ')
+          ..write('permissions: $permissions, ')
+          ..write('status: $status, ')
+          ..write('unread_count: $unread_count, ')
+          ..write('updated_at: $updated_at')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, chat_id, image, title, subtitle, message,
+      permissions, status, unread_count, updated_at);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AdminChatTableData &&
+          other.id == this.id &&
+          other.chat_id == this.chat_id &&
+          other.image == this.image &&
+          other.title == this.title &&
+          other.subtitle == this.subtitle &&
+          other.message == this.message &&
+          other.permissions == this.permissions &&
+          other.status == this.status &&
+          other.unread_count == this.unread_count &&
+          other.updated_at == this.updated_at);
+}
+
+class AdminChatTableCompanion extends UpdateCompanion<AdminChatTableData> {
+  final Value<int> id;
+  final Value<String> chat_id;
+  final Value<String> image;
+  final Value<String> title;
+  final Value<String> subtitle;
+  final Value<Map<dynamic, dynamic>> message;
+  final Value<String> permissions;
+  final Value<String> status;
+  final Value<int> unread_count;
+  final Value<DateTime> updated_at;
+  const AdminChatTableCompanion({
+    this.id = const Value.absent(),
+    this.chat_id = const Value.absent(),
+    this.image = const Value.absent(),
+    this.title = const Value.absent(),
+    this.subtitle = const Value.absent(),
+    this.message = const Value.absent(),
+    this.permissions = const Value.absent(),
+    this.status = const Value.absent(),
+    this.unread_count = const Value.absent(),
+    this.updated_at = const Value.absent(),
+  });
+  AdminChatTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String chat_id,
+    required String image,
+    required String title,
+    required String subtitle,
+    this.message = const Value.absent(),
+    this.permissions = const Value.absent(),
+    this.status = const Value.absent(),
+    this.unread_count = const Value.absent(),
+    required DateTime updated_at,
+  })  : chat_id = Value(chat_id),
+        image = Value(image),
+        title = Value(title),
+        subtitle = Value(subtitle),
+        updated_at = Value(updated_at);
+  static Insertable<AdminChatTableData> custom({
+    Expression<int>? id,
+    Expression<String>? chat_id,
+    Expression<String>? image,
+    Expression<String>? title,
+    Expression<String>? subtitle,
+    Expression<String>? message,
+    Expression<String>? permissions,
+    Expression<String>? status,
+    Expression<int>? unread_count,
+    Expression<DateTime>? updated_at,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (chat_id != null) 'chat_id': chat_id,
+      if (image != null) 'image': image,
+      if (title != null) 'title': title,
+      if (subtitle != null) 'subtitle': subtitle,
+      if (message != null) 'message': message,
+      if (permissions != null) 'permissions': permissions,
+      if (status != null) 'status': status,
+      if (unread_count != null) 'unread_count': unread_count,
+      if (updated_at != null) 'updated_at': updated_at,
+    });
+  }
+
+  AdminChatTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? chat_id,
+      Value<String>? image,
+      Value<String>? title,
+      Value<String>? subtitle,
+      Value<Map<dynamic, dynamic>>? message,
+      Value<String>? permissions,
+      Value<String>? status,
+      Value<int>? unread_count,
+      Value<DateTime>? updated_at}) {
+    return AdminChatTableCompanion(
+      id: id ?? this.id,
+      chat_id: chat_id ?? this.chat_id,
+      image: image ?? this.image,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      message: message ?? this.message,
+      permissions: permissions ?? this.permissions,
+      status: status ?? this.status,
+      unread_count: unread_count ?? this.unread_count,
+      updated_at: updated_at ?? this.updated_at,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (chat_id.present) {
+      map['chat_id'] = Variable<String>(chat_id.value);
+    }
+    if (image.present) {
+      map['image'] = Variable<String>(image.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (subtitle.present) {
+      map['subtitle'] = Variable<String>(subtitle.value);
+    }
+    if (message.present) {
+      map['message'] = Variable<String>(
+          $AdminChatTableTable.$convertermessage.toSql(message.value));
+    }
+    if (permissions.present) {
+      map['permissions'] = Variable<String>(permissions.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (unread_count.present) {
+      map['unread_count'] = Variable<int>(unread_count.value);
+    }
+    if (updated_at.present) {
+      map['updated_at'] = Variable<DateTime>(updated_at.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AdminChatTableCompanion(')
+          ..write('id: $id, ')
+          ..write('chat_id: $chat_id, ')
+          ..write('image: $image, ')
+          ..write('title: $title, ')
+          ..write('subtitle: $subtitle, ')
+          ..write('message: $message, ')
+          ..write('permissions: $permissions, ')
+          ..write('status: $status, ')
+          ..write('unread_count: $unread_count, ')
+          ..write('updated_at: $updated_at')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2829,6 +3339,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MessageTableTable messageTable = $MessageTableTable(this);
   late final $SyncTableTable syncTable = $SyncTableTable(this);
   late final $LogTableTable logTable = $LogTableTable(this);
+  late final $AdminChatTableTable adminChatTable = $AdminChatTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2840,7 +3351,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         chatTable,
         messageTable,
         syncTable,
-        logTable
+        logTable,
+        adminChatTable
       ];
 }
 
@@ -4263,6 +4775,236 @@ typedef $$LogTableTableProcessedTableManager = ProcessedTableManager<
     (LogTableData, BaseReferences<_$AppDatabase, $LogTableTable, LogTableData>),
     LogTableData,
     PrefetchHooks Function()>;
+typedef $$AdminChatTableTableCreateCompanionBuilder = AdminChatTableCompanion
+    Function({
+  Value<int> id,
+  required String chat_id,
+  required String image,
+  required String title,
+  required String subtitle,
+  Value<Map<dynamic, dynamic>> message,
+  Value<String> permissions,
+  Value<String> status,
+  Value<int> unread_count,
+  required DateTime updated_at,
+});
+typedef $$AdminChatTableTableUpdateCompanionBuilder = AdminChatTableCompanion
+    Function({
+  Value<int> id,
+  Value<String> chat_id,
+  Value<String> image,
+  Value<String> title,
+  Value<String> subtitle,
+  Value<Map<dynamic, dynamic>> message,
+  Value<String> permissions,
+  Value<String> status,
+  Value<int> unread_count,
+  Value<DateTime> updated_at,
+});
+
+class $$AdminChatTableTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $AdminChatTableTable> {
+  $$AdminChatTableTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get chat_id => $state.composableBuilder(
+      column: $state.table.chat_id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get image => $state.composableBuilder(
+      column: $state.table.image,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get subtitle => $state.composableBuilder(
+      column: $state.table.subtitle,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnWithTypeConverterFilters<Map<dynamic, dynamic>, Map<dynamic, dynamic>,
+          String>
+      get message => $state.composableBuilder(
+          column: $state.table.message,
+          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
+              column,
+              joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get permissions => $state.composableBuilder(
+      column: $state.table.permissions,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get unread_count => $state.composableBuilder(
+      column: $state.table.unread_count,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get updated_at => $state.composableBuilder(
+      column: $state.table.updated_at,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$AdminChatTableTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $AdminChatTableTable> {
+  $$AdminChatTableTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get chat_id => $state.composableBuilder(
+      column: $state.table.chat_id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get image => $state.composableBuilder(
+      column: $state.table.image,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get subtitle => $state.composableBuilder(
+      column: $state.table.subtitle,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get message => $state.composableBuilder(
+      column: $state.table.message,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get permissions => $state.composableBuilder(
+      column: $state.table.permissions,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get status => $state.composableBuilder(
+      column: $state.table.status,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get unread_count => $state.composableBuilder(
+      column: $state.table.unread_count,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get updated_at => $state.composableBuilder(
+      column: $state.table.updated_at,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $$AdminChatTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AdminChatTableTable,
+    AdminChatTableData,
+    $$AdminChatTableTableFilterComposer,
+    $$AdminChatTableTableOrderingComposer,
+    $$AdminChatTableTableCreateCompanionBuilder,
+    $$AdminChatTableTableUpdateCompanionBuilder,
+    (
+      AdminChatTableData,
+      BaseReferences<_$AppDatabase, $AdminChatTableTable, AdminChatTableData>
+    ),
+    AdminChatTableData,
+    PrefetchHooks Function()> {
+  $$AdminChatTableTableTableManager(
+      _$AppDatabase db, $AdminChatTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AdminChatTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AdminChatTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> chat_id = const Value.absent(),
+            Value<String> image = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> subtitle = const Value.absent(),
+            Value<Map<dynamic, dynamic>> message = const Value.absent(),
+            Value<String> permissions = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<int> unread_count = const Value.absent(),
+            Value<DateTime> updated_at = const Value.absent(),
+          }) =>
+              AdminChatTableCompanion(
+            id: id,
+            chat_id: chat_id,
+            image: image,
+            title: title,
+            subtitle: subtitle,
+            message: message,
+            permissions: permissions,
+            status: status,
+            unread_count: unread_count,
+            updated_at: updated_at,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String chat_id,
+            required String image,
+            required String title,
+            required String subtitle,
+            Value<Map<dynamic, dynamic>> message = const Value.absent(),
+            Value<String> permissions = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<int> unread_count = const Value.absent(),
+            required DateTime updated_at,
+          }) =>
+              AdminChatTableCompanion.insert(
+            id: id,
+            chat_id: chat_id,
+            image: image,
+            title: title,
+            subtitle: subtitle,
+            message: message,
+            permissions: permissions,
+            status: status,
+            unread_count: unread_count,
+            updated_at: updated_at,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$AdminChatTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $AdminChatTableTable,
+    AdminChatTableData,
+    $$AdminChatTableTableFilterComposer,
+    $$AdminChatTableTableOrderingComposer,
+    $$AdminChatTableTableCreateCompanionBuilder,
+    $$AdminChatTableTableUpdateCompanionBuilder,
+    (
+      AdminChatTableData,
+      BaseReferences<_$AppDatabase, $AdminChatTableTable, AdminChatTableData>
+    ),
+    AdminChatTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4281,4 +5023,6 @@ class $AppDatabaseManager {
       $$SyncTableTableTableManager(_db, _db.syncTable);
   $$LogTableTableTableManager get logTable =>
       $$LogTableTableTableManager(_db, _db.logTable);
+  $$AdminChatTableTableTableManager get adminChatTable =>
+      $$AdminChatTableTableTableManager(_db, _db.adminChatTable);
 }

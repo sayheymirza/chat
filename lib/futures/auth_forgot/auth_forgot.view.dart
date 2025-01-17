@@ -76,14 +76,14 @@ class AuthForgotView extends GetView<AuthForgotController> {
 
   Widget footer() {
     return Container(
-      height: 280,
+      height: 296,
       padding: const EdgeInsets.only(
         left: 32,
         right: 32,
         bottom: 40,
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CardNumbersBlockedWidget(),
           const Gap(10),
@@ -114,9 +114,7 @@ class AuthForgotView extends GetView<AuthForgotController> {
               ),
             ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
+          const Gap(16),
         ],
       ),
     );

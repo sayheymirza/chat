@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
@@ -109,8 +110,17 @@ class MapViewController extends GetxController {
 
     var image = await screenshotController.captureAndSave(
       tempDir.path,
-      fileName: 'map.png',
+      fileName: 'map-${DateTime.now().millisecondsSinceEpoch}.png',
     );
+
+    // open file to ByteData
+    var data = await File(image!).readAsBytes();
+
+    // compress image
+    var compressedBytes = await Services.compress.image(bytes: data);
+
+    // write file
+    await File(image).writeAsBytes(compressedBytes);
 
     Get.back(
       result: {

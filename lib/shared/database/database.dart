@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat/shared/database/admin-chat.database.dart';
 import 'package:chat/shared/database/cache.database.dart';
 import 'package:chat/shared/database/chat.database.dart';
 import 'package:chat/shared/database/dropdown.database.dart';
@@ -23,7 +24,8 @@ part 'database.g.dart';
     MessageTable,
     UserTable,
     SyncTable,
-    LogTable
+    LogTable,
+    AdminChatTable
   ],
 )
 class AppDatabase extends _$AppDatabase {

@@ -25,4 +25,13 @@ abstract class ApiPurchaseAbstract extends GetxService {
   });
 
   Future<InvoiceModel?> invoice({required int id});
+
+  Future<ApiPurchaseInvoiceWithCafebazaarResponseModel?>
+      payInvoiceWithCafebazaar({required int invoiceId});
+
+  Future<ApiSimpleResponseModel> consumeInvoiceWithCafebazaar({
+    required String purchaseToken,
+    required String sku,
+    required String packageName,
+  });
 }

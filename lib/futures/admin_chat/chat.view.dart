@@ -6,6 +6,7 @@ import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:glass/glass.dart';
 
 class AdminChatView extends GetView<AdminChatController> {
   const AdminChatView({super.key});
@@ -14,119 +15,80 @@ class AdminChatView extends GetView<AdminChatController> {
   Widget build(BuildContext context) {
     Get.put(AdminChatController());
 
-    return Scaffold(
-      appBar: appBar(),
-      body: GetBuilder<AdminChatController>(
-        builder: (controller) => ChatBodyWidget(
-          messages: controller.messages,
-          children: controller.children,
-          onLoadMore: () {
-            controller.loadMessages();
-          },
-          onLoadLess: () {
-            // controller.loadMessages(pageValue: max(controller.page - 2, 0));
-          },
-        ),
-      ),
+    return Obx(
+      () {
+        return Stack(
+          children: [
+            Scaffold(
+              appBar: appBar(),
+              body: ChatBodyWidget(
+                action: false,
+                permissions: controller.chat.value.permission,
+                messages: controller.messages.value
+                  ..sort((a, b) {
+                    return a.seq!.compareTo(b.seq!);
+                  }),
+                children: controller.children,
+                onLoadMore: () {
+                  controller.loadMessages();
+                },
+                onLoadLess: () {
+                  // controller.loadMessages(pageValue: max(controller.page - 2, 0));
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
   PreferredSize appBar() {
     return PreferredSize(
       preferredSize: Size(double.infinity, 56),
-      child: StreamBuilder(
-        stream: controller.chatStream.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return GradientAppBarWidget(
-              back: true,
-              title: "خطایی رخ داد",
-            );
-          }
+      child: Obx(() {
+        var data = controller.chat.value;
 
-          var data = snapshot.data;
+        data.status ??= 'normal';
 
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              data == null) {
-            return GradientAppBarWidget(back: true);
-          }
-
-          data.status ??= 'normal';
-
-          return GradientAppBarWidget(
-            back: true,
-            right: GestureDetector(
-              onTap: () {
-                if (Get.previousRoute == '/profile/${data.userId}') {
-                  Get.back();
-                } else {
-                  Get.toNamed('/profile/${data.userId}', arguments: {
-                    'options': true,
-                  });
-                }
-              },
-              child: Row(
+        return GradientAppBarWidget(
+          back: true,
+          right: Row(
+            children: [
+              AvatarWidget(
+                seen: "",
+                url: data.image ?? '',
+                size: 42,
+              ),
+              const Gap(14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AvatarWidget(
-                    seen: data.user!.seen!,
-                    url: data.user!.avatar!,
-                    size: 42,
-                  ),
-                  const Gap(14),
-                  SizedBox(
-                    width: Get.width - 300,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Gap(6),
-                        Text(
-                          data.user!.fullname!,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const Gap(2),
-                        if (data.status == 'typing')
-                          Text(
-                            "در حال نوشتن ...",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        if (data.status == 'normal' &&
-                            data.user?.seen == "online")
-                          Text(
-                            "آنلاین",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        if (data.status == 'normal' &&
-                            data.user?.seen != "online")
-                          Text(
-                            formatAgo(data.user!.lastAt.toString()),
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                      ],
+                  const Gap(6),
+                  Text(
+                    data.title ?? '',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Gap(2),
+                  Text(
+                    data.subtitle ?? '',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-            ),
-          );
-        },
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

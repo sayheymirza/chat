@@ -54,16 +54,16 @@ class EarningIncomeView extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'https://mah1.org?ref=1234',
+                      Services.configs.get(key: CONSTANTS.STORAGE_INVITE_LINK) ?? '',
                       textAlign: TextAlign.end,
                     ),
                   ),
                   const Gap(4),
                   IconButton(
                     onPressed: () async {
-                      await Services.app.copy('https://mah1.org?ref=1234');
+                      await Services.app.copy(Services.configs.get(key: CONSTANTS.STORAGE_INVITE_LINK));
 
                       showSnackbar(message: 'لینک کپی شد');
                     },

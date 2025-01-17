@@ -28,4 +28,9 @@ class ConfigsService extends GetxService {
     // log('[configs.service.dart] get $key=${value.toString()}');
     return value;
   }
+
+  Future<void> clear() async {
+    await _storage.erase();
+    log('[configs.service.dart] clear');
+  }
 }

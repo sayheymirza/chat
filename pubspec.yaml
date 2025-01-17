@@ -1,11 +1,9 @@
 name: chat
-description: "A new Flutter project."
-publish_to: "none"
+description: A new Flutter project.
+publish_to: none
 version: 0.1.0
-
 environment:
   sdk: ^3.5.0
-
 dependencies:
   dio: ^5.6.0
   drift: ^2.20.0
@@ -56,13 +54,16 @@ dependencies:
   objectid: ^3.1.0
   vector_map_tiles: ^8.0.0
   restart_app: ^1.3.2
-
-#  load flutter_inappwebview from ./packages/flutter_inappwebview
   flutter_inappwebview:
     path: ./packages/flutter_inappwebview/flutter_inappwebview
   flutter_image_compress: ^2.4.0
-
-
+  firebase_messaging: ^15.1.6
+  firebase_crashlytics: ^4.2.0
+  firebase_core: ^3.9.0
+  firebase_analytics: ^11.3.6
+  flutter_poolakey:
+    path: ./lib/flavors/cafebazaar/flutter_poolakey
+  firebase_remote_config: ^5.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -72,17 +73,12 @@ dev_dependencies:
   rename_app: ^1.6.1
   change_app_package_name: ^1.4.0
   flutter_launcher_icons: ^0.14.1
-
 flutter:
   uses-material-design: true
-
-  # fonts
   fonts:
     - family: YekanBakh
       fonts:
         - asset: lib/assets/fonts/YekanBakhFaNum-Regular.ttf
-
-  # assets
   assets:
     - lib/app/app.env
     - lib/assets/images/empty.png
@@ -91,9 +87,13 @@ flutter:
     - lib/app/assets/images/auth_logo.png
     - lib/app/assets/images/auth_hero.png
     - lib/app/assets/images/star.png
+    - lib/app/assets/images/fire.png
     - lib/app/assets/images/map_marker.png
     - lib/app/assets/images/logo-white.png
     - lib/app/assets/images/pattern.png
     - lib/app/assets/images/one.png
     - lib/app/assets/images/two.png
     - lib/app/assets/images/three.png
+    - lib/app/assets/images/cafebazaar.png
+    - lib/app/assets/images/myket.png
+    - lib/app/assets/images/psp.png

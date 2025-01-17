@@ -55,4 +55,8 @@ abstract class ApiUserAbstract extends GetxService {
     required String user,
     required String message,
   });
+
+  Future<void> logout();
+
+  Future<ApiSimpleResponseModel> joinToNotification({required String token});
 }
