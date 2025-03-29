@@ -44,14 +44,24 @@ class AccountView extends GetView<AccountController> {
                     Get.toNamed('/app/admin/chat');
                   },
                   suffix: StreamBuilder(
-                      stream: Services.adminChat.listenToUnreadedChats(),
-                      builder: (context, snapshot) {
-                        var count = snapshot.data ?? 0;
+                    stream: Services.adminChat.listenToUnreadedChats(),
+                    builder: (context, snapshot) {
+                      var count = snapshot.data ?? 0;
 
-                        return Badge(
-                          label: Text(count.toString()),
-                        );
-                      }),
+                      return Badge(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 2,
+                          horizontal: 4,
+                        ),
+                        label: Text(
+                          count.toString(),
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 if (controller.profile.profile.value.id != null)
                   item(
@@ -118,12 +128,16 @@ class AccountView extends GetView<AccountController> {
                   color: Colors.green,
                   page: "/app/transactions",
                 ),
-                item(
-                  title: 'کسب درآمد میلیونی با دعوت از دوستان',
-                  icon: Icons.payments,
-                  color: Colors.blue,
-                  page: "/app/earning",
-                ),
+                if ((Services.configs
+                            .get<String>(key: CONSTANTS.STORAGE_INVITE_LINK) ??
+                        '')
+                    .isNotEmpty)
+                  item(
+                    title: 'کسب درآمد میلیونی با دعوت از دوستان',
+                    icon: Icons.payments,
+                    color: Colors.blue,
+                    page: "/app/earning",
+                  ),
                 item(
                   title: 'به ما امتیاز بدید',
                   icon: Icons.star_rounded,
@@ -151,22 +165,30 @@ class AccountView extends GetView<AccountController> {
                   color: Colors.blue,
                   page: "/page/contact",
                 ),
-                item(
-                  title: 'وبلاگ',
-                  icon: Icons.article,
-                  color: Colors.purple,
-                  onTap: () async {
-                    controller.openLink(CONSTANTS.STORAGE_LINK_WEBLOG);
-                  },
-                ),
-                item(
-                  title: 'ورود به وب',
-                  icon: Icons.language,
-                  color: Colors.green,
-                  onTap: () async {
-                    controller.openLink(CONSTANTS.STORAGE_LINK_WEBSITE);
-                  },
-                ),
+                if ((Services.configs
+                            .get<String>(key: CONSTANTS.STORAGE_LINK_WEBLOG) ??
+                        '')
+                    .isNotEmpty)
+                  item(
+                    title: 'وبلاگ',
+                    icon: Icons.article,
+                    color: Colors.purple,
+                    onTap: () async {
+                      controller.openLink(CONSTANTS.STORAGE_LINK_WEBLOG);
+                    },
+                  ),
+                if ((Services.configs
+                            .get<String>(key: CONSTANTS.STORAGE_LINK_WEBSITE) ??
+                        '')
+                    .isNotEmpty)
+                  item(
+                    title: 'ورود به وب',
+                    icon: Icons.language,
+                    color: Colors.green,
+                    onTap: () async {
+                      controller.openLink(CONSTANTS.STORAGE_LINK_WEBSITE);
+                    },
+                  ),
                 item(
                   title: 'خروج از حساب کاربری',
                   icon: Icons.logout,
@@ -206,6 +228,21 @@ class AccountView extends GetView<AccountController> {
   }
 
   Widget version() {
+    String flavor = '';
+
+    switch (CONSTANTS.FLAVOR) {
+      case 'cafebazaar':
+        flavor = 'کافه بازار';
+        break;
+      case 'myket':
+        flavor = 'مایکت';
+        break;
+      case 'direct':
+        flavor = 'دانلود مستقیم';
+        break;
+      default:
+    }
+
     return Obx(
       () => Container(
         width: double.infinity,
@@ -224,7 +261,12 @@ class AccountView extends GetView<AccountController> {
               ),
             ),
             const Spacer(),
-            Text('${CONSTANTS.FLAVOR}-'),
+            Text(
+              '$flavor-',
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
             Text(
               controller.version.value,
               style: const TextStyle(

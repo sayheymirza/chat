@@ -50,7 +50,7 @@ class MessageService extends GetxService {
   // sync api with database
   Future<List<MessageTableData>> syncAPIWithDatabase({
     required String chatId,
-    int? seq,
+    double? seq,
     ApiChatMessageOperator operator = ApiChatMessageOperator.BEFORE,
     CancelToken? cancelToken,
     int limit = 100,
@@ -91,7 +91,7 @@ class MessageService extends GetxService {
           data: drift.Value(message.data),
           meta: drift.Value(message.meta),
           theme: drift.Value(message.theme),
-          seq: drift.Value(message.seq!),
+          seq: drift.Value(double.parse(message.seq.toString())),
         );
 
         await database.transaction(() async {
@@ -170,12 +170,16 @@ class MessageService extends GetxService {
       var userId = Services.profile.profile.value.id;
       var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
 
-      if (userId != null &&
-          chatId == message.chatId &&
-          message.senderId != userId) {
-        seen(messageId: message.messageId!);
-        see(messageId: message.messageId!);
-        // Services.chat.see(chatId: message.chatId!);
+      try {
+        if (message.messageId != null &&
+            userId != null &&
+            chatId == message.chatId &&
+            message.senderId != userId) {
+          seen(messageId: message.messageId!);
+          see(messageId: message.messageId!);
+        }
+      } catch (e) {
+        //
       }
 
       // 1. check local id exists to update that
@@ -275,7 +279,7 @@ class MessageService extends GetxService {
   // select message (sent_at and limit)
   Future<List<MessageTableData>> select({
     required String chatId,
-    int? seq,
+    double? seq,
     ApiChatMessageOperator operator = ApiChatMessageOperator.BEFORE,
     int limit = 20,
     int page = 1,
@@ -333,7 +337,7 @@ class MessageService extends GetxService {
     message.chatId = chat_id;
     message.senderId = Services.profile.profile.value.id ?? '-1';
     message.sentAt = DateTime.now();
-    message.seq = (last?.seq ?? 0) + 1;
+    message.seq = (last?.seq ?? 0) + 0.0001;
 
     log('[message.service.dart] save message with local id ${message.localId} and chat id ${message.chatId} and seq ${message.seq}');
 

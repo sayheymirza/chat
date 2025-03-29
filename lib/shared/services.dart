@@ -9,6 +9,7 @@ import 'package:chat/shared/services/chat.service.dart';
 import 'package:chat/shared/services/chrome.service.dart';
 import 'package:chat/shared/services/compress.service.dart';
 import 'package:chat/shared/services/configs.service.dart';
+import 'package:chat/shared/services/endpoint.service.dart';
 import 'package:chat/shared/services/event.service.dart';
 import 'package:chat/shared/services/file.service.dart';
 import 'package:chat/shared/services/firebase.service.dart';
@@ -75,6 +76,8 @@ class Services {
 
   static SoundService get sound => Get.find(tag: 'sound');
 
+  static EndpointService get endpoint => Get.find(tag: 'endpoint');
+
   static put() async {
     developer.log('[services.dart] start put Get services');
     Get.put(HttpService(), tag: 'http');
@@ -101,6 +104,7 @@ class Services {
     Get.lazyPut(() => LogService(), tag: 'log');
     Get.lazyPut(() => CompressService(), tag: 'compress');
     Get.lazyPut(() => SoundService(), tag: 'sound');
+    Get.lazyPut(() => EndpointService(), tag: 'endpoint');
     developer.log('[services.dart] end put Get services');
   }
 }

@@ -336,7 +336,13 @@ class ChatController extends GetxController {
 
     // check user profile phone number is verified
     if (chat.value.permission.contains('CARD_CONFIRM_PHONE')) {
-      children.add(ChatCardVerifyWidget(onChange: childing));
+      children.add(
+        ChatCardVerifyWidget(
+          onChange: () {
+            fetch();
+          },
+        ),
+      );
     }
 
     if (chat.value.permission.contains('CARD_NEED_PLAN')) {
@@ -360,7 +366,8 @@ class ChatController extends GetxController {
         action: RELATION_ACTION.BLOCK,
       );
       if (result) {
-        showSnackbar(message: 'کاربر به بلاکی ها اضافه شد');
+        showSnackbar(
+            message: '${chat.value.user!.fullname} به بلاکی ها اضافه شد');
         fetchUser();
       }
     });
@@ -383,7 +390,8 @@ class ChatController extends GetxController {
         action: RELATION_ACTION.UNBLOCK,
       );
       if (result) {
-        showSnackbar(message: 'کاربر از بلاکی ها حذف شد');
+        showSnackbar(
+            message: '${chat.value.user!.fullname} از بلاکی ها حذف شد');
         fetchUser();
       }
     });
@@ -403,7 +411,8 @@ class ChatController extends GetxController {
         action: RELATION_ACTION.FAVORITE,
       );
       if (result) {
-        showSnackbar(message: 'کاربر به علاقه مندی ها اضافه شد');
+        showSnackbar(
+            message: '${chat.value.user!.fullname} به علاقه مندی ها اضافه شد');
       }
     });
   }
@@ -422,7 +431,8 @@ class ChatController extends GetxController {
         action: RELATION_ACTION.DISFAVORITE,
       );
       if (result) {
-        showSnackbar(message: 'کاربر از علاقه مندی ها حذف شد');
+        showSnackbar(
+            message: '${chat.value.user!.fullname} از علاقه مندی ها حذف شد');
       }
     });
   }
@@ -453,6 +463,8 @@ class ChatController extends GetxController {
       if (result) {
         Get.back();
         showSnackbar(message: 'چت شما حذف شد');
+        Services.chat.delete(chatId: id);
+        Services.message.deleteByChatId(chatId: id);
       } else {
         showSnackbar(message: 'خطا در حذف چت رخ داد');
       }

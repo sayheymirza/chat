@@ -23,6 +23,8 @@ class SearchViewSlimController extends GetxController {
   ApiUserSearchFilterRequestModel filters =
       ApiUserSearchFilterRequestModel.empty;
 
+  List<ApiUserSearchFilterRequestModel> filters_history = [];
+
   void init() {
     filterable.value = true;
     backable.value = true;
@@ -49,6 +51,7 @@ class SearchViewSlimController extends GetxController {
     if (loading.value == true) return;
     page.value = value;
     submit();
+    onPageChange();
   }
 
   Future<void> submit() async {
@@ -81,10 +84,37 @@ class SearchViewSlimController extends GetxController {
       useSafeArea: false,
     ).then((values) {
       if (values != null) {
+        filters_history.add(
+          filters.copyWith({
+            'page': page.value,
+          }),
+        );
+
         filters = values;
         page.value = 1;
         submit();
       }
     });
+  }
+
+  void onBack() {
+    if (filters_history.isNotEmpty) {
+      var last = filters_history.last;
+
+      filters = last;
+      page.value = last.page ?? 1;
+
+      submit();
+
+      filters_history.removeLast();
+    }
+  }
+
+  void onPageChange() {
+    filters_history.add(
+      filters.copyWith({
+        'page': page.value,
+      }),
+    );
   }
 }

@@ -69,6 +69,9 @@ class ContactView extends GetView<ContactController> {
             ContactFormWidget(
               formKey: controller.formKey,
               disabled: controller.disabled.value,
+              showEmail:
+                  Services.configs.get(key: CONSTANTS.STORAGE_ACCESS_TOKEN) ==
+                      null,
             ),
             const Gap(20),
             SizedBox(

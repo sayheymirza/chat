@@ -1,4 +1,5 @@
 import 'package:chat/futures/auth_login/auth_login.controller.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/or.widget.dart';
 import 'package:flutter/material.dart';
@@ -20,25 +21,25 @@ class AuthLoginView extends GetView<AuthLoginController> {
         centerTitle: true,
       ),
       bottomNavigationBar: footer(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'ورود به حساب کاربری',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+      body: Obx(
+        () => Container(
+          padding: EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'ورود به حساب کاربری',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            const Gap(10),
-            const Text(
-              'برای استفاده از امکانات ماه‌عسل، لطفاً شماره موبایل خود را وارد کنید.',
-            ),
-            const Gap(32),
-            Obx(
-              () => FormBuilder(
+              const Gap(10),
+              const Text(
+                'برای استفاده از امکانات ماه‌عسل، لطفاً شماره موبایل خود را وارد کنید.',
+              ),
+              const Gap(32),
+              FormBuilder(
                 key: controller.loginFormKey,
                 enabled: !controller.disabled.value,
                 child: Column(
@@ -96,8 +97,9 @@ class AuthLoginView extends GetView<AuthLoginController> {
                   ],
                 ),
               ),
-            ),
-          ],
+              const Gap(20),
+            ],
+          ),
         ),
       ),
     );
@@ -106,10 +108,12 @@ class AuthLoginView extends GetView<AuthLoginController> {
   Widget footer() {
     return Container(
       height: 240,
-      padding: const EdgeInsets.only(
+      width: Get.width,
+      color: Colors.white,
+      padding: EdgeInsets.only(
         left: 32,
         right: 32,
-        bottom: 40,
+        bottom: navigationBarHeight + 32,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -162,7 +166,6 @@ class AuthLoginView extends GetView<AuthLoginController> {
               ),
             ),
           ),
-          const Gap(16),
         ],
       ),
     );

@@ -1,10 +1,10 @@
 import 'package:chat/models/chat/admin.model.dart';
-import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/shared/formats/date.format.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class AdminChatItemWidget extends StatelessWidget {
   final AdminModel item;
@@ -18,6 +18,7 @@ class AdminChatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(item.updatedAt.toString());
     return GestureDetector(
       onTap: () {
         onTap();
@@ -151,13 +152,15 @@ class AdminChatItemWidget extends StatelessWidget {
           size: 16,
         ),
         const Gap(4),
-        Text(
-          text,
-          style: TextStyle(
-            color: Colors.grey.shade700,
-            fontSize: 14,
-          ),
-        )
+        if (type.startsWith('text')) MarkdownBody(data: text),
+        if (!type.startsWith('text'))
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.grey.shade700,
+              fontSize: 14,
+            ),
+          )
       ],
     );
   }

@@ -35,7 +35,7 @@ class AvatarWidget extends StatelessWidget {
   }
 
   Color get color {
-    switch (seen) {
+    switch (seen.toLowerCase()) {
       case "online":
         return Colors.green;
       case "recently":

@@ -24,7 +24,7 @@ class SearchFilterController extends GetxController {
         child: Text('همه استان ها'),
       ),
     ],
-    'Age': [
+    'age': [
       const DropdownMenuItem<String>(
         value: null,
         child: Text('هر سنی'),

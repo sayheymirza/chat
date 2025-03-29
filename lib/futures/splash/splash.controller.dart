@@ -1,14 +1,17 @@
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
+import 'package:chat/shared/formats/number.format.dart';
 import 'package:chat/shared/services.dart';
-import 'package:get/get.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:get/get.dart';
 
 class SplashController extends GetxController {
   RxString status = 'در حال اتصال به سرور'.obs;
+  RxBool deprecated = false.obs;
 
   @override
   void onInit() async {
@@ -16,13 +19,23 @@ class SplashController extends GetxController {
 
     await firebase();
 
-    await updateEndpointFromRemoveConfig();
+    var result = await updateEndpointFromRemoteConfig();
 
-    await handshake();
+    if (result) {
+      await handshake();
 
-    await fetchAndSaveDropdowns();
+      result = await versionCheck();
 
-    await move();
+      if (result == false) {
+        return;
+      }
+
+      await fetchAndSaveDropdowns();
+
+      await move();
+    } else {
+      status.value = 'سروری برای اتصال یافت نشد';
+    }
   }
 
   Future<void> move() async {
@@ -44,13 +57,10 @@ class SplashController extends GetxController {
     await Services.firebase.init();
   }
 
-  Future<void> updateEndpointFromRemoveConfig() async {
-    var value =
-        await Services.firebase.getStringFromRemote(key: 'ENDPOINT_API');
+  Future<bool> updateEndpointFromRemoteConfig() {
+    status.value = 'در حال یافتن سرور';
 
-    if (value != null && value.isNotEmpty) {
-      CONSTANTS.DEFAULT_ENDPOINT_API = value;
-    }
+    return Services.endpoint.init();
   }
 
   Future<void> handshake() async {
@@ -60,6 +70,22 @@ class SplashController extends GetxController {
     } catch (error) {
       status.value = 'خطا در دریافت اطلاعات اپلیکیشن';
     }
+  }
+
+  Future<bool> versionCheck() async {
+    // check app is deprected or not
+    var currentVersion = (await Services.access.generatePackageInfo()).version;
+    var deprectedVersion = Services.configs.get<String>(
+      key: CONSTANTS.STORAGE_DEPRECATED_VERSION,
+    );
+
+    if (formatVersion(deprectedVersion ?? '0') >=
+        formatVersion(currentVersion)) {
+      deprecated.value = true;
+      return false;
+    }
+
+    return true;
   }
 
   Future<void> fetchAndSaveDropdowns() async {
@@ -104,5 +130,9 @@ class SplashController extends GetxController {
       status.value = 'خطا در دریافت تنظیمات رخ داد';
       print(e);
     }
+  }
+
+  void download() {
+    Services.event.fire(event: EVENTS.SHOW_APP_IN_STORE);
   }
 }

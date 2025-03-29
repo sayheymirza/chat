@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:chat/shared/formats/byte.format.dart';
 import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
 import 'package:get/get.dart';

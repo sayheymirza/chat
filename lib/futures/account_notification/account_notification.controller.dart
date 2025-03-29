@@ -19,15 +19,15 @@ class AccountNotificationController extends GetxController {
 
     soundChat.value = (Services.configs
                 .get<bool>(key: CONSTANTS.STORAGE_SETTINGS_SOUND_CHAT) ??
-            false) !=
+            true) !=
         false;
     soundCall.value = (Services.configs
                 .get<bool>(key: CONSTANTS.STORAGE_SETTINGS_SOUND_CALL) ??
-            false) !=
+            true) !=
         false;
     vibration.value = (Services.configs
                 .get<bool>(key: CONSTANTS.STORAGE_SETTINGS_VIBRATION) ??
-            false) !=
+            true) !=
         false;
 
     update();

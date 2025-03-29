@@ -38,7 +38,7 @@ class SoundService extends GetxService {
       }
 
       var url = Services.configs.get(key: CONSTANTS.AUDIO_BEEP_BEEP);
-      if(url == null) return;
+      if (url == null) return;
       beepController = PlayerController(onStateChange: () {});
       await beepController!.load(url: url);
       beepController!.controller!.setLooping(true);
@@ -50,8 +50,14 @@ class SoundService extends GetxService {
         dialingController!.unload();
       }
 
+      if (Services.configs
+              .get<bool>(key: CONSTANTS.STORAGE_SETTINGS_SOUND_CALL) ==
+          false) {
+        return;
+      }
+
       var url = Services.configs.get(key: CONSTANTS.AUDIO_DIALING);
-      if(url == null) return;
+      if (url == null) return;
       dialingController = PlayerController(onStateChange: () {});
       await dialingController!.load(url: url);
       dialingController!.controller!.setLooping(true);
@@ -64,16 +70,16 @@ class SoundService extends GetxService {
       }
 
       var url = Services.configs.get(key: CONSTANTS.AUDIO_RINGTONE);
-      if(url == null) return;
+      if (url == null) return;
       ringtoneController = PlayerController(onStateChange: () {});
       await ringtoneController!.load(url: url);
       ringtoneController!.controller!.setLooping(true);
       ringtoneController!.play();
     }
 
-    if(type == "message") {
+    if (type == "message") {
       var url = Services.configs.get(key: CONSTANTS.AUDIO_MESSAGE);
-      if(url == null) return;
+      if (url == null) return;
       var messageController = PlayerController(onStateChange: () {});
       await messageController.load(url: url);
       messageController.play();

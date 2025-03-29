@@ -1,4 +1,5 @@
 import 'package:chat/futures/account_verify_phone/account_verify_phone.controller.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/widgets/card_numbers_blocked.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +15,7 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
     return Obx(
       () => Scaffold(
         backgroundColor: Colors.white,
-        bottomNavigationBar: footer(),
+        bottomNavigationBar: footer(context),
         body: container(
           children: [
             IconButton(
@@ -60,14 +61,19 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
     );
   }
 
-  Widget footer() {
+  Widget footer(BuildContext context) {
     return Obx(
       () => Container(
         height: 420,
-        padding: const EdgeInsets.only(
+        width: Get.width,
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        padding: EdgeInsets.only(
           left: 32,
           right: 32,
-          bottom: 40,
+          bottom: navigationBarHeight + 32,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,

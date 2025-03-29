@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat/futures/purchase/purchase.controller.dart';
+import 'package:chat/shared/snackbar.dart';
 import 'package:get/get.dart';
 
 class PurchaseOneStepController extends PurchaseController {
@@ -40,14 +41,14 @@ class PurchaseOneStepController extends PurchaseController {
     } else if (index.value == 1) {
       if (selectedPaymentMethod.value == "psp") {
         await submitWithPSP();
-      }
-      if(selectedPaymentMethod.value == "cafebazaar") {
+      } else if (selectedPaymentMethod.value == "cafebazaar") {
         await submitWithCafebazaar();
-      }
-      if (selectedPaymentMethod.value == "card-by-card") {
+      } else if (selectedPaymentMethod.value == "card-by-card") {
         index.value = 2;
         title.value = 'کارت به کارت';
         button.value = "تایید و ارسال";
+      } else {
+        showSnackbar(message: 'یک روش پرداخت را انتخاب کنید');
       }
     } else if (index.value == 2) {
       await submitCardByCard();

@@ -8,6 +8,13 @@
         "program": "lib/main.direct.dart",
         "args": ["--flavor", "direct", "--target", "lib/flavors/direct/main.dart" ]
       },
+      {
+        "name": "cafebazaar",
+        "request": "launch",
+        "type": "dart",
+        "program": "lib/main.cafebazaar.dart",
+        "args": ["--flavor", "cafebazaar", "--target", "lib/flavors/cafebazaar/main.dart" ]
+      }
     ],
     "compounds": []
   }

@@ -1,7 +1,6 @@
 import 'package:chat/futures/transacrion/transaction.controller.dart';
 import 'package:chat/models/plan.model.dart';
 import 'package:chat/shared/formats/number.format.dart';
-import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -67,22 +66,7 @@ class TransactionView extends GetView<TransactionController> {
         ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.network(value),
-          Positioned(
-            bottom: 12,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                showSnackbar(message: 'بزودی ویژگی دانلود اضافه خواهد شد');
-              },
-              label: const Text('دانلود فیش'),
-              icon: const Icon(Icons.download_rounded),
-            ),
-          ),
-        ],
-      ),
+      child: Image.network(value),
     );
   }
 

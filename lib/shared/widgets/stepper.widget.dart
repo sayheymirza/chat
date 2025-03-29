@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StepperWidget extends StatelessWidget {
   final int count;
@@ -12,12 +13,10 @@ class StepperWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = ((Get.width - 64) - (count * 28)) / (count - 1);
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.only(
-        right: 32,
-        left: 32,
-      ),
       child: Row(
         children: List.generate(
           count,
@@ -27,7 +26,6 @@ class StepperWidget extends StatelessWidget {
                 AnimatedContainer(
                   width: 28,
                   height: 28,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: index <= current
@@ -46,8 +44,8 @@ class StepperWidget extends StatelessWidget {
                 ),
                 if (index != count - 1)
                   Container(
-                    width: 32,
-                    height: 2,
+                    width: width,
+                    height: 3,
                     color: index <= current
                         ? Theme.of(context).primaryColor
                         : Colors.grey,

@@ -12,8 +12,32 @@ class AdminChatsController extends GetxController {
   RxBool loading = false.obs;
   StreamSubscription<AdminListModel>? stream;
 
+  List<int> page_history = [];
+
+  @override
+  void onReady() {
+    super.onReady();
+
+    Services.adminChat.syncAPIWithDatabase();
+    load();
+  }
+
+  void onBack() {
+    if (page_history.isNotEmpty) {
+      var last = page_history.last;
+
+      page.value = last;
+      load();
+
+      page_history.removeLast();
+    } else {
+      Get.back();
+    }
+  }
+
   void goToPage(int value) {
     if (loading.value == true) return;
+    page_history.add(page.value);
     page.value = value;
     load();
   }

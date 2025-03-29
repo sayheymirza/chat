@@ -1,7 +1,5 @@
 import 'package:chat/futures/chat/chat.controller.dart';
-import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/shared/formats/date.format.dart';
-import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_body/chat_body.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
@@ -21,20 +19,20 @@ class ChatView extends GetView<ChatController> {
       () {
         Widget error = Container();
 
-        if (controller.chat.value.user!.relation!.blocked == true) {
+        if (controller.chat.value.user?.relation?.blocked == true) {
           error = errorBlocked();
         }
 
-        if (controller.chat.value.user!.relation!.blockedMe == true) {
+        if (controller.chat.value.user?.relation?.blockedMe == true) {
           error = errorBlockedMe();
         }
 
-        if (controller.chat.value.user!.status!.toLowerCase() ==
+        if (controller.chat.value.user?.status?.toLowerCase() ==
             'unsubscribe') {
           error = errorCanceled();
         }
 
-        if (controller.chat.value.user!.status!.toLowerCase() ==
+        if (controller.chat.value.user?.status?.toLowerCase() ==
             'left_for_ever') {
           error = errorDeleted();
         }
@@ -67,7 +65,7 @@ class ChatView extends GetView<ChatController> {
 
   Widget errorBlocked() {
     return alert(
-      title: 'کاربر بلاک شده',
+      title: '${controller.chat.value.user!.fullname} بلاک شده',
       content:
           'شما این کاربر را بلاک کرده اید و امکان مشاهده اطلاعات و ارسال پیام به او وجود ندارد',
       action: OutlinedButton(
@@ -90,7 +88,8 @@ class ChatView extends GetView<ChatController> {
   Widget errorCanceled() {
     // کاربر از عضویت خود منصرف شده است ولی امکان بازگشت دارد
     return alert(
-      title: 'کاربر از عضویت خود منصرف شده است',
+      title:
+          '${controller.chat.value.user!.fullname} از عضویت خود منصرف شده است',
       content:
           'این کاربر از عضویت خود انصراف داده است اما احتمال بازگشت مجدد او وجود دارد',
     );
@@ -98,7 +97,7 @@ class ChatView extends GetView<ChatController> {
 
   Widget errorDeleted() {
     return alert(
-      title: 'کاربر حذف شده',
+      title: '${controller.chat.value.user!.fullname} حذف شده',
       content: 'این کاربر حساب کاربری خودش را حذف کرده است',
     );
   }
@@ -190,13 +189,13 @@ class ChatView extends GetView<ChatController> {
         return GradientAppBarWidget(
           back: true,
           right: GestureDetector(
-            onTap: () {
-              if (data.permission.contains('CAN_SEE_PROFILE')) {
-                Get.toNamed('/app/profile/${data.userId}', arguments: {
-                  'options': true,
-                });
-              }
-            },
+            onTap: data.permission.contains('CAN_SEE_PROFILE')
+                ? () {
+                    Get.toNamed('/app/profile/${data.userId}', arguments: {
+                      'options': true,
+                    });
+                  }
+                : null,
             child: Row(
               children: [
                 AvatarWidget(
@@ -261,7 +260,7 @@ class ChatView extends GetView<ChatController> {
               // call buttons
               if (data.permission.contains('CAN_VOICE_CALL'))
                 IconButton(
-                  onPressed: data.permission.contains('ALLOW_VOICE_CALL') &&
+                  onPressed: data.permission.contains('CAN_VOICE_CALL_WORK') &&
                           !controller.makingCall.value
                       ? () {
                           controller.makeCall(mode: 'audio');
@@ -269,14 +268,14 @@ class ChatView extends GetView<ChatController> {
                       : null,
                   icon: Icon(
                     Icons.call_rounded,
-                    color: data.permission.contains('ALLOW_VOICE_CALL')
+                    color: data.permission.contains('CAN_VOICE_CALL_WORK')
                         ? Colors.red
                         : Colors.white70,
                   ),
                 ),
               if (data.permission.contains('CAN_VIDEO_CALL'))
                 IconButton(
-                  onPressed: data.permission.contains('ALLOW_VIDEO_CALL') &&
+                  onPressed: data.permission.contains('CAN_VIDEO_CALL_WORK') &&
                           !controller.makingCall.value
                       ? () {
                           controller.makeCall(mode: 'video');
@@ -284,7 +283,7 @@ class ChatView extends GetView<ChatController> {
                       : null,
                   icon: Icon(
                     Icons.videocam_rounded,
-                    color: data.permission.contains('ALLOW_VIDEO_CALL')
+                    color: data.permission.contains('CAN_VIDEO_CALL_WORK')
                         ? Colors.green
                         : Colors.white70,
                   ),

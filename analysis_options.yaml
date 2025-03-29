@@ -5,9 +5,11 @@ analyzer:
     camel_case_types: ignore
     constant_identifier_names: ignore
     depend_on_referenced_packages: ignore
+    deprecated_member_use: ignore
     invalid_use_of_protected_member: ignore
     library_prefixes: ignore
     non_constant_identifier_names: ignore
     prefer_final_fields: ignore
     unnecessary_null_comparison: ignore
     unnecessary_question_mark: ignore
+    unused_element: ignore

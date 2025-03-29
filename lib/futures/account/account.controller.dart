@@ -27,12 +27,15 @@ class AccountController extends GetxController {
     super.onInit();
 
     versioning();
+
+    onRefresh();
   }
 
   Future<void> onRefresh() async {
     try {
       await profile.fetchMyProfile();
       await Services.app.handshake();
+      Services.adminChat.syncAPIWithDatabase();
       versioning();
       vibrate();
     } catch (e) {

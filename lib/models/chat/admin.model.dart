@@ -1,5 +1,4 @@
 import 'package:chat/models/chat/chat.message.dart';
-import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/database/database.dart';
 
 class AdminListModel {

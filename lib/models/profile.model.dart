@@ -34,6 +34,7 @@ class ProfileSearchModel {
   late bool? special;
   late bool? verified;
   late int? age;
+  late RelationCount? relationCount;
 
   ProfileSearchModel({
     this.id,
@@ -45,6 +46,7 @@ class ProfileSearchModel {
     this.special,
     this.verified,
     this.age,
+    this.relationCount,
   });
 
   Map<String, dynamic> toJson() {
@@ -58,6 +60,7 @@ class ProfileSearchModel {
     data['special'] = special;
     data['verified'] = verified;
     data['age'] = age;
+    data['relationCount'] = relationCount;
     return data;
   }
 }
@@ -98,8 +101,10 @@ class ProfileModel {
   late String? job;
   late String? about;
   late Plan? plan;
+  late int? reports;
   late Permission? permission;
   late Relation? relation;
+  late RelationCount? relationCount;
   late Map<String, dynamic>? dropdowns;
   late List<String> permissions;
 
@@ -139,8 +144,10 @@ class ProfileModel {
     this.job,
     this.about,
     this.plan,
+    this.reports,
     this.permission,
     this.relation,
+    this.relationCount,
     this.dropdowns,
     this.permissions = const [],
   });
@@ -153,7 +160,7 @@ class ProfileModel {
       defaultAvatar: value['defaultAvatar'],
       fullname: value['fullname'],
       last: value['last'],
-      lastAt: DateTime.parse(value['lastAt']),
+      lastAt: value['lastAt'] == null ? null : DateTime.parse(value['lastAt']),
       seen: value['seen'],
       age: value['age'],
       phone: value['phone'],
@@ -181,9 +188,17 @@ class ProfileModel {
       weight: value['weight'],
       job: value['job'],
       about: value['about'],
-      plan: Plan.fromJson(value['plan']),
-      permission: Permission.fromJson(value['permission']),
-      relation: Relation.fromJson(value['relation']),
+      reports: value['reports'],
+      plan: value['plan'] == null ? null : Plan.fromJson(value['plan']),
+      permission: value['permission'] == null
+          ? null
+          : Permission.fromJson(value['permission']),
+      relation: value['relation'] == null
+          ? null
+          : Relation.fromJson(value['relation']),
+      relationCount: value['relationCount'] == null
+          ? null
+          : RelationCount.fromJson(value['relationCount']),
       dropdowns: value['dropdowns'],
       permissions: value['permissions'].toString().split(','),
     );
@@ -225,6 +240,7 @@ class ProfileModel {
       weight: value['weight'] ?? weight,
       job: value['job'] ?? job,
       about: value['about'] ?? about,
+      reports: value['reports'] ?? reports,
       plan: value['plan'] != null ? Plan.fromJson(value['plan']) : plan,
       permission: value['permission'] != null
           ? Permission.fromJson(value['permission'])
@@ -232,6 +248,9 @@ class ProfileModel {
       relation: value['relation'] != null
           ? Relation.fromJson(value['relation'])
           : relation,
+      relationCount: value['relationCount'] != null
+          ? RelationCount.fromJson(value['relationCount'])
+          : relationCount,
       dropdowns: value['dropdowns'] ?? dropdowns,
       permissions: value['permissions'] != null
           ? value['permissions'].toString().split(',')
@@ -274,9 +293,11 @@ class ProfileModel {
     data['weight'] = weight;
     data['job'] = job;
     data['about'] = about;
+    data['reports'] = reports;
     data['plan'] = plan?.toJson();
     data['permission'] = permission?.toJson();
     data['relation'] = relation?.toJson();
+    data['relationCount'] = relationCount?.toJson();
     data['dropdowns'] = dropdowns;
     data['permissions'] = permissions.join(',');
     return data;
@@ -379,18 +400,48 @@ enum RELATION_ACTION {
   DISFAVORITE,
   FAVORITED,
   VISIT,
-  VISITED
+  VISITED,
+  LIKE,
+  DISLIKE
+}
+
+class RelationCount {
+  final int likes;
+  final int dislikes;
+
+  RelationCount({
+    required this.likes,
+    required this.dislikes,
+  });
+
+  factory RelationCount.fromJson(Map<String, dynamic> json) {
+    return RelationCount(
+      likes: json['likes'],
+      dislikes: json['dislikes'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['likes'] = likes;
+    data['dislikes'] = dislikes;
+    return data;
+  }
 }
 
 class Relation {
   bool? blocked;
   bool? blockedMe;
   bool? favorited;
+  bool? liked;
+  bool? disliked;
 
   Relation({
     required this.blocked,
     required this.blockedMe,
     required this.favorited,
+    required this.liked,
+    required this.disliked,
   });
 
   factory Relation.fromJson(Map<String, dynamic> json) {
@@ -398,11 +449,19 @@ class Relation {
       blocked: json['blocked'],
       blockedMe: json['blockedMe'],
       favorited: json['favorited'],
+      liked: json['liked'],
+      disliked: json['disliked'],
     );
   }
 
   static Relation get empty {
-    return Relation(blocked: false, favorited: false, blockedMe: false);
+    return Relation(
+      blocked: false,
+      favorited: false,
+      blockedMe: false,
+      liked: false,
+      disliked: false,
+    );
   }
 
   // copyWith
@@ -411,6 +470,8 @@ class Relation {
       blocked: value['blocked'] ?? blocked,
       blockedMe: value['blockedMe'] ?? blockedMe,
       favorited: value['favorited'] ?? favorited,
+      liked: value['liked'] ?? liked,
+      disliked: value['disliked'] ?? disliked,
     );
   }
 
@@ -419,8 +480,10 @@ class Relation {
     data['blocked'] = blocked;
     data['blockedMe'] = blockedMe;
     data['favorited'] = favorited;
+    data['liked'] = liked;
+    data['disliked'] = disliked;
     return data;
   }
 }
 
-enum ProfileReactions { BLOCK, UNBLOCK, FAVORITE, DISFAVORITE }
+enum ProfileReactions { BLOCK, UNBLOCK, FAVORITE, DISFAVORITE, LIKE, DISLIKE }

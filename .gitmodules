@@ -1,3 +1,7 @@
 [submodule "lib/app"]
 	path = lib/app
 	url = https://github.com/sayheymirza/chat-api.git
+
+[submodule "packages/flutter_inappwebview"]
+	path = packages/flutter_inappwebview
+	url = https://github.com/pichillilorenzo/flutter_inappwebview.git

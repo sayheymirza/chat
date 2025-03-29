@@ -112,12 +112,15 @@ class PurchaseCardByCardView extends StatelessWidget {
                       child: FormBuilderTextField(
                         name: 'card',
                         decoration: const InputDecoration(
+                          counter: Offstage(),
                           labelText: '۴ شماره آخر کارت',
                         ),
+                        maxLength: 4,
                         keyboardType: TextInputType.number,
                         validator: FormBuilderValidators.compose(
                           [
                             FormBuilderValidators.required(),
+                            FormBuilderValidators.maxLength(4),
                           ],
                         ),
                       ),

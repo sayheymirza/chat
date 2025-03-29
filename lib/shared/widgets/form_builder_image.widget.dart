@@ -45,24 +45,32 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
         cancelToken = CancelToken();
         setState(() {});
 
-        var result = await ApiService.data.upload(
-          file: file!,
-          cancelToken: cancelToken,
-          callback: ({int percent = 0, int total = 0, int sent = 0}) {
-            uploadProgress = percent;
-            setState(() {});
-          },
-        );
+        try {
+          var result = await ApiService.data.upload(
+            file: file!,
+            cancelToken: cancelToken,
+            callback: ({int percent = 0, int total = 0, int sent = 0}) {
+              uploadProgress = percent;
+              setState(() {});
+            },
+          );
 
-        if (result.success) {
-          url = result.url;
-          field.didChange(url);
-        } else {
+          if (result.success) {
+            url = result.url;
+            field.didChange(url);
+          } else {
+            uploadProgress = 0;
+            uploading = false;
+            showSnackbar(message: 'خطا در هنگام آپلود رخ داد');
+          }
+          setState(() {});
+        } catch (e) {
+          file = null;
           uploadProgress = 0;
           uploading = false;
           showSnackbar(message: 'خطا در هنگام آپلود رخ داد');
+          setState(() {});
         }
-        setState(() {});
       }
     });
   }
@@ -86,6 +94,13 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
     return FormBuilderField(
       name: widget.name,
       validator: widget.validator,
+      onReset: () {
+        file = null;
+        url = null;
+        uploadProgress = 0;
+        uploading = false;
+        setState(() {});
+      },
       builder: (FormFieldState field) {
         return GestureDetector(
           onTap: () {

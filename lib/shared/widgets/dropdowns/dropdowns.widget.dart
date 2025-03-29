@@ -41,6 +41,9 @@ class DropdownsWidget extends GetView<DropdownsWidgetController> {
           dropdownColor: Colors.white,
           name: name,
           decoration: decoration,
+          onReset: () {
+            controller.load(group: group, parentId: parentId);
+          },
           items: controller.items.isEmpty
               ? [
                   const DropdownMenuItem(

@@ -2,6 +2,7 @@ import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatMessageTextV1Widget extends StatefulWidget {
   final ChatMessageModel message;
@@ -48,9 +49,25 @@ class _ChatMessageTextV1WidgetState extends State<ChatMessageTextV1Widget> {
         constraints: BoxConstraints(
           maxWidth: 300,
         ),
-        child: Text(
-          widget.message.data['text'],
-        ),
+        child: widget.message.data['markdown'] == true
+            ? Column(
+                children: widget.message.data['text']
+                    .toString()
+                    .split('\n')
+                    .map((text) {
+                  return Markdown(
+                    padding: const EdgeInsets.all(10),
+                    shrinkWrap: true,
+                    data: text.trim(),
+                    selectable: false,
+                    physics: NeverScrollableScrollPhysics(),
+                    // data: widget.message.data['text'].toString().trim(),
+                  );
+                }).toList(),
+              )
+            : Text(
+                widget.message.data['text'],
+              ),
       ),
     );
   }

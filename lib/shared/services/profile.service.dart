@@ -5,7 +5,6 @@ import 'package:chat/models/apis/user.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/vibration.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProfileService extends GetxService {
@@ -24,19 +23,6 @@ class ProfileService extends GetxService {
 
       return true;
     } catch (e) {
-      if (Get.currentRoute != '/500') {
-        Get.offAllNamed('/500');
-      }
-
-      Get.dialog(
-        Scaffold(
-          body: Container(
-            color: Colors.white,
-            child: Text(e.toString()),
-          ),
-        ),
-      );
-
       log('[profile.service.dart] fetch my profile got an error');
 
       Services.firebase.crash(e.toString());

@@ -143,6 +143,7 @@ class ApiUserSearchFilterRequestModel {
   final String? maxAge;
   final String? marital;
   final bool? avatar;
+  final int? page;
 
   ApiUserSearchFilterRequestModel({
     this.province,
@@ -151,6 +152,7 @@ class ApiUserSearchFilterRequestModel {
     this.maxAge,
     this.marital,
     this.avatar,
+    this.page,
   });
 
   // from form factory
@@ -162,6 +164,19 @@ class ApiUserSearchFilterRequestModel {
       maxAge: form['maxAge'] as String?,
       marital: form['marital'] as String?,
       avatar: form['avatar'] as bool?,
+      page: form['page'] as int?,
+    );
+  }
+
+  copyWith(Map<String, dynamic> value) {
+    return ApiUserSearchFilterRequestModel(
+      province: value['province'] ?? province,
+      city: value['city'] ?? city,
+      minAge: value['minAge'] ?? minAge,
+      maxAge: value['maxAge'] ?? maxAge,
+      marital: value['marital'] ?? marital,
+      avatar: value['avatar'] ?? avatar,
+      page: value['page'] ?? page,
     );
   }
 
@@ -174,6 +189,7 @@ class ApiUserSearchFilterRequestModel {
       'maxAge': maxAge,
       'marital': marital,
       'avatar': avatar,
+      'page': page,
     };
   }
 

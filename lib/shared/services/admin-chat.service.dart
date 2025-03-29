@@ -61,12 +61,14 @@ class AdminChatService extends GetxService {
           });
         }
 
-        if (result.last >= page || result.last == 0) {
+        if (result.last <= page || result.last == 0) {
           // save new last sync date
           await Services.sync.set(
             category: 'admin-chat',
             syncedAt: DateTime.now(),
           );
+
+          log('[admin-chat.service.dart] sync done');
 
           break;
         } else {
@@ -85,7 +87,7 @@ class AdminChatService extends GetxService {
         syncAPIWithDatabase();
       }
 
-      if (data.event == CHAT_EVENTS.ON_RECEIVE_MESSAGE) {
+      if (data.event == CHAT_EVENTS.ON_RECEIVE_ADMIN_MESSAGE) {
         var value = data.value as ChatMessageModel;
 
         onReciveMessage(message: value);
@@ -169,7 +171,7 @@ class AdminChatService extends GetxService {
                     message: drift.Value({}),
                     permissions: drift.Value(result.permissions),
                     unread_count: drift.Value(result.unread_count),
-                    updated_at: DateTime.now(),
+                    updated_at: result.updated_at,
                   ),
                 );
           }
@@ -184,13 +186,11 @@ class AdminChatService extends GetxService {
                 image: drift.Value(result.image),
                 permissions: drift.Value(result.permissions),
                 unread_count: drift.Value(result.unread_count),
+                updated_at: drift.Value(result.updated_at),
               ),
             );
           }
         });
-
-        // update last message for chat
-        await updateLastMessage(chatId: chatId);
 
         return true;
       }
@@ -237,7 +237,7 @@ class AdminChatService extends GetxService {
   }
 
   // select chats (limit and sort by updated_at and join to last message) steam
-  Future<Stream<AdminListModel>> list({int page = 1, int limit = 12}) async {
+  Future<Stream<AdminListModel>> list({int page = 1, int limit = 6}) async {
     try {
       var query = database.select(database.adminChatTable);
 
@@ -268,16 +268,19 @@ class AdminChatService extends GetxService {
             });
           })
           .watch()
-          .map((chats) {
-            var last = count ~/ limit;
-            return AdminListModel(
-              chats: chats,
-              page: page,
-              limit: limit,
-              last: last,
-              total: count,
-            );
-          });
+          .map(
+            (chats) {
+              var last = (count / limit).ceil();
+
+              return AdminListModel(
+                chats: chats,
+                page: page,
+                limit: limit,
+                last: last,
+                total: count,
+              );
+            },
+          );
     } catch (e) {
       return Stream.value(AdminListModel(
         page: page,
@@ -299,17 +302,9 @@ class AdminChatService extends GetxService {
   }
 
   // select chats (limit and sort by updated_at and join to last message)
-  Future<AdminListModel> select({int page = 1, int limit = 12}) async {
+  Future<AdminListModel> select({int page = 1, int limit = 6}) async {
     try {
       var query = database.select(database.adminChatTable);
-
-      // query.orderBy(
-      //   [
-      //     drift.OrderingTerm(
-      //         expression: database.adminChatTable.updated_at,
-      //         mode: drift.OrderingMode.asc),
-      //   ],
-      // );
 
       query.orderBy(
         [
@@ -341,7 +336,7 @@ class AdminChatService extends GetxService {
         chats: chats,
         page: page,
         limit: limit,
-        last: count ~/ page,
+        last: (count / limit).ceil(),
         total: count,
       );
     } catch (e) {

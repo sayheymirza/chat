@@ -31,6 +31,7 @@ class HomeController extends GetxController {
                 buttonText: data.buttonText,
                 buttonType: data.buttonType,
                 profiles: data.profiles,
+                emptyText: data.emptyText,
               ),
             );
             break;

@@ -54,22 +54,18 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
               if (controller.visableVoiceButton.value &&
                   permissions.contains('CAN_RECORD_VOICE')) {
                 return iconButton(
-                  // onPressed: () {
-                  //   controller.toggleRecording();
-                  // },
-                  onHold: () {
-                    controller.startRecording();
-                  },
-                  onHoldEnd: () {
-                    controller.stopRecording();
-                  },
-                  onHoldLeave: () {
-                    controller.cancelRecoring();
-                  },
-                  icon: Icons.keyboard_voice_rounded,
+                  onPressed: permissions.contains('CAN_RECORD_VOICE_WORK')
+                      ? () {
+                          controller.toggleRecording();
+                        }
+                      : null,
+                  icon: controller.recoring.value
+                      ? Icons.send_rounded
+                      : Icons.keyboard_voice_rounded,
                   color: Get.theme.colorScheme.onPrimary,
                   backgroundColor: Get.theme.primaryColor,
                   size: 24,
+                  flip: controller.recoring.value,
                 );
               } else {
                 return SizedBox(); // Placeholder when button is not visible
@@ -81,9 +77,11 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
               if (controller.visableSendButton.value &&
                   permissions.contains('CAN_SEND_MESSAGE')) {
                 return iconButton(
-                  onPressed: () {
-                    controller.sendTextMessage();
-                  },
+                  onPressed: permissions.contains('CAN_SEND_MESSAGE_WORK')
+                      ? () {
+                          controller.sendTextMessage();
+                        }
+                      : null,
                   icon: Icons.send_rounded,
                   color: Get.theme.colorScheme.onPrimary,
                   backgroundColor: Get.theme.primaryColor,
@@ -97,9 +95,12 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
             if (permissions.contains('CAN_SEND_TEST_MESSAGE'))
               iconButton(
                 icon: Icons.send_time_extension_rounded,
-                onPressed: () {
-                  controller.testSendMessages(10, Duration(milliseconds: 300));
-                },
+                onPressed: permissions.contains('CAN_SEND_TEST_MESSAGE_WORK')
+                    ? () {
+                        controller.testSendMessages(
+                            10, Duration(milliseconds: 300));
+                      }
+                    : null,
               ),
 
             // Recording indicator
@@ -146,15 +147,19 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   // Text input area
-                  if (permissions.contains('CAN_TYPE_MESSAGE')) message(),
+                  message(),
                   // Attach button
                   Obx(() {
                     if (controller.visableAttachmentButton.value &&
                         permissions.contains('CAN_SEND_ATTACHMENT')) {
                       return iconButton(
-                        onPressed: () {
-                          controller.openAttachment(permissions: permissions);
-                        },
+                        onPressed:
+                            permissions.contains('CAN_SEND_ATTACHMENT_WORK')
+                                ? () {
+                                    controller.openAttachment(
+                                        permissions: permissions);
+                                  }
+                                : null,
                         icon: Icons.attach_file_rounded,
                       );
                     } else {
@@ -166,12 +171,14 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
                   if (permissions.contains('CAN_PICK_EMOJI'))
                     Obx(() {
                       return iconButton(
-                        onPressed: () {
-                          controller.toggleVisableEmojis();
-                          if (onPickEmoji != null) {
-                            onPickEmoji!(controller.visableEmojis.value);
-                          }
-                        },
+                        onPressed: permissions.contains('CAN_PICK_EMOJI_WORK')
+                            ? () {
+                                controller.toggleVisableEmojis();
+                                if (onPickEmoji != null) {
+                                  onPickEmoji!(controller.visableEmojis.value);
+                                }
+                              }
+                            : null,
                         icon: controller.visableEmojis.value
                             ? Icons.keyboard_rounded
                             : Icons.emoji_emotions_rounded,
@@ -203,8 +210,16 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
 
     return Expanded(
       child: TextField(
+        contextMenuBuilder: permissions.contains('CAN_PASTE_MESSAGE')
+            ? (context, editableTextState) {
+                return AdaptiveTextSelectionToolbar.editableText(
+                  editableTextState: editableTextState,
+                );
+              }
+            : null,
         controller: controller.messageController,
         focusNode: controller.messageFocus,
+        enabled: permissions.contains('CAN_TYPE_MESSAGE'),
         decoration: InputDecoration(
           hintText: placeholder,
           hintStyle: const TextStyle(
@@ -217,6 +232,7 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
           contentPadding: const EdgeInsets.all(4),
         ),
         style: const TextStyle(
+          color: Colors.black,
           fontSize: 14,
         ),
         autocorrect: true,
@@ -236,10 +252,12 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
 
           controller.changeMessageText(text);
         },
-        onSubmitted: (value) {
-          controller.changeMessageText(value);
-          controller.sendTextMessage();
-        },
+        onSubmitted: permissions.contains('CAN_SUBMIT_MESSAGE_WORK')
+            ? (value) {
+                controller.changeMessageText(value);
+                controller.sendTextMessage();
+              }
+            : null,
       ),
     );
   }
@@ -295,13 +313,19 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: EmojiPicker(
-          onBackspacePressed: () {
-            controller.changeMessageTextFromController();
-          },
-          onEmojiSelected: (_, __) {
-            controller.changeMessageTextFromController();
-          },
-          textEditingController: controller.messageController,
+          onBackspacePressed: permissions.contains('CAN_BACKSPACE_EMOJI_WORK')
+              ? () {
+                  controller.changeMessageTextFromController();
+                }
+              : null,
+          onEmojiSelected: permissions.contains('CAN_PICK_EMOJI_WORK')
+              ? (_, __) {
+                  controller.changeMessageTextFromController();
+                }
+              : null,
+          textEditingController: permissions.contains('CAN_PICK_EMOJI_WORK')
+              ? controller.messageController
+              : null,
           config: Config(
             height: 290,
             checkPlatformCompatibility: true,

@@ -186,7 +186,6 @@ class FirebaseService extends GetxService {
         await FirebaseAnalytics.instance.logEvent(
           name: "logout",
         );
-      default:
     }
     log('[firebase.service.dart] log event $type');
   }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:intl/intl.dart';
 
 int formatDiscount({int price = 0, int discount = 0}) {
@@ -21,9 +23,15 @@ String formatPrice(int price) {
 }
 
 int formatVersion(String version) {
-  List<int> v = version.split('.').map((e) => int.parse(e)).toList();
+  List<int> ver = version.split('.').map((e) => int.parse(e)).toList();
 
-  var r = v.reduce((value, element) => value + element);
+  var r = 0;
+
+  for (var i = 1; i <= ver.length; i++) {
+    var j = pow(10, i).toInt();
+    var v = ver[ver.length - i];
+    r += (v * j);
+  }
 
   return r;
 }

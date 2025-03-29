@@ -69,7 +69,9 @@ class NotificationService extends GetxService {
     required String title,
     String? body,
   }) {
-    return AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
+    return AwesomeNotifications()
+        .isNotificationAllowed()
+        .then((isAllowed) async {
       if (isAllowed) {
         try {
           await AwesomeNotifications().createNotification(
@@ -83,7 +85,7 @@ class NotificationService extends GetxService {
               autoDismissible: true,
             ),
           );
-        } catch(e) {
+        } catch (e) {
           //
         }
       }
@@ -132,30 +134,23 @@ class NotificationService extends GetxService {
   }
 
   Future<void> join() async {
-    // check firebase token is in storage
-    var token = Services.configs.get(key: CONSTANTS.STORAGE_FIREBASE_TOKEN);
+    // generate new token
+    var firebase_token = await Services.firebase.token;
 
-    log('[notification.service.dart] firebase token from storage: $token');
+    log('[notification.service.dart] firebase token: $firebase_token');
 
-    if (token == null) {
-      // generate new token
-      var firebase_token = await Services.firebase.token;
+    if (firebase_token != null) {
+      var result = await ApiService.user.joinToNotification(
+        token: firebase_token,
+      );
 
-      log('[notification.service.dart] firebase token: $firebase_token');
+      log('[notification.service.dart] join result: ${result.status}');
 
-      if (firebase_token != null) {
-        var result = await ApiService.user.joinToNotification(
-          token: firebase_token,
+      if (result.status) {
+        Services.configs.set(
+          key: CONSTANTS.STORAGE_FIREBASE_TOKEN,
+          value: firebase_token,
         );
-
-        log('[notification.service.dart] join result: ${result.status}');
-
-        if (result.status) {
-          Services.configs.set(
-            key: CONSTANTS.STORAGE_FIREBASE_TOKEN,
-            value: firebase_token,
-          );
-        }
       }
     }
   }

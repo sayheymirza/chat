@@ -31,7 +31,7 @@ class FavoritesView extends GetView<FavoritesController> {
                 text: "علاقه مندی های من",
               ),
               Tab(
-                text: "علاقه مندان من",
+                text: "علاقه مندان به من",
               ),
             ],
           ),
@@ -70,7 +70,8 @@ class FavoritesView extends GetView<FavoritesController> {
                       'id': item.id,
                       'options': true,
                     },
-                  );
+                  )!
+                      .then((_) => controller.submit());
                 },
               ),
             if (controller.profiles.isNotEmpty)

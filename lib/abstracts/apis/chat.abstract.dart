@@ -28,7 +28,7 @@ abstract class ChatAbstract extends GetxService {
     required int limit,
     required int page,
     required ApiChatMessageOperator operator,
-    int? seq,
+    double? seq,
   });
 
   Future<bool> deleteChatWithChatId({required String chatId});

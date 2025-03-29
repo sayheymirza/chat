@@ -3,20 +3,6 @@ import 'package:timeago/timeago.dart' as timeago;
 
 String formatAgoChat(String? value) {
   return formatAgo(value!);
-  if (value == null) return '';
-
-  String format(int value) => value < 9 ? '0$value' : value.toString();
-
-  var date = Jalali.fromDateTime(DateTime.parse(value));
-  var today = Jalali.now();
-
-  if (date.year == today.year &&
-      date.month == today.month &&
-      date.day == today.day) {
-    return '${format(date.hour)}:${format(date.minute)}';
-  }
-
-  return "${date.year}/${format(date.month)}/${format(date.day)}";
 }
 
 String formatAgoChatMessage(String value) {
@@ -31,8 +17,12 @@ String formatAgoChatMessage(String value) {
 }
 
 String formatAgo(String value) {
-  timeago.setLocaleMessages('fa', timeago.FaMessages());
-  var output = timeago.format(DateTime.parse(value), locale: 'fa');
-  output = output.replaceAll('~', '');
-  return output;
+  try {
+    timeago.setLocaleMessages('fa', timeago.FaMessages());
+    var output = timeago.format(DateTime.parse(value), locale: 'fa');
+    output = output.replaceAll('~', '');
+    return output;
+  } catch (e) {
+    return '';
+  }
 }

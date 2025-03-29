@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/apis/socket.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
@@ -14,11 +15,11 @@ class UserService extends GetxService {
     try {
       var query = database.select(database.userTable);
 
-      query.where((row) => row.id.equals(userId.toString()));
+      query.where((row) => row.id.equals(userId));
 
       query.limit(1);
 
-      var result = await query.getSingle();
+      var result = await query.getSingleOrNull();
 
       if (result != null) {
         return ProfileModel.fromDatabase({
@@ -35,6 +36,7 @@ class UserService extends GetxService {
 
       return null;
     } catch (e) {
+      print(e);
       return null;
     }
   }
@@ -95,18 +97,57 @@ class UserService extends GetxService {
   Future<void> save({required ProfileModel profile}) async {
     try {
       log('[user.service.dart] saved user with id ${profile.id}');
-      await database.into(database.userTable).insertOnConflictUpdate(
-            UserTableCompanion.insert(
-              id: profile.id!.toString(),
-              status: profile.status!,
-              avatar: profile.avatar!,
-              fullname: profile.fullname!,
-              last: profile.lastAt.toString(),
-              seen: profile.seen!,
-              data: profile.toJson(),
-              verified: drift.Value(profile.verified ?? false),
-            ),
-          );
+
+      var query = database.select(database.userTable);
+
+      query.where((row) => row.id.equals(profile.id.toString()));
+
+      query.limit(1);
+
+      var result = await query.getSingleOrNull();
+
+      if (result != null) {
+        await (database.update(database.userTable)
+              ..where((e) => e.id.equals(profile.id.toString())))
+            .write(
+          UserTableCompanion.insert(
+            id: profile.id!.toString(),
+            status: profile.status!,
+            avatar: profile.avatar!,
+            fullname: profile.fullname!,
+            last: profile.lastAt.toString(),
+            seen: profile.seen!,
+            data: profile.toJson(),
+            verified: drift.Value(profile.verified ?? false),
+          ),
+        );
+      } else {
+        await database.into(database.userTable).insert(
+              UserTableCompanion.insert(
+                id: profile.id!.toString(),
+                status: profile.status!,
+                avatar: profile.avatar!,
+                fullname: profile.fullname!,
+                last: profile.lastAt.toString(),
+                seen: profile.seen!,
+                data: profile.toJson(),
+                verified: drift.Value(profile.verified ?? false),
+              ),
+            );
+      }
+
+      // await database.into(database.userTable).insertOnConflictUpdate(
+      //       UserTableCompanion.insert(
+      //         id: profile.id!.toString(),
+      //         status: profile.status!,
+      //         avatar: profile.avatar!,
+      //         fullname: profile.fullname!,
+      //         last: profile.lastAt.toString(),
+      //         seen: profile.seen!,
+      //         data: profile.toJson(),
+      //         verified: drift.Value(profile.verified ?? false),
+      //       ),
+      //     );
     } catch (e) {
       print(e);
     }
@@ -140,7 +181,7 @@ class UserService extends GetxService {
     await database.transaction(() async {
       var user = await (database.select(database.userTable)
             ..where((row) => row.id.equals(userId)))
-          .getSingle();
+          .getSingleOrNull();
 
       if (user != null) {
         if (action == RELATION_ACTION.BLOCK) {
@@ -161,6 +202,34 @@ class UserService extends GetxService {
           user.data['relation']['favorited'] = false;
         }
 
+        // like
+        if (action == RELATION_ACTION.LIKE) {
+          if (user.data['relation']['disliked'] == true) {
+            user.data['relationCount']['dislikes'] =
+                user.data['relationCount']['dislikes'] - 1;
+          }
+
+          user.data['relation']['liked'] = true;
+          user.data['relation']['disliked'] = false;
+
+          user.data['relationCount']['likes'] =
+              user.data['relationCount']['likes'] + 1;
+        }
+
+        // dislike
+        if (action == RELATION_ACTION.DISLIKE) {
+          if (user.data['relation']['liked'] == true) {
+            user.data['relationCount']['likes'] =
+                user.data['relationCount']['likes'] - 1;
+          }
+
+          user.data['relation']['liked'] = false;
+          user.data['relation']['disliked'] = true;
+
+          user.data['relationCount']['dislikes'] =
+              user.data['relationCount']['dislikes'] + 1;
+        }
+
         // update
         await (database.update(database.userTable)
               ..where((row) => row.id.equals(userId)))
@@ -169,12 +238,14 @@ class UserService extends GetxService {
             data: drift.Value(user.data),
           ),
         );
+
+        log('[user.service.dart] user $userId relation $action');
       }
     });
   }
 
   Future<void> see({required String userId}) async {
-    var seened = await seen(userId: userId);
+    var seened = seen(userId: userId);
 
     if (seened > 0) {
       return;
@@ -203,7 +274,6 @@ class UserService extends GetxService {
       return 0;
     }
 
-    var start_at = DateTime.parse(expire_at['start_at']);
     var end_at = DateTime.parse(expire_at['end_at']);
 
     if (now.isAfter(end_at)) {
@@ -213,9 +283,105 @@ class UserService extends GetxService {
     }
 
     //   how much percent of time has passed in hours
-    var percent = (100 * now.microsecondsSinceEpoch) /
-        end_at.microsecondsSinceEpoch;
+    var percent =
+        (100 * now.microsecondsSinceEpoch) / end_at.microsecondsSinceEpoch;
 
     return percent / 100;
+  }
+
+  void like({required String userId}) {
+    ApiService.socket.send(
+      event: SOCKET_EVENTS.SOCKET_REQUEST,
+      data: {
+        'action': 'frontend.do_interaction',
+        'body': {'entity_id': userId, 'type': 'like'},
+      },
+    );
+  }
+
+  void dislike({required String userId}) {
+    ApiService.socket.send(
+      event: SOCKET_EVENTS.SOCKET_REQUEST,
+      data: {
+        'action': 'frontend.do_interaction',
+        'body': {'entity_id': userId, 'type': 'dislike'},
+      },
+    );
+  }
+
+  void statuses({required List<String> userIds}) {
+    if (userIds.isNotEmpty) {
+      ApiService.socket.send(
+        event: SOCKET_EVENTS.SOCKET_REQUEST,
+        data: {
+          'action': 'frontend.get_onlines_status',
+          'body': {
+            'ids': userIds
+                .where((id) => id != null && id.trim().isNotEmpty)
+                .map(int.parse)
+                .toList()
+          },
+        },
+      );
+    }
+  }
+
+  Future<void> changeStatus({
+    required String userId,
+    required String status,
+  }) async {
+    var update = database.update(database.userTable);
+
+    update.where((row) => row.id.equals(userId.toString()));
+
+    var output = await update.writeReturning(
+      UserTableCompanion(
+        seen: drift.Value(status),
+      ),
+    );
+
+    if (output.isNotEmpty) {
+      log('[user.service.dart] changed status ${output.first.id} to ${output.first.seen}');
+    }
+  }
+
+  Future<void> saveFromSearch({required ProfileSearchModel profile}) async {
+    await database.transaction(() async {
+      // get one by id
+      var user = await (database.select(database.userTable)
+            ..where((row) => row.id.equals(profile.id.toString())))
+          .getSingleOrNull();
+
+      if (user == null) {
+        // create user
+        await database.into(database.userTable).insert(
+              UserTableCompanion.insert(
+                id: profile.id!.toString(),
+                status: 'unknown',
+                avatar: profile.avatar!,
+                fullname: profile.fullname!,
+                last: DateTime.now().toString(),
+                seen: profile.seen!,
+                data: profile.toJson(),
+                verified: drift.Value(profile.verified ?? false),
+              ),
+            );
+
+        log('[user.service.dart] create user ${profile.id} from search as seen ${profile.seen}');
+      } else {
+        // update user
+        await (database.update(database.userTable)
+              ..where((row) => row.id.equals(profile.id.toString())))
+            .writeReturning(
+          UserTableCompanion(
+            avatar: drift.Value(profile.avatar!),
+            fullname: drift.Value(profile.fullname!),
+            seen: drift.Value(profile.seen!),
+          ),
+        );
+
+        log('[user.service.dart] update user ${profile.id} from search as seen ${profile.seen}');
+      }
+    });
   }
 }

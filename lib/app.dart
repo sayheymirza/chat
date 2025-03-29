@@ -1,6 +1,7 @@
 import 'package:chat/app/shared/i18n.dart';
 import 'package:chat/app/shared/theme.dart';
 import 'package:chat/pages.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
@@ -11,6 +12,12 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var val = getNavigationBarHeight(context);
+
+    if (navigationBarHeight == 0) {
+      navigationBarHeight = val;
+    }
+
     return GetMaterialApp(
       initialRoute: '/',
       debugShowCheckedModeBanner: false,

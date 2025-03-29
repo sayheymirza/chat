@@ -15,6 +15,10 @@ class ProfileController extends GetxController {
 
   Rx<ProfileModel> profile = ProfileModel().obs;
 
+  String? get id {
+    return profile.value.id ?? Get.parameters['id'];
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -23,7 +27,6 @@ class ProfileController extends GetxController {
   }
 
   Future<void> load() async {
-    var id = Get.parameters['id']!;
     var args = Get.arguments;
 
     showOptions.value = args != null && args['options'] != false;
@@ -37,21 +40,21 @@ class ProfileController extends GetxController {
       } else {
         showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
       }
-    } else {
+    } else if (id != null) {
       loadUser();
       fetch();
-      Services.user.see(userId: id);
+      Services.user.see(userId: id!);
     }
   }
 
   Future<void> loadUser() async {
     try {
-      var id = Get.parameters['id']!;
-      var result = await Services.user.one(userId: id);
+      var result = await Services.user.one(userId: id!);
 
-      if (result != null) {
+      if (result != null && result.status != 'unknown') {
         profile.value = result;
         loading.value = false;
+        update();
       }
     } catch (e) {
       print(e);
@@ -59,9 +62,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> fetch() async {
-    var id = Get.parameters['id']!;
-
-    await Services.user.fetch(userId: id);
+    await Services.user.fetch(userId: id!);
 
     loadUser();
   }
@@ -72,15 +73,15 @@ class ProfileController extends GetxController {
       action: RELATION_ACTION.BLOCK,
     );
 
+    showSnackbar(message: '${profile.value.fullname} به بلاکی ها اضافه شد');
+
+    loadUser();
+
     Services.queue.add(() async {
-      var result = await ApiService.user.react(
+      await ApiService.user.react(
         user: id,
         action: RELATION_ACTION.BLOCK,
       );
-      if (result) {
-        showSnackbar(message: 'کاربر به بلاکی ها اضافه شد');
-        fetch();
-      }
     });
   }
 
@@ -90,15 +91,15 @@ class ProfileController extends GetxController {
       action: RELATION_ACTION.UNBLOCK,
     );
 
+    showSnackbar(message: '${profile.value.fullname} از بلاکی ها حذف شد');
+
+    loadUser();
+
     Services.queue.add(() async {
-      var result = await ApiService.user.react(
+      await ApiService.user.react(
         user: id,
         action: RELATION_ACTION.UNBLOCK,
       );
-      if (result) {
-        showSnackbar(message: 'کاربر از بلاکی ها حذف شد');
-        fetch();
-      }
     });
   }
 
@@ -108,14 +109,17 @@ class ProfileController extends GetxController {
       action: RELATION_ACTION.FAVORITE,
     );
 
+    showSnackbar(
+      message: '${profile.value.fullname} به علاقه مندی ها اضافه شد',
+    );
+
+    loadUser();
+
     Services.queue.add(() async {
-      var result = await ApiService.user.react(
+      await ApiService.user.react(
         user: id,
         action: RELATION_ACTION.FAVORITE,
       );
-      if (result) {
-        showSnackbar(message: 'کاربر به علاقه مندی ها اضافه شد');
-      }
     });
   }
 
@@ -125,14 +129,53 @@ class ProfileController extends GetxController {
       action: RELATION_ACTION.DISFAVORITE,
     );
 
+    showSnackbar(
+      message: '${profile.value.fullname} از علاقه مندی ها حذف شد',
+    );
+
+    loadUser();
+
     Services.queue.add(() async {
-      var result = await ApiService.user.react(
+      await ApiService.user.react(
         user: id,
         action: RELATION_ACTION.DISFAVORITE,
       );
-      if (result) {
-        showSnackbar(message: 'کاربر از علاقه مندی ها حذف شد');
-      }
+    });
+  }
+
+  void like({required String id}) async {
+    await Services.user.relation(
+      userId: id,
+      action: RELATION_ACTION.LIKE,
+    );
+
+    loadUser();
+
+    Services.queue.add(() async {
+      // await ApiService.user.react(
+      //   user: id,
+      //   action: RELATION_ACTION.LIKE,
+      // );
+
+      Services.user.like(userId: id);
+    });
+  }
+
+  void dislike({required String id}) async {
+    await Services.user.relation(
+      userId: id,
+      action: RELATION_ACTION.DISLIKE,
+    );
+
+    loadUser();
+
+    Services.queue.add(() async {
+      // await ApiService.user.react(
+      //   user: id,
+      //   action: RELATION_ACTION.DISLIKE,
+      // );
+
+      Services.user.dislike(userId: id);
     });
   }
 

@@ -10,6 +10,7 @@ class SearchViewController extends GetxController {
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxBool loading = false.obs;
+  RxBool inited = false.obs;
 
   RxBool filterable = false.obs;
   RxBool backable = false.obs;
@@ -23,11 +24,14 @@ class SearchViewController extends GetxController {
   ApiUserSearchFilterRequestModel filters =
       ApiUserSearchFilterRequestModel.empty;
 
+  List<ApiUserSearchFilterRequestModel> filters_history = [];
+
   String? type;
 
   void init({
     required String? type,
   }) {
+    inited.value = false;
     this.type = type;
     switch (type) {
       case 'newest':
@@ -37,7 +41,7 @@ class SearchViewController extends GetxController {
         backable.value = true;
         filterable.value = false;
         break;
-      case 'visited':
+      case 'visites':
         title.value = 'بازدیدکنندگان پروفایل من';
         colors.value = [Colors.green.shade500, Colors.green.shade700];
         color.value = Colors.green.shade600;
@@ -79,6 +83,7 @@ class SearchViewController extends GetxController {
     if (loading.value == true) return;
     page.value = value;
     submit();
+    onPageChange();
   }
 
   Future<void> submit() async {
@@ -101,8 +106,10 @@ class SearchViewController extends GetxController {
       profiles.value = result.profiles;
 
       loading.value = false;
+      inited.value = true;
     } catch (e) {
       loading.value = false;
+      inited.value = true;
     }
   }
 
@@ -114,10 +121,37 @@ class SearchViewController extends GetxController {
       useSafeArea: false,
     ).then((values) {
       if (values != null) {
+        filters_history.add(
+          filters.copyWith({
+            'page': page.value,
+          }),
+        );
+
         filters = values;
         page.value = 1;
         submit();
       }
     });
+  }
+
+  void onBack() {
+    if (filters_history.isNotEmpty) {
+      var last = filters_history.last;
+
+      filters = last;
+      page.value = last.page ?? 1;
+
+      submit();
+
+      filters_history.removeLast();
+    }
+  }
+
+  void onPageChange() {
+    filters_history.add(
+      filters.copyWith({
+        'page': page.value,
+      }),
+    );
   }
 }

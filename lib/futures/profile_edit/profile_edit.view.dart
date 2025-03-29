@@ -514,26 +514,25 @@ class ProfileEditView extends GetView<ProfileEditController> {
                                 ),
                               ),
                             ),
-                            if ('type'.tr == 'dating') const Gap(16),
-                            if ('type'.tr == 'dating')
-                              Expanded(
-                                child: DropdownsWidget(
-                                  group: 'MarriageType',
-                                  name: 'marriageType',
-                                  items: controller
-                                      .dropdownsItems['marriageType']!
-                                      .map((e) => e as DropdownMenuItem<String>)
-                                      .toList(),
-                                  decoration: const InputDecoration(
-                                    labelText: 'نوع ازدواج',
-                                  ),
-                                  validator: FormBuilderValidators.compose(
-                                    [
-                                      FormBuilderValidators.required(),
-                                    ],
-                                  ),
+                            const Gap(16),
+                            Expanded(
+                              child: DropdownsWidget(
+                                group: 'marriageType',
+                                name: 'marriageType',
+                                items: controller
+                                    .dropdownsItems['marriageType']!
+                                    .map((e) => e as DropdownMenuItem<String>)
+                                    .toList(),
+                                decoration: const InputDecoration(
+                                  labelText: 'نوع ازدواج',
+                                ),
+                                validator: FormBuilderValidators.compose(
+                                  [
+                                    FormBuilderValidators.required(),
+                                  ],
                                 ),
                               ),
+                            ),
                           ],
                         ),
                         const Gap(16),

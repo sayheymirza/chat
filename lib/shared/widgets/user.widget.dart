@@ -12,6 +12,7 @@ class UserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Services.user.saveFromSearch(profile: item);
     var opacity = Services.user.seen(userId: item.id!);
 
     return GestureDetector(
@@ -55,12 +56,18 @@ class UserWidget extends StatelessWidget {
                         const Icon(
                           Icons.verified_rounded,
                           color: Colors.blue,
-                          size: 16,
+                          size: 20,
                         ),
                     ],
                   ),
                   const Gap(10),
-                  Text('${item.age} ساله'),
+                  Row(
+                    children: [
+                      Text('${item.age} ساله'),
+                      const Gap(10),
+                      liking(),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -131,6 +138,34 @@ class UserWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget liking() {
+    return Row(
+      children: [
+        Icon(
+          Icons.thumb_up_alt_rounded,
+          color: Colors.green,
+          size: 14,
+        ),
+        const Gap(4),
+        Text(
+          (item.relationCount?.likes ?? 0).toString(),
+          style: TextStyle(fontSize: 12),
+        ),
+        const Gap(10),
+        Icon(
+          Icons.thumb_down_alt_rounded,
+          color: Colors.red,
+          size: 14,
+        ),
+        const Gap(4),
+        Text(
+          (item.relationCount?.dislikes ?? 0).toString(),
+          style: TextStyle(fontSize: 12),
+        ),
+      ],
     );
   }
 }

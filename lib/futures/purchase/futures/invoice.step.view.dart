@@ -81,7 +81,7 @@ class PurchaseInvoiceView extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
             color: selected ? Get.theme.primaryColor : Colors.grey.shade400,
-            width: selected ? 2 : 1,
+            width: selected ? 3 : 1,
             strokeAlign: BorderSide.strokeAlignInside,
           ),
           borderRadius: BorderRadius.circular(10),

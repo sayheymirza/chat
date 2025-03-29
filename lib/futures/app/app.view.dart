@@ -3,7 +3,6 @@ import 'package:chat/futures/app/app.controller.dart';
 import 'package:chat/futures/chats/chats.view.dart';
 import 'package:chat/futures/home/home.view.dart';
 import 'package:chat/futures/search/search.view.dart';
-import 'package:chat/models/call.model.dart';
 import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,8 +13,6 @@ class AppView extends GetView<AppController> {
   @override
   Widget build(BuildContext context) {
     Get.put(AppController());
-
-    Services.notification.join();
 
     return Obx(
       () => Scaffold(

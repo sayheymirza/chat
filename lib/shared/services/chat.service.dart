@@ -8,6 +8,7 @@ import 'package:chat/models/chat/chat.event.model.dart';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
+import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/event.dart';
@@ -40,7 +41,7 @@ class ChatService extends GetxService {
               chat.message?.toJson() ?? {},
             ),
             // permissions: drift.Value(''),
-            status: drift.Value('normal'),
+            status: drift.Value(chat.status ?? 'normal'),
             unread_count: drift.Value(chat.unreadCount!),
             updated_at: drift.Value(chat.updatedAt!),
           );
@@ -57,10 +58,9 @@ class ChatService extends GetxService {
               // set data permissions to empty string
               data = data.copyWith(permissions: drift.Value(''));
 
-              var result = await database
+              await database
                   .into(database.chatTable)
                   .insertReturningOrNull(data);
-              print(result);
             }
             // 3. update
             else {
@@ -75,13 +75,21 @@ class ChatService extends GetxService {
                   ..where((row) => row.id.equals(chat.userId!)))
                 .getSingleOrNull();
 
-            if (user == null) {
-              await Services.user.fetch(userId: chat.userId!);
+            if (user == null && chat.user != null) {
+              await Services.user.saveFromSearch(
+                profile: ProfileSearchModel(
+                  id: chat.user!.id,
+                  avatar: chat.user!.avatar,
+                  fullname: chat.user!.fullname,
+                  seen: chat.user!.seen,
+                  verified: chat.user!.verified,
+                ),
+              );
             }
           });
         }
 
-        if (result.last >= page || result.last == 0) {
+        if (result.last <= page || result.last == 0) {
           // save new last sync date
           await Services.sync.set(
             category: 'chat',
@@ -178,12 +186,22 @@ class ChatService extends GetxService {
 
   // listen to unreaded chats
   Stream<int> listenToUnreadedChats() {
+    // return (database.select(database.chatTable)).watch().map((unreaded) {
+    //   return unreaded.fold(0, (previousValue, element) {
+    //     return previousValue +
+    //         (element.status == "normal" && element.user_id.trim().isNotEmpty
+    //             ? (element.unread_count)
+    //             : 0);
+    //   });
+    // });
+
     return (database.select(database.chatTable)
-          )
+          ..where((row) => row.status.equals('normal')))
         .watch()
         .map((unreaded) {
       return unreaded.fold(0, (previousValue, element) {
-        return previousValue + (element.status != "deleted" ? (element.unread_count ?? 0) : 0);
+        return previousValue +
+            (element.user_id.trim().isNotEmpty ? (element.unread_count) : 0);
       });
     });
   }
@@ -347,7 +365,7 @@ class ChatService extends GetxService {
   }
 
   // select chats (limit and sort by updated_at and join to last message) steam
-  Future<Stream<ChatListModel>> list({int page = 1, int limit = 12}) async {
+  Future<Stream<ChatListModel>> list({int page = 1, int limit = 6}) async {
     try {
       var query = database.select(database.chatTable).join([
         drift.innerJoin(
@@ -385,7 +403,8 @@ class ChatService extends GetxService {
           })
           .watch()
           .map((chats) {
-            var last = count ~/ limit;
+            var last = (count / limit).round();
+
             return ChatListModel(
               chats: chats,
               page: page,
@@ -403,22 +422,19 @@ class ChatService extends GetxService {
   }
 
   // select chats (limit and sort by updated_at and join to last message)
-  Future<ChatListModel> select({int page = 1, int limit = 12}) async {
+  Future<ChatListModel> select({int page = 1, int limit = 6}) async {
     try {
-      var query = database.select(database.chatTable).join([
-        drift.innerJoin(
-          database.userTable,
-          database.userTable.id.equalsExp(
-            database.chatTable.user_id,
-          ),
-        ),
-      ]);
+      var query = database.select(database.chatTable);
+
+      // where chat status is not 'deleted'
+      query.where((row) => row.status.equals('normal'));
 
       query.orderBy(
         [
-          drift.OrderingTerm(
-              expression: database.chatTable.updated_at,
-              mode: drift.OrderingMode.desc),
+          (row) => drift.OrderingTerm(
+                expression: row.updated_at,
+                mode: drift.OrderingMode.desc,
+              ),
         ],
       );
 
@@ -426,21 +442,22 @@ class ChatService extends GetxService {
 
       var chats = await query.map((row) {
         return ChatModel.fromJson({
-          "chat_id": row.rawData.data['chat_table.chat_id'],
-          "user_id": row.rawData.data['chat_table.user_id'],
-          "user": row.readTable(database.userTable).data,
-          "message": jsonDecode(row.rawData.data['chat_table.message']),
-          "permissions": row.rawData.data['chat_table.permissions'],
-          "status": row.rawData.data['chat_table.status'],
-          "unread_count": row.rawData.data['chat_table.unread_count'],
-          'updated_at': row.rawData.data['chat_table.updated_at'],
+          "chat_id": row.chat_id,
+          "user_id": row.user_id,
+          "message": row.message,
+          "permissions": row.permissions,
+          "status": row.status,
+          "unread_count": row.unread_count,
+          'updated_at': row.updated_at,
         });
       }).get();
 
-      var count = await database.chatTable.count().getSingle();
+      var count = await database.chatTable
+          .count(where: (row) => row.status.equals('normal'))
+          .getSingle();
 
       // last page by devide count by limit and round up to integer (example: 5/2 = 3)
-      var last = count ~/ limit;
+      var last = (count / limit).ceil();
 
       return ChatListModel(
         chats: chats,
@@ -450,6 +467,7 @@ class ChatService extends GetxService {
         total: count,
       );
     } catch (e) {
+      print('error on select chats');
       print(e.toString());
 
       return ChatListModel(
@@ -482,7 +500,6 @@ class ChatService extends GetxService {
   }
 
   void action({required String type}) {
-    return;
     var chatId = Services.configs.get(key: CONSTANTS.CURRENT_CHAT);
 
     if (chatId == null) {

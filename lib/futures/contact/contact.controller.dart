@@ -18,8 +18,10 @@ class ContactController extends GetxController {
         var value = formKey.currentState!.value;
 
         var result = await ApiService.data.contact(
+          type: 'contact',
           reciver: value['reciver'],
           title: value['title'],
+          email: value['email'],
           description: value['description'],
           file: value['image'],
         );

@@ -6,6 +6,7 @@ import 'package:chat/futures/purchase/one-step.controller.dart';
 import 'package:chat/futures/purchase/purchase.controller.dart';
 import 'package:chat/models/plan.model.dart';
 import 'package:chat/shared/formats/number.format.dart';
+import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -110,19 +111,21 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                       .toList(),
                   selectedPlans: controller.selectedPlans.value,
                 ),
-                expansion(
-                  expanded: controller.expanded.value == 3,
-                  icon: const Icon(
-                    Icons.chat,
-                    color: Colors.blue,
+                if (Services.profile.profile.value.plan?.specialDays != 0 ||
+                    Services.profile.profile.value.plan?.adDays != 0)
+                  expansion(
+                    expanded: controller.expanded.value == 3,
+                    icon: const Icon(
+                      Icons.chat,
+                      color: Colors.blue,
+                    ),
+                    title: "بسته پیامکی",
+                    subtitle: "ارسال پیامک دعوت به گفتگو",
+                    plans: controller.plans
+                        .where((element) => element.category == "sms")
+                        .toList(),
+                    selectedPlans: controller.selectedPlans.value,
                   ),
-                  title: "بسته پیامکی",
-                  subtitle: "ارسال پیامک دعوت به گفتگو",
-                  plans: controller.plans
-                      .where((element) => element.category == "sms")
-                      .toList(),
-                  selectedPlans: controller.selectedPlans.value,
-                ),
               ],
             ),
             Gap(Get.bottomBarHeight + 32),
@@ -237,15 +240,16 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                       style: ButtonStyle(
                         elevation: const WidgetStatePropertyAll(0),
                         minimumSize: WidgetStatePropertyAll(
-                          controller.disabled.value ? Size(48, 48) :
-                          Size(160, 48),
+                          controller.disabled.value
+                              ? Size(48, 48)
+                              : Size(160, 48),
                         ),
                         backgroundColor: controller.disabled.value
                             ? const WidgetStatePropertyAll(Colors.transparent)
                             : WidgetStatePropertyAll(Get.theme.primaryColor),
                       ),
                       child: controller.disabled.value
-                          ?  SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(

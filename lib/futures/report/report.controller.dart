@@ -38,6 +38,7 @@ class ReportController extends GetxController {
         var value = formKey.currentState!.value;
 
         var result = await ApiService.data.contact(
+          type: 'report',
           reciver: '0',
           title: value['title'],
           description: value['description'],

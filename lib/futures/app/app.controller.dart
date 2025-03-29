@@ -26,6 +26,8 @@ class AppController extends GetxController {
   void onInit() {
     super.onInit();
 
+    Services.notification.join();
+
     Services.profile.fetchMyProfile();
     Services.app.handshake();
 
@@ -117,26 +119,26 @@ class AppController extends GetxController {
         );
       }
 
-      if(data.event == EVENTS.SOCKET_SOUND_PLAY) {
+      if (data.event == EVENTS.SOCKET_SOUND_PLAY) {
         var type = data.value['type'];
 
-        if(type != null) {
+        if (type != null) {
           Services.sound.play(type: type);
         }
       }
 
-      if(data.event == EVENTS.SOCKET_SOUND_STOP) {
+      if (data.event == EVENTS.SOCKET_SOUND_STOP) {
         var type = data.value['type'];
 
-        if(type != null) {
+        if (type != null) {
           Services.sound.stop(type: type);
         }
       }
 
-      if(data.event == EVENTS.SOCKET_VIBRATION) {
+      if (data.event == EVENTS.SOCKET_VIBRATION) {
         var duration = data.value['duration'];
 
-        if(duration != null) {
+        if (duration != null) {
           vibrate(
             duration: duration ?? 100,
           );

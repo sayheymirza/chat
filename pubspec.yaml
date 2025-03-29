@@ -1,7 +1,7 @@
 name: chat
 description: A new Flutter project.
 publish_to: none
-version: 0.1.0
+version: 2.0.1+201
 environment:
   sdk: ^3.5.0
 dependencies:
@@ -47,7 +47,7 @@ dependencies:
   video_player: ^2.9.2
   flutter_audio_waveforms: ^1.2.1+8
   waveform_extractor: ^1.0.3
-  record: ^5.1.2
+  record: ^5.2.0
   video_player_control_panel: ^1.1.2
   glass: ^2.0.0+1
   socket_io_client: ^3.0.1
@@ -61,9 +61,11 @@ dependencies:
   firebase_crashlytics: ^4.2.0
   firebase_core: ^3.9.0
   firebase_analytics: ^11.3.6
+  firebase_remote_config: ^5.3.0
   flutter_poolakey:
     path: ./lib/flavors/cafebazaar/flutter_poolakey
-  firebase_remote_config: ^5.3.0
+  flutter_markdown: ^0.7.6+2
+  flutter_html_v3: ^3.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

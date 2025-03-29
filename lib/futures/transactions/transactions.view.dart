@@ -45,7 +45,9 @@ class TransactionsView extends GetView<TransactionsController> {
               children: [
                 if (!controller.loading.value &&
                     controller.transactions.isEmpty)
-                  const EmptyWidget(message: 'شما تراکنشی ندارید'),
+                  const EmptyWidget(
+                    message: 'شما تراکنشی ندارید',
+                  ),
                 ...controller.transactions.map(
                   (item) => transaction(item: item),
                 ),

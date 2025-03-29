@@ -44,6 +44,7 @@ class HomeComponentListProfileV1Model {
   final String buttonText;
   final String buttonType;
   final List<ProfileSearchModel> profiles;
+  final String? emptyText;
 
   HomeComponentListProfileV1Model({
     required this.title,
@@ -51,6 +52,7 @@ class HomeComponentListProfileV1Model {
     required this.buttonText,
     required this.buttonType,
     required this.profiles,
+    required this.emptyText,
   });
 }
 

@@ -11,7 +11,7 @@ import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 
 class HttpService extends GetxService {
-  final Dio.Dio _client = Dio.Dio();
+  final Dio.Dio client = Dio.Dio();
   int index = 0;
 
   Future<dynamic> request({
@@ -34,10 +34,13 @@ class HttpService extends GetxService {
 
     var url = "$endpoint$path";
 
+    var package = await Services.access.generatePackageInfo();
+
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'x-app-time': DateTime.now().toIso8601String(),
-      'x-flavor': CONSTANTS.FLAVOR,
+      'x-app-flavor': CONSTANTS.FLAVOR,
+      'x-app-version': package.version,
     };
 
     if (auth) {
@@ -55,7 +58,7 @@ class HttpService extends GetxService {
 
     log('[http.service.dart#$i] $method $url');
 
-    var response = await _client.request(
+    var response = await client.request(
       url,
       data: data,
       cancelToken: cancelToken,
@@ -93,7 +96,7 @@ class HttpService extends GetxService {
         });
       }
 
-      await _client.download(
+      await client.download(
         url,
         path,
         cancelToken: cancelToken,
@@ -144,8 +147,6 @@ class HttpService extends GetxService {
 
     if (accessToken != null) {
       headers['Authorization'] = 'Bearer $accessToken';
-    } else {
-      return Future.error("Unauthorized");
     }
 
     // Get the file size for progress calculation
@@ -173,7 +174,7 @@ class HttpService extends GetxService {
 
     log('[http.service.dart#$i] POST $path');
 
-    var response = await _client.post(
+    var response = await client.post(
       url,
       data: data,
       options: Dio.Options(

@@ -39,9 +39,11 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
             color: HexColor("3B81F6"),
             icon: Icons.collections,
             label: "گالری",
-            onTap: () {
-              controller.imageFromGallery();
-            },
+            onTap: permissions.contains('CAN_PICK_GALLERY_WORK')
+                ? () {
+                    controller.imageFromGallery();
+                  }
+                : null,
           ),
         // button دوربین
         if (permissions.contains('CAN_PICK_CAMERA'))
@@ -49,9 +51,11 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
             color: HexColor("EC4899"),
             icon: Icons.camera_alt,
             label: "دوربین",
-            onTap: () {
-              controller.imageFromCamera();
-            },
+            onTap: permissions.contains('CAN_PICK_CAMERA_WORK')
+                ? () {
+                    controller.imageFromCamera();
+                  }
+                : null,
           ),
         // button موزیک
         if (permissions.contains('CAN_PICK_AUDIO'))
@@ -59,30 +63,36 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
             color: HexColor("F43F5E"),
             icon: Icons.headset,
             label: "موزیک",
-            onTap: () {
-              controller.pickAudio();
-            },
+            onTap: permissions.contains('CAN_PICK_AUDIO_WORK')
+                ? () {
+                    controller.pickAudio();
+                  }
+                : null,
           ),
         // button فیلم
-        if(permissions.contains('CAN_PICK_VIDEO'))
-        button(
-          color: HexColor("A854F7"),
-          icon: Icons.movie,
-          label: "فیلم",
-          onTap: () {
-            controller.pickVideo();
-          },
-        ),
+        if (permissions.contains('CAN_PICK_VIDEO'))
+          button(
+            color: HexColor("A854F7"),
+            icon: Icons.movie,
+            label: "فیلم",
+            onTap: permissions.contains('CAN_PICK_VIDEO_WORK')
+                ? () {
+                    controller.pickVideo();
+                  }
+                : null,
+          ),
         // button لوکیشن
-        if(permissions.contains('CAN_PICK_LOCATION'))
-        button(
-          color: HexColor("16A349"),
-          icon: Icons.location_on,
-          label: "نقشه",
-          onTap: () {
-            controller.pickMap();
-          },
-        ),
+        if (permissions.contains('CAN_PICK_LOCATION'))
+          button(
+            color: HexColor("16A349"),
+            icon: Icons.location_on,
+            label: "نقشه",
+            onTap: permissions.contains('CAN_PICK_LOCATION_WORK')
+                ? () {
+                    controller.pickMap();
+                  }
+                : null,
+          ),
       ],
     );
   }
@@ -91,7 +101,7 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
     required Color color,
     required IconData icon,
     required String label,
-    required Function() onTap,
+    required Function()? onTap,
   }) {
     return GestureDetector(
       onTap: onTap,

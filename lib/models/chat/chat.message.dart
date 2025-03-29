@@ -11,7 +11,7 @@ class ChatMessageModel {
   dynamic? data;
   dynamic? meta;
   dynamic? theme;
-  int? seq;
+  double? seq;
   String? replyMessageId;
   String? reaction;
 

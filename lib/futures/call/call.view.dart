@@ -1,11 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:chat/futures/call/call.controller.dart';
 import 'package:chat/models/call.model.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class CallView extends GetView<CallController> {
   const CallView({super.key});
@@ -14,13 +18,15 @@ class CallView extends GetView<CallController> {
   Widget build(BuildContext context) {
     Get.put(CallController());
 
-    var token = Get.parameters['token'] ?? Get.arguments['token'];
+    var token = Get.parameters['token'] ?? Get.arguments?['token'];
+
     var mode = Get.parameters['mode'] ?? Get.arguments['mode'] ?? 'video';
-    // var url = Services.configs.get(key: CONSTANTS.STORAGE_CALL_URL);
-    var url = "https://public.doting.ir/call.html?token=\$1&mode=\$2";
+    var url = Services.configs.get(key: CONSTANTS.STORAGE_CALL_URL);
 
     url = url.replaceAll('\$1', token);
     url = url.replaceAll('\$2', mode);
+
+    print(url);
 
     if (mode == "audio") {
       controller.microphone.value = true;
@@ -28,6 +34,48 @@ class CallView extends GetView<CallController> {
     } else {
       controller.microphone.value = true;
       controller.camera.value = true;
+    }
+
+    onMessage(dynamic json) {
+      var event = json['event'];
+      var data = json['data'];
+
+      log('[call.view.dart] got $event event with $data');
+
+      if (event == 'init') {
+        return {
+          'event': 'init',
+          'data': {
+            'token': token,
+            'mode': mode,
+          },
+        };
+      }
+
+      if (event == 'state') {
+        print('state is $data');
+        if (data == 'connected') {
+          Services.sound.stop(type: 'ringtone');
+          Services.sound.stop(type: 'dialing');
+          controller.durationing();
+        }
+      }
+
+      if (event == 'options') {
+        Services.call.action(type: CALL_ACTIONS.HEARTBEAT);
+
+        // controller.devices.value = data['devices'];
+
+        return {
+          'event': 'options',
+          'data': {
+            'video': controller.camera.value,
+            'audio': controller.microphone.value,
+            'audio_device': controller.selected_speaker.value,
+            'video_device': controller.selected_camera.value,
+          }
+        };
+      }
     }
 
     return Obx(
@@ -54,7 +102,6 @@ class CallView extends GetView<CallController> {
                 ),
               ),
               InAppWebView(
-                initialUrlRequest: URLRequest(url: WebUri(url)),
                 initialSettings: InAppWebViewSettings(
                   iframeAllow: "camera; microphone",
                   // for camera and microphone permissions
@@ -73,6 +120,28 @@ class CallView extends GetView<CallController> {
                 onWebViewCreated: (ctx) async {
                   controller.web = ctx;
 
+                  await ctx.addWebMessageListener(
+                    WebMessageListener(
+                      jsObjectName: "flutter",
+                      onPostMessage:
+                          (message, sourceOrigin, isMainFrame, replyProxy) {
+                        if (message?.data != null &&
+                            message?.type == WebMessageType.STRING) {
+                          var json = jsonDecode(message!.data.toString());
+
+                          var result = onMessage(json);
+
+                          replyProxy.postMessage(
+                            WebMessage(
+                              data: jsonEncode(result),
+                              type: WebMessageType.STRING,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  );
+
                   ctx.addJavaScriptHandler(
                     handlerName: 'flutter',
                     callback: (JavaScriptHandlerFunctionData e) {
@@ -80,51 +149,14 @@ class CallView extends GetView<CallController> {
                       if (d != null) {
                         var json = d;
 
-                        var event = json['event'];
-                        var data = json['data'];
-
-                        if (event == 'state') {
-                          if (data == 'connected') {
-                            Services.sound.stop(type: 'ringtone');
-                            Services.sound.stop(type: 'dialing');
-                            controller.durationing();
-                          }
-                        }
-
-                        if (event == 'options') {
-                          Services.call.action(type: CALL_ACTIONS.HEARTBEAT);
-
-                          controller.devices.value = data['devices'];
-
-                          return {
-                            'event': 'options',
-                            'data': {
-                              'video': controller.camera.value,
-                              'audio': controller.microphone.value,
-                              'audio_device': controller.selected_speaker.value,
-                              'video_device': controller.selected_camera.value,
-                            }
-                          };
-                        }
+                        return onMessage(json);
                       }
                     },
                   );
+
+                  await ctx.loadUrl(urlRequest: URLRequest(url: WebUri(url)));
                 },
               ),
-              // if (controller.devices.isNotEmpty)
-              //   Positioned(
-              //     top: MediaQuery.of(context).padding.top + 20,
-              //     left: 20,
-              //     child: IconButton(
-              //       onPressed: () {
-              //         controller.openDevicesDialog();
-              //       },
-              //       icon: Icon(
-              //         Icons.settings,
-              //         color: Colors.white,
-              //       ),
-              //     ),
-              //   ),
               if (controller.profile.value.avatar != null)
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 100,

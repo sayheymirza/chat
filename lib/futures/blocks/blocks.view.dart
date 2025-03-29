@@ -70,7 +70,8 @@ class BlocksView extends GetView<BlocksController> {
                       'id': item.id,
                       'options': true,
                     },
-                  );
+                  )!
+                      .then((_) => controller.submit());
                 },
               ),
             if (controller.profiles.isNotEmpty)

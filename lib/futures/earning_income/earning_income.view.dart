@@ -31,7 +31,7 @@ class EarningIncomeView extends StatelessWidget {
             ),
             const Gap(32),
             const Text(
-              'کسب درآمد میلیونی با دوعو از دوستان',
+              'کسب درآمد میلیونی با دعوت از دوستان',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -56,14 +56,17 @@ class EarningIncomeView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      Services.configs.get(key: CONSTANTS.STORAGE_INVITE_LINK) ?? '',
+                      Services.configs
+                              .get(key: CONSTANTS.STORAGE_INVITE_LINK) ??
+                          '',
                       textAlign: TextAlign.end,
                     ),
                   ),
                   const Gap(4),
                   IconButton(
                     onPressed: () async {
-                      await Services.app.copy(Services.configs.get(key: CONSTANTS.STORAGE_INVITE_LINK));
+                      await Services.app.copy(Services.configs
+                          .get(key: CONSTANTS.STORAGE_INVITE_LINK));
 
                       showSnackbar(message: 'لینک کپی شد');
                     },

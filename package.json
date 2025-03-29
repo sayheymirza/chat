@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "cli": "node scripts/cli/index.js",
+    "sign": "java -jar scripts/bundlesigner.jar genbin --bundle build/app/outputs/bundle/cafebazaarRelease/app-cafebazaar-release.aab --bin build/app/outputs/bundle/cafebazaarRelease/ --v2-signing-enabled true --v3-signing-enabled false --ks android/upload-keystore.jks -v",
     "run:direct": "flutter run --flavor direct --target lib/flavors/direct/main.dart",
     "build:direct": "flutter build apk --flavor direct --target lib/flavors/direct/main.dart --split-per-abi",
     "build:web": "flutter build web --target lib/flavors/direct/main.dart",

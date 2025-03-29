@@ -1,4 +1,5 @@
 import 'package:chat/futures/auth_forgot/auth_forgot.controller.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/card_numbers_blocked.widget.dart';
 import 'package:flutter/material.dart';
@@ -20,25 +21,29 @@ class AuthForgotView extends GetView<AuthForgotController> {
         centerTitle: true,
       ),
       bottomNavigationBar: footer(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'فراموشی رمز عبور',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+      body: Obx(
+        () => Container(
+          padding: EdgeInsets.only(
+            top: 32,
+            left: 32,
+            right: 32,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'فراموشی رمز عبور',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            const Gap(10),
-            const Text(
-              'شماره موبایل خود را وارد کنید تا رمز جدید برای شما ارسال شود',
-            ),
-            const Gap(32),
-            Obx(
-              () => FormBuilder(
+              const Gap(10),
+              const Text(
+                'شماره موبایل خود را وارد کنید تا رمز جدید برای شما ارسال شود',
+              ),
+              const Gap(32),
+              FormBuilder(
                 key: controller.forgotFormKey,
                 enabled: !controller.disabled.value,
                 child: Column(
@@ -67,8 +72,8 @@ class AuthForgotView extends GetView<AuthForgotController> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -76,11 +81,13 @@ class AuthForgotView extends GetView<AuthForgotController> {
 
   Widget footer() {
     return Container(
-      height: 296,
-      padding: const EdgeInsets.only(
+      height: 314,
+      width: Get.width,
+      color: Colors.white,
+      padding: EdgeInsets.only(
         left: 32,
         right: 32,
-        bottom: 40,
+        bottom: navigationBarHeight + 32,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

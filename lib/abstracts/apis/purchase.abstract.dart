@@ -34,4 +34,6 @@ abstract class ApiPurchaseAbstract extends GetxService {
     required String sku,
     required String packageName,
   });
+
+  Future<ApiSimpleResponseModel> consumeFreePlan();
 }

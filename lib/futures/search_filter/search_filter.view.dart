@@ -87,9 +87,9 @@ class SearchFilterView extends GetView<SearchFilterController> {
                   children: [
                     Expanded(
                       child: DropdownsWidget(
-                        group: 'Age',
+                        group: 'age',
                         name: 'minAge',
-                        items: controller.dropdownsItems['Age']!
+                        items: controller.dropdownsItems['age']!
                             .map((e) => e as DropdownMenuItem<String>)
                             .toList(),
                         decoration: const InputDecoration(
@@ -100,9 +100,9 @@ class SearchFilterView extends GetView<SearchFilterController> {
                     const Gap(16),
                     Expanded(
                       child: DropdownsWidget(
-                        group: 'Age',
+                        group: 'age',
                         name: 'maxAge',
-                        items: controller.dropdownsItems['Age']!
+                        items: controller.dropdownsItems['age']!
                             .map((e) => e as DropdownMenuItem<String>)
                             .toList(),
                         decoration: const InputDecoration(

@@ -35,11 +35,6 @@ class PageView extends GetView<PageViewController> {
                 initialData: InAppWebViewInitialData(
                   data: controller.data.value,
                 ),
-                initialOptions: InAppWebViewGroupOptions(
-                  crossPlatform: InAppWebViewOptions(
-                    transparentBackground: true,
-                  ),
-                ),
               ),
             if (controller.errored.value)
               Center(

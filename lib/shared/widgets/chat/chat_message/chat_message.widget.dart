@@ -52,6 +52,200 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
       }
     }
 
+    Widget footer = Container();
+
+    switch (message.status) {
+      case 'notverified':
+        footer = Row(
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 16,
+              color: Colors.red,
+            ),
+            Gap(8),
+            Text(
+              'پیام ارسال نمی‌شود، حساب را تایید کنید.',
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'unknown':
+        footer = Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'sending':
+        footer = Row(
+          children: [
+            Icon(
+              Icons.access_time_rounded,
+              size: 16,
+              color: Colors.grey,
+            ),
+            Gap(8),
+            Text(
+              "در حال ارسال",
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'sent':
+      case 'deleted':
+        footer = Row(
+          children: [
+            Icon(
+              Icons.done_rounded,
+              size: 16,
+              color: Colors.grey.shade700,
+            ),
+            Gap(8),
+            // date time
+            Text(
+              formatAgoChatMessage(message.sentAt.toString()),
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'seen':
+        footer = Row(
+          children: [
+            Icon(
+              Icons.done_all_rounded,
+              size: 16,
+              color: Colors.green,
+            ),
+            Gap(8),
+            // date time
+            Text(
+              formatAgoChatMessage(message.sentAt.toString()),
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'notsend':
+      case 'faild':
+      case 'failed':
+      case 'unuploaded':
+        footer = Row(
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 16,
+              color: Colors.red,
+            ),
+            Gap(8),
+            Text(
+              'ارسال نشد',
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'undownloaded':
+        footer = Row(
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              size: 16,
+              color: Colors.red,
+            ),
+            Gap(8),
+            Text(
+              'دانلود نشد',
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'downlading':
+        Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                value: double.parse(message.meta['percent'].toString()) / 100,
+                strokeWidth: 2,
+              ),
+            ),
+            const Gap(8),
+            Text(
+              '${message.meta['percent']}%',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            const Gap(8),
+            Text(
+              '${formatBytes(message.meta['received'] ?? message.meta['recive'] ?? 0)}/${formatBytes(message.meta['total'])}',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+        break;
+      case 'uploading':
+        footer = Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                value: double.parse(message.meta['percent'].toString()) / 100,
+                strokeWidth: 2,
+              ),
+            ),
+            const Gap(8),
+            Text(
+              '${message.meta['percent']}%',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            const Gap(8),
+            Text(
+              '${formatBytes(message.meta['sent'])}/${formatBytes(message.meta['total'])}',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+      default:
+    }
+
     return Container(
       width: Get.width,
       padding: const EdgeInsets.symmetric(
@@ -85,174 +279,7 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
             mainAxisAlignment:
                 me ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: [
-              // if unknown
-              if (message.status == 'unknown')
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  ],
-                ),
-              // if sent
-              if (message.status == 'sending')
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time_rounded,
-                      size: 16,
-                      color: Colors.grey,
-                    ),
-                    Gap(8),
-                    Text(
-                      "در حال ارسال",
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              if (message.status == 'sent' || message.status == "deleted")
-                Row(
-                  children: [
-                    Icon(
-                      Icons.done_rounded,
-                      size: 16,
-                      color: Colors.grey.shade700,
-                    ),
-                    Gap(8),
-                    // date time
-                    Text(
-                      formatAgoChatMessage(message.sentAt.toString()),
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              if (message.status == 'seen')
-                Row(
-                  children: [
-                    Icon(
-                      Icons.done_all_rounded,
-                      size: 16,
-                      color: Colors.green,
-                    ),
-                    Gap(8),
-                    // date time
-                    Text(
-                      formatAgoChatMessage(message.sentAt.toString()),
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              if (message.status == "faild" ||
-                  message.status == "failed" ||
-                  message.status == "unuploaded")
-                Row(
-                  children: [
-                    Icon(
-                      Icons.error_outline_rounded,
-                      size: 16,
-                      color: Colors.red,
-                    ),
-                    Gap(8),
-                    Text(
-                      'ارسال نشد',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              // if undownloaded
-              if(message.status == "undownloaded")
-                Row(
-                  children: [
-                    Icon(
-                      Icons.error_outline_rounded,
-                      size: 16,
-                      color: Colors.red,
-                    ),
-                    Gap(8),
-                    Text(
-                      'دانلود نشد',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              // if downloading
-              if (message.status == "downloading")
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        value: double.parse(message.meta['percent'].toString()) /
-                            100,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                    const Gap(8),
-                    Text(
-                      '${message.meta['percent']}%',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Gap(8),
-                    Text(
-                      '${formatBytes(message.meta['received'] ?? message.meta['recive'] ?? 0)}/${formatBytes(message.meta['total'])}',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              // if uploading
-              if (message.status == "uploading")
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        value:
-                            double.parse(message.meta['percent'].toString()) /
-                                100,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                    const Gap(8),
-                    Text(
-                      '${message.meta['percent']}%',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Gap(8),
-                    Text(
-                      '${formatBytes(message.meta['sent'])}/${formatBytes(message.meta['total'])}',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+              footer,
             ],
           ),
         ],

@@ -114,6 +114,7 @@ class ApiAdminChatOneResponse {
   final String image;
   final String permissions;
   final int unread_count;
+  final DateTime updated_at;
 
   ApiAdminChatOneResponse({
     required this.title,
@@ -121,5 +122,6 @@ class ApiAdminChatOneResponse {
     required this.image,
     required this.permissions,
     required this.unread_count,
+    required this.updated_at,
   });
 }

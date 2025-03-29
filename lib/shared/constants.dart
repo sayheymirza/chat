@@ -58,7 +58,8 @@ class CONSTANTS {
 
   static String STORAGE_CALL_URL = 'call:URL';
 
-  static String STORAGE_VERIFY_PHONE_DESCRIPTION = 'app:verify_phone_description';
+  static String STORAGE_VERIFY_PHONE_DESCRIPTION =
+      'app:verify_phone_description';
 
   static String STORAGE_EYE_TIME = 'app:eye_time';
 
@@ -91,11 +92,7 @@ class CONSTANTS {
       'text': 'کارت به کارت',
       'icon': Icons.payments,
     },
-    {
-      'key': 'cafebazaar',
-      'text': 'کافه بازار',
-      'image': 'cafebazaar'
-    }
+    {'key': 'cafebazaar', 'text': 'کافه بازار', 'image': 'cafebazaar'}
   ];
 
   static Future<void> Load() async {

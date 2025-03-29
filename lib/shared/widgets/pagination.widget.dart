@@ -49,7 +49,7 @@ class _PaginationWidgetState extends State<PaginationWidget> {
           )
         : Container(
             margin: EdgeInsets.only(
-              bottom: Get.bottomBarHeight,
+              bottom: 36,
             ),
             padding: const EdgeInsets.symmetric(
               vertical: 10,

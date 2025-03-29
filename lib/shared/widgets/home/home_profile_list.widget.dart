@@ -10,6 +10,7 @@ class HomeProfileListWidget extends StatelessWidget {
   final String buttonText;
   final String buttonType;
   final List<ProfileSearchModel> profiles;
+  final String? emptyText;
 
   const HomeProfileListWidget({
     super.key,
@@ -17,6 +18,7 @@ class HomeProfileListWidget extends StatelessWidget {
     required this.icon,
     required this.buttonText,
     required this.buttonType,
+    required this.emptyText,
     required this.profiles,
   });
 
@@ -83,6 +85,41 @@ class HomeProfileListWidget extends StatelessWidget {
             ],
           ),
         ),
+        if (profiles.isEmpty)
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 12,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xffff2147),
+                  Color(0xffff8a8a),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  color: Colors.white,
+                ),
+                const Gap(10),
+                Text(
+                  emptyText ?? 'کاربری یافت نشد',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
         for (var item in profiles)
           UserWidget(
             item: item,

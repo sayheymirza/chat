@@ -1,17 +1,16 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/models/download_upload.model.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:crypto/crypto.dart';
-import 'package:convert/convert.dart';
 
 int uuid() {
   var now = DateTime.now();
@@ -235,9 +234,7 @@ class FileService extends GetxService {
       uploads[id] = output;
 
       // remove
-      if (result.success == false) {
-        uploads.remove(id);
-      }
+      uploads.remove(id);
 
       // if success (put to cache)
 

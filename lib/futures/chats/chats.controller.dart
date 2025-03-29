@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:chat/models/chat/chat.model.dart';
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 
@@ -12,14 +15,39 @@ class ChatsController extends GetxController {
   RxBool loading = false.obs;
   StreamSubscription<ChatListModel>? stream;
 
+  List<int> page_history = [];
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    event.on<EventModel>().listen((data) async {
+      if (data.event == 'reload_chats') {
+        load(statusing: false);
+      }
+    });
+  }
+
   @override
   void onClose() {
     stream?.cancel();
     super.onClose();
   }
 
+  void onBack() {
+    if (page_history.isNotEmpty) {
+      var last = page_history.last;
+
+      page.value = last;
+      load();
+
+      page_history.removeLast();
+    }
+  }
+
   void goToPage(int value) {
     if (loading.value == true) return;
+    page_history.add(page.value);
     page.value = value;
     load();
   }
@@ -28,30 +56,27 @@ class ChatsController extends GetxController {
     Get.toNamed('/app/chat/$id')!.then((_) => load());
   }
 
-  void load() async {
-    // if page is 1 use stream to get data
-    if (page.value == 1) {
-      if (stream != null) return;
+  void load({bool statusing = true}) async {
+    var result = await Services.chat.select(
+      page: page.value,
+      limit: 12,
+    );
 
-      var result = await Services.chat.list(
-        page: page.value,
-      );
+    chats.value = result.chats ?? [];
+    lastPage.value = result.last ?? 0;
 
-      stream = result.listen((event) {
-        chats.value = event.chats ?? [];
-        lastPage.value = event.last ?? 0;
-      });
+    if (statusing) {
+      statuses();
     } else {
-      // close stream
-      stream?.cancel();
-      stream = null;
-
-      var result = await Services.chat.select(
-        page: page.value,
-      );
-
-      chats.value = result.chats ?? [];
-      lastPage.value = result.last ?? 0;
+      update();
     }
+  }
+
+  void statuses() {
+    var ids = chats.map((e) => e.userId!).toList();
+
+    Services.user.statuses(userIds: ids);
+
+    log('[chats.controller.dart] list of users are $ids');
   }
 }

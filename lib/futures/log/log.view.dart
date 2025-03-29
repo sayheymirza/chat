@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chat/futures/log/log.controller.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';

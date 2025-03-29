@@ -24,6 +24,7 @@ abstract class ApiDataAbstract extends GetxService {
   });
 
   Future<ApiSimpleResponseModel> contact({
+    required String type,
     required String reciver,
     required String title,
     required String description,
