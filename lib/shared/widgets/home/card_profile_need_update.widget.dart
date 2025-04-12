@@ -1,30 +1,9 @@
-import 'package:chat/shared/color.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
-class CardDynamicWidget extends StatelessWidget {
-  final List<String> gradientColors;
-  final String title;
-  final String titleColor;
-  final String subtitle;
-  final String subtitleColor;
-  final String? buttonText;
-  final String? buttonOnTap;
-  final bool buttonVisable;
-  final bool closeable;
-
-  const CardDynamicWidget({
-    super.key,
-    required this.gradientColors,
-    required this.title,
-    required this.titleColor,
-    required this.subtitle,
-    required this.subtitleColor,
-    this.buttonText,
-    this.buttonOnTap,
-    required this.buttonVisable,
-    required this.closeable,
-  });
+class CardProfileNeedUpdateWidget extends StatelessWidget {
+  const CardProfileNeedUpdateWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +28,14 @@ class CardDynamicWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              if (title != null)
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: HexColor(titleColor),
-                  ),
+              const Text(
+                'اطلاعات پروفایل شما نیاز به ویرایش دارد',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
+              ),
             ],
           ),
           const Gap(20),
@@ -65,10 +44,7 @@ class CardDynamicWidget extends StatelessWidget {
             height: 48,
             child: OutlinedButton(
               onPressed: () {
-                if (buttonOnTap != null) {
-                  // Handle button tap
-                  // For example, navigate to a new screen or perform an action
-                }
+                Get.toNamed('/app/profile');
               },
               style: ButtonStyle(
                 padding: WidgetStateProperty.all(

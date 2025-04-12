@@ -31,7 +31,7 @@ class FlavorCafebazaar extends FlavorAbstract {
         });
       }
 
-      if(data.event == EVENTS.PURCHASE_NOT_CONSUMED) {
+      if (data.event == EVENTS.PURCHASE_NOT_CONSUMED) {
         listOfNotConsumed();
       }
     });
@@ -62,7 +62,6 @@ class FlavorCafebazaar extends FlavorAbstract {
   ) async {
     connectToPoolakey(onConnect: () async {
       try {
-
         print(params.sku);
         print(await Services.access.generate());
 
@@ -154,11 +153,11 @@ class FlavorCafebazaar extends FlavorAbstract {
   }
 
   void listOfNotConsumed() {
-    connectToPoolakey(
-      onConnect: () async {
+    connectToPoolakey(onConnect: () async {
+      try {
         var result = await FlutterPoolakey.getAllPurchasedProducts();
 
-        if(result.isNotEmpty) {
+        if (result.isNotEmpty) {
           var purchases = result.map((e) {
             return EventParchaseResultModel.success(
               e.productId,
@@ -172,10 +171,11 @@ class FlavorCafebazaar extends FlavorAbstract {
             value: purchases,
           );
         }
-      },
-      onError: () {
+      } catch (e) {
         //
       }
-    );
+    }, onError: () {
+      //
+    });
   }
 }

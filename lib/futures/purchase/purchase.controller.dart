@@ -41,12 +41,11 @@ class PurchaseController extends GetxController {
         if (data.value != null) {
           var result = data.value as EventParchaseResultModel;
 
-          consumeWithCafebazaar(
-            purchaseToken: result.token!,
-            sku: result.sku,
-          );
-
           if (result.status == "success") {
+            consumeWithCafebazaar(
+              purchaseToken: result.token!,
+              sku: result.sku,
+            );
           } else if (result.status == "failed") {
             showSnackbar(message: 'پرداخت ناموفق بود');
           } else if (result.status == "close") {

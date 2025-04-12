@@ -1,7 +1,7 @@
 name: chat
 description: A new Flutter project.
 publish_to: none
-version: 2.0.1+201
+version: 2.0.3+203
 environment:
   sdk: ^3.5.0
 dependencies:
@@ -62,10 +62,10 @@ dependencies:
   firebase_core: ^3.9.0
   firebase_analytics: ^11.3.6
   firebase_remote_config: ^5.3.0
-  flutter_poolakey:
-    path: ./lib/flavors/cafebazaar/flutter_poolakey
   flutter_markdown: ^0.7.6+2
   flutter_html_v3: ^3.0.6
+  flutter_poolakey:
+    path: ./lib/flavors/cafebazaar/flutter_poolakey
 dev_dependencies:
   flutter_test:
     sdk: flutter

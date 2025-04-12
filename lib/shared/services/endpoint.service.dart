@@ -11,6 +11,20 @@ class EndpointService extends GetxService {
 
   Future<bool> init() async {
     try {
+      // check last endpoint is working or not else try to find new endpoint
+      var lastEndpoint =
+          Services.configs.get(key: CONSTANTS.STORAGE_ENDPOINT_API);
+
+      if (lastEndpoint != null) {
+        var result = await work(endpoint: lastEndpoint);
+
+        if (result == true) {
+          log('[endpoint.service.dart] endpoint inited successfully');
+
+          return true;
+        }
+      }
+
       for (var site in sites) {
         var endpoint = await lookup(site: site);
 

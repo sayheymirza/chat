@@ -5,6 +5,7 @@ import 'package:chat/shared/widgets/home/card_dynamic.widget.dart';
 import 'package:chat/shared/widgets/home/card_earning_income.widget.dart';
 import 'package:chat/shared/widgets/home/card_enable_welcome_plan.widget.dart';
 import 'package:chat/shared/widgets/home/card_new_version.widget.dart';
+import 'package:chat/shared/widgets/home/card_profile_need_update.widget.dart';
 import 'package:chat/shared/widgets/home/home_profile_list.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,6 +51,10 @@ class HomeController extends GetxController {
 
           case 'card-new-version#1':
             components.add(CardNewVersionWidget());
+            break;
+
+          case 'card-profile-need-update#1':
+            components.add(CardProfileNeedUpdateWidget());
             break;
 
           case 'card-dynamic#1':

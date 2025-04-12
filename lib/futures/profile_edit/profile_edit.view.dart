@@ -523,8 +523,8 @@ class ProfileEditView extends GetView<ProfileEditController> {
                                     .dropdownsItems['marriageType']!
                                     .map((e) => e as DropdownMenuItem<String>)
                                     .toList(),
-                                decoration: const InputDecoration(
-                                  labelText: 'نوع ازدواج',
+                                decoration: InputDecoration(
+                                  labelText: 'marriage_type_title'.tr,
                                 ),
                                 validator: FormBuilderValidators.compose(
                                   [

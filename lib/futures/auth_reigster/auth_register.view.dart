@@ -556,24 +556,22 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
             ),
           ),
           const Gap(16),
-          if ('type'.tr == 'dating')
-            // mariage type
-            DropdownsWidget(
-              group: 'MarriageType',
-              name: 'marriageType',
-              items: controller.dropdownsItems['marriageType']!
-                  .map((e) => e as DropdownMenuItem<String>)
-                  .toList(),
-              decoration: const InputDecoration(
-                labelText: 'نوع ازدواج',
-              ),
-              validator: FormBuilderValidators.compose(
-                [
-                  FormBuilderValidators.required(),
-                ],
-              ),
+          // mariage type
+          DropdownsWidget(
+            group: 'MarriageType',
+            name: 'marriageType',
+            items: controller.dropdownsItems['marriageType']!
+                .map((e) => e as DropdownMenuItem<String>)
+                .toList(),
+            decoration: InputDecoration(
+              labelText: 'marriage_type_title'.tr,
             ),
-          if ('type'.tr == 'dating') const Gap(16),
+            validator: FormBuilderValidators.compose(
+              [
+                FormBuilderValidators.required(),
+              ],
+            ),
+          ),
           FormBuilderTextField(
             name: 'about',
             decoration: InputDecoration(

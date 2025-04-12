@@ -1,6 +1,6 @@
 import 'package:chat/futures/account_verify_phone/account_verify_phone.controller.dart';
+import 'package:chat/futures/dialog_sms_send_error/dialog_sms_send_error.view.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
-import 'package:chat/shared/widgets/card_numbers_blocked.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -64,7 +64,7 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
   Widget footer(BuildContext context) {
     return Obx(
       () => Container(
-        height: 420,
+        height: 180,
         width: Get.width,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -79,11 +79,6 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SizedBox(
-              width: Get.width - 32,
-              child: CardNumbersBlockedWidget(),
-            ),
-            const Gap(10),
             if (controller.sent.value)
               SizedBox(
                 width: Get.width - 32,
@@ -91,6 +86,11 @@ class AccountVerifyPhoneView extends GetView<AccountVerifyPhoneController> {
                   onPressed: controller.time.value != '00:00'
                       ? null
                       : () {
+                          Get.bottomSheet(
+                            const DialogSmsSendErrorView(),
+                            isScrollControlled: true,
+                          );
+
                           controller.requestOTP();
                         },
                   style: ButtonStyle(

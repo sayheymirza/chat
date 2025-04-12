@@ -1,7 +1,7 @@
 import 'package:chat/futures/auth_forgot/auth_forgot.controller.dart';
+import 'package:chat/futures/dialog_sms_send_error/dialog_sms_send_error.view.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/validator.dart';
-import 'package:chat/shared/widgets/card_numbers_blocked.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -40,7 +40,7 @@ class AuthForgotView extends GetView<AuthForgotController> {
               ),
               const Gap(10),
               const Text(
-                'شماره موبایل خود را وارد کنید تا رمز جدید برای شما ارسال شود',
+                'شماره موبایل خود را وارد کنید تا رمز عبور جدید برای شما ارسال شود',
               ),
               const Gap(32),
               FormBuilder(
@@ -81,7 +81,7 @@ class AuthForgotView extends GetView<AuthForgotController> {
 
   Widget footer() {
     return Container(
-      height: 314,
+      height: 180,
       width: Get.width,
       color: Colors.white,
       padding: EdgeInsets.only(
@@ -92,7 +92,16 @@ class AuthForgotView extends GetView<AuthForgotController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          CardNumbersBlockedWidget(),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton(
+              onPressed: () => Get.bottomSheet(
+                const DialogSmsSendErrorView(),
+                isScrollControlled: true,
+              ),
+              child: Text('رمز عبور جدید را دریافت نکرده اید ؟'),
+            ),
+          ),
           const Gap(10),
           Obx(
             () => SizedBox(

@@ -88,7 +88,7 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                           item(
-                            title: 'نوع رابطه',
+                            title: 'marriage_type_title'.tr,
                             value: data.marriageType!,
                             icon: const Icon(
                               Icons.favorite,

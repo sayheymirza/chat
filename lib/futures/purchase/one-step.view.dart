@@ -91,8 +91,12 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                 expansion(
                   expanded: controller.expanded.value == 1,
                   icon: Image.asset('lib/app/assets/images/star.png'),
-                  title: "بسته آگهی ویژه",
-                  subtitle: "نمایش به عنوان آگهی ویژه در صفحه اول",
+                  title: 'type'.tr == 'dating'
+                      ? "بسته آگهی همسریابی"
+                      : "بسته آگهی ویژه",
+                  subtitle: 'type'.tr == 'dating'
+                      ? "نمایش به عنوان آگهی همسریابی در صفحه اول"
+                      : "نمایش به عنوان آگهی ویژه در صفحه اول",
                   plans: controller.plans
                       .where((element) => element.category == "ads")
                       .toList(),
@@ -114,6 +118,10 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                 if (Services.profile.profile.value.plan?.specialDays != 0 ||
                     Services.profile.profile.value.plan?.adDays != 0)
                   expansion(
+                    disabled:
+                        (Services.profile.profile.value.plan?.specialDays ==
+                                0 ||
+                            Services.profile.profile.value.plan?.adDays == 0),
                     expanded: controller.expanded.value == 3,
                     icon: const Icon(
                       Icons.chat,
@@ -142,24 +150,29 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
     required String subtitle,
     required List<PlanModel> plans,
     required List<int> selectedPlans,
+    bool disabled = false,
   }) {
     return ExpansionPanel(
+      canTapOnHeader: !disabled,
       isExpanded: expanded,
-      canTapOnHeader: true,
-      backgroundColor: Get.theme.scaffoldBackgroundColor,
-      headerBuilder: (context, isExpanded) => ListTile(
-        leading: icon,
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+      backgroundColor:
+          disabled ? Colors.grey.shade100 : Get.theme.scaffoldBackgroundColor,
+      headerBuilder: (context, isExpanded) => Opacity(
+        opacity: disabled ? 0.3 : 1,
+        child: ListTile(
+          leading: icon,
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
-            fontSize: 12,
+          subtitle: Text(
+            subtitle,
+            style: const TextStyle(
+              fontSize: 12,
+            ),
           ),
         ),
       ),

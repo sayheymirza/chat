@@ -1,6 +1,7 @@
 import 'package:chat/app/shared/i18n.dart';
 import 'package:chat/app/shared/theme.dart';
 import 'package:chat/pages.dart';
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -33,7 +34,13 @@ class App extends StatelessWidget {
       ),
       getPages: pages,
       translations: I18NTranslations(),
-      locale: const Locale('fa', 'social'),
+      locale: Locale(
+        'fa',
+        ['direct', 'web', 'google-play']
+                .contains(CONSTANTS.FLAVOR.toLowerCase())
+            ? 'dating'
+            : 'social',
+      ),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

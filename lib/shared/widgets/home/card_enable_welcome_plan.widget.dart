@@ -15,7 +15,6 @@ class _CardEnableWelcomePlanWidgetState
     extends State<CardEnableWelcomePlanWidget> {
   bool loading = false;
   String time = 'کوتاهی';
-  bool hidden = false;
 
   @override
   initState() {
@@ -25,13 +24,6 @@ class _CardEnableWelcomePlanWidgetState
     if (time_value != null) {
       setState(() {
         time = time_value;
-      });
-    }
-
-    var hidden_value = Services.configs.get(key: 'config:show_welcome_package');
-    if (hidden_value != null) {
-      setState(() {
-        hidden = hidden_value == 'false';
       });
     }
   }
@@ -55,17 +47,11 @@ class _CardEnableWelcomePlanWidgetState
       Services.configs.set(key: 'config:show_welcome_package', value: 'false');
       Services.profile.fetchMyProfile();
       showSnackbar(message: 'بسته خوش آمد گویی با موفقیت فعال شد');
-      hidden = true;
-      if (mounted) {
-        setState(() {});
-      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (hidden) return Container();
-
     return Container(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

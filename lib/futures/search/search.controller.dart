@@ -49,7 +49,8 @@ class SearchViewController extends GetxController {
         filterable.value = false;
         break;
       case 'advertised':
-        title.value = 'آگهی شده ها';
+        title.value =
+            'type'.tr == 'dating' ? 'آگهی های همسریابی' : 'آگهی های ویژه';
         colors.value = [Colors.yellow.shade500, Colors.yellow.shade700];
         color.value = Colors.yellow.shade600;
         backable.value = true;
