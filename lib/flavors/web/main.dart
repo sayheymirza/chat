@@ -4,6 +4,7 @@ import 'package:chat/flavors/web/service.dart';
 import 'package:chat/run.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:web/web.dart' as web; // Add
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,5 +14,7 @@ void main() {
 
   CONSTANTS.FLAVOR = "web";
 
+  CONSTANTS.PAYMENT_CALLBACK =
+      "${web.window.location.protocol}//${web.window.location.host}/#/payment";
   run();
 }
