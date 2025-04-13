@@ -1,7 +1,7 @@
 name: chat
 description: A new Flutter project.
 publish_to: none
-version: 2.0.3+203
+version: 2.0.4+204
 environment:
   sdk: ^3.5.0
 dependencies:
@@ -82,7 +82,6 @@ flutter:
       fonts:
         - asset: lib/assets/fonts/YekanBakhFaNum-Regular.ttf
   assets:
-    - lib/app/app.env
     - lib/assets/images/empty.png
     - lib/assets/images/confetti.png
     - lib/app/assets/images/splash_logo.png

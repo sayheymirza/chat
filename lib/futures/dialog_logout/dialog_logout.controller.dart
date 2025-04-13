@@ -14,7 +14,11 @@ class DialogLogoutController extends GetxController {
 
       disabled.value = false;
 
-      Restart.restartApp();
+      if (GetPlatform.isWeb) {
+        Get.offAllNamed('/');
+      } else {
+        Restart.restartApp();
+      }
     } catch (e) {
       disabled.value = false;
       showSnackbar(message: 'خطا در هنگام خروج از حساب کاربری رخ داد');

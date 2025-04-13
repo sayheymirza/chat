@@ -240,6 +240,9 @@ class AccountView extends GetView<AccountController> {
       case 'direct':
         flavor = 'دانلود مستقیم';
         break;
+      case 'web':
+        flavor = 'وب اپلیکیشن';
+        break;
       default:
     }
 

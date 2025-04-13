@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: app
+    restart: always
+    networks:
+      app:
+        ipv4_address: 10.6.0.6
+
+networks:
+  app:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.6.0.0/16
+         gateway: 10.6.0.1

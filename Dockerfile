@@ -1,75 +1,49 @@
-# Dockerfile
-FROM ubuntu:22.04
+# Install Operating system and dependencies
+FROM ubuntu:20.04
 
-# Set environment variables
-ENV FLUTTER_HOME=/opt/flutter
-ENV FLUTTER_VERSION=3.24.3
-ENV JAVA_VERSION=22.0.2
-ENV PATH=$FLUTTER_HOME/bin:$PATH
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install necessary dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    unzip \
-    xz-utils \
-    zip \
-    libglu1-mesa \
-    wget \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update 
+RUN apt-get install -y curl git wget unzip libgconf-2-4 gdb libstdc++6 libglu1-mesa fonts-droid-fallback python3
+RUN curl -sL https://deb.nodesource.com/setup_21.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt-get install -y nodejs
+RUN apt-get clean
 
-# Install Java 22.0.2
-RUN wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz && \
-    tar xvf openjdk-22.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-22.0.2 /opt/jdk-22 && \
-    rm openjdk-22.0.2_linux-x64_bin.tar.gz
+ENV DEBIAN_FRONTEND=dialog
+ENV PUB_HOSTED_URL=https://pub.flutter-io.cn
+ENV FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 
-# Set JAVA_HOME and add Java to PATH
-ENV JAVA_HOME=/opt/jdk-22
-ENV PATH=$JAVA_HOME/bin:$PATH
+# download Flutter SDK from Flutter Github repo
+RUN git clone -b 3.27.3 https://github.com/flutter/flutter.git /usr/local/flutter
 
-# Verify Java installation
-RUN java -version
+# Set flutter environment path
+ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-# Download and setup Flutter
-RUN git clone https://github.com/flutter/flutter.git $FLUTTER_HOME && \
-    cd $FLUTTER_HOME && \
-    git fetch && \
-    git checkout $FLUTTER_VERSION
+# Run flutter doctor
+RUN flutter doctor
 
-# Setup Android SDK
-ENV ANDROID_HOME=/root/Android/sdk
-ENV PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+# Enable flutter web
+# RUN flutter channel master
+# RUN flutter upgrade
+RUN flutter config --enable-web
 
-# Create necessary directories
-RUN mkdir -p ${ANDROID_HOME}/cmdline-tools/latest
+# Copy files to container and build
+RUN mkdir /app/
+COPY . /app/
+WORKDIR /app/
+RUN flutter pub get --verbose
+# RUN flutter pub outdated
+# RUN flutter pub upgrade --major-versions
+RUN npm install --verbose
+RUN npm run cli:web
 
-# Download and setup Android command-line tools
-RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
-    unzip commandlinetools-linux-9477386_latest.zip && \
-    mv cmdline-tools/* ${ANDROID_HOME}/cmdline-tools/latest/ && \
-    rm -rf cmdline-tools commandlinetools-linux-9477386_latest.zip
+RUN flutter build web --target lib/flavors/web/main.dart --verbose
 
-# Accept licenses and install Android SDK packages
-RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses && \
-    ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+# Record the exposed port
+EXPOSE 9000
 
-# Set up workspace
-WORKDIR /app
-COPY . .
+# make server startup script executable and start the web server
+RUN ["chmod", "+x", "/app/server.sh"]
 
-# Initialize and update submodules
-RUN git submodule update --init --recursive
-
-# Pre-download Flutter dependencies
-RUN flutter precache
-RUN flutter doctor -v
-
-# Install project dependencies
-RUN flutter pub get
-
-RUN dart run build_runner build --delete-conflicting-outputs
-
-# Build APK with flavor - ARM64 only
-RUN flutter build apk --flavor direct --target lib/flavors/direct/main.dart --target-platform android-arm64 --verbose
+ENTRYPOINT [ "/app/server.sh"]

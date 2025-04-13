@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CONSTANTS {
   static String DEFAULT_ENDPOINT_API = "";
@@ -95,11 +94,7 @@ class CONSTANTS {
     {'key': 'cafebazaar', 'text': 'کافه بازار', 'image': 'cafebazaar'}
   ];
 
-  static Future<void> Load() async {
-    await dotenv.load(fileName: "lib/app/app.env");
-
-    CONSTANTS.DEFAULT_ENDPOINT_API = dotenv.env['DEFAULT_ENDPOINT_API']!;
-  }
+  static Future<void> Load() async {}
 
   static Map<String, String> get PAYMENT_METHODS_MAP {
     Map<String, String> output = {};
