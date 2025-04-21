@@ -34,6 +34,13 @@ class _PaginationWidgetState extends State<PaginationWidget> {
     controller.text = widget.page.toString();
   }
 
+  @override
+  void didUpdateWidget(covariant PaginationWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    controller.text = widget.page.toString();
+  }
+
   void setPage(int value) {
     setState(() {
       controller.text = value.toString();

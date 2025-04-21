@@ -14,36 +14,53 @@ class FavoritesView extends GetView<FavoritesController> {
   Widget build(BuildContext context) {
     Get.put(FavoritesController());
 
-    return Scaffold(
-      appBar: GradientAppBarWidget(
-        back: true,
-        title: 'علاقه مندی ها',
-      ),
-      body: Column(
-        children: [
-          TabBar(
-            controller: controller.tab,
-            onTap: (_) {
-              controller.onTabChange();
+    return Obx(
+      () => PopScope(
+        canPop: controller.pagination_history.isEmpty,
+        onPopInvokedWithResult: (_, __) {
+          if (controller.pagination_history.isEmpty) {
+            Get.back();
+          } else {
+            controller.onBack();
+          }
+        },
+        child: Scaffold(
+          appBar: GradientAppBarWidget(
+            back: true,
+            onBack: () {
+              if (controller.pagination_history.isEmpty) {
+                Get.back();
+              } else {
+                controller.onBack();
+              }
             },
-            tabs: const [
-              Tab(
-                text: "علاقه مندی های من",
+            title: 'علاقه مندی ها',
+          ),
+          body: Column(
+            children: [
+              TabBar(
+                controller: controller.tab,
+                onTap: (_) {
+                  controller.onTabChange();
+                },
+                tabs: const [
+                  Tab(
+                    text: "علاقه مندی های من",
+                  ),
+                  Tab(
+                    text: "علاقه مندان به من",
+                  ),
+                ],
               ),
-              Tab(
-                text: "علاقه مندان به من",
+              tabView(
+                loading: controller.loading.value,
+                profiles: controller.profiles,
+                lastPage: controller.lastPage.value,
+                page: controller.page.value,
               ),
             ],
           ),
-          Obx(
-            () => tabView(
-              loading: controller.loading.value,
-              profiles: controller.profiles,
-              lastPage: controller.lastPage.value,
-              page: controller.page.value,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

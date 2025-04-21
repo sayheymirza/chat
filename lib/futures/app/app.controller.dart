@@ -21,6 +21,7 @@ class AppController extends GetxController {
   RxInt view = 0.obs;
 
   bool purchasing = false;
+  List<int> viewsHistory = [];
 
   @override
   void onInit() {
@@ -187,8 +188,15 @@ class AppController extends GetxController {
   }
 
   void setView(int value) {
+    viewsHistory.add(view.value);
     view.value = value;
     log('[app.controller.dart] view changed to $value');
+  }
+
+  void back() {
+    var last = viewsHistory.removeLast();
+    view.value = last;
+    log('[app.controller.dart] view backed to $last');
   }
 
   Future<void> consumeNotConsumedPurchase({

@@ -28,7 +28,7 @@ abstract class ApiUserAbstract extends GetxService {
 
   Future<bool> deleteAvatar();
 
-  Future<ApiUserOTPRequestResponseModel> requestOTP();
+  Future<ApiUserOTPRequestResponseModel> requestOTP({required String sign});
 
   Future<ApiUserOTPVerifyResponseModel> verifyOTP({
     required String code,

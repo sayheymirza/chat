@@ -11,6 +11,7 @@ class FavoritesController extends GetxController
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxBool loading = false.obs;
+  List<dynamic> pagination_history = [];
 
   @override
   void onInit() {
@@ -24,11 +25,13 @@ class FavoritesController extends GetxController
     page.value = 1;
     profiles.value = List<ProfileSearchModel>.empty();
     lastPage.value = 0;
+    onPageChange(tab.index == 0 ? 1 : 0);
     submit();
   }
 
   void goToPage(int value) {
     if (loading.value == true) return;
+    onPageChange(tab.index);
     page.value = value;
     submit();
   }
@@ -52,5 +55,24 @@ class FavoritesController extends GetxController
       print(e);
       loading.value = false;
     }
+  }
+
+  void onPageChange(int tab) {
+    pagination_history.add({
+      "page": page.value,
+      "tab": tab,
+    });
+  }
+
+  void onBack() {
+    var last = pagination_history.removeLast();
+
+    print(last);
+
+    page.value = last['page'];
+    // tab.index = last['tab'];
+    tab.animateTo(last['tab']);
+
+    submit();
   }
 }

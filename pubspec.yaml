@@ -64,6 +64,7 @@ dependencies:
   firebase_remote_config: ^5.3.0
   flutter_markdown: ^0.7.6+2
   flutter_html_v3: ^3.0.6
+  sms_autofill: ^2.4.1
   flutter_poolakey:
     path: ./lib/flavors/cafebazaar/flutter_poolakey
 dev_dependencies:

@@ -1,7 +1,10 @@
+import 'package:chat/app/apis/api.dart';
+import 'package:chat/futures/dialog_delete_chat/dialog_delete_chat.view.dart';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/formats/date.format.dart';
 import 'package:chat/shared/services.dart';
+import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -10,11 +13,13 @@ import 'package:get/get.dart';
 class ChatItemWidget extends StatefulWidget {
   final ChatModel item;
   final Function onTap;
+  final bool deleteable;
 
   const ChatItemWidget({
     super.key,
     required this.item,
     required this.onTap,
+    this.deleteable = false,
   });
 
   @override
@@ -38,6 +43,28 @@ class _ChatItemWidgetState extends State<ChatItemWidget> {
 
     if (oldWidget.item != widget.item) {
       loadProfile();
+    }
+  }
+
+  void delete() async {
+    // confirm
+    var result = await Get.bottomSheet(
+      DialogDeleteChatView(),
+      isScrollControlled: true,
+    );
+
+    if (result == true) {
+      // delete all chats and delete chat
+      var id = widget.item.chatId!;
+      var result = await ApiService.chat.deleteChatWithChatId(chatId: id);
+      if (result) {
+        Get.back();
+        showSnackbar(message: 'چت شما حذف شد');
+        Services.chat.delete(chatId: id);
+        Services.message.deleteByChatId(chatId: id);
+      } else {
+        showSnackbar(message: 'خطا در حذف چت رخ داد');
+      }
     }
   }
 
@@ -67,9 +94,11 @@ class _ChatItemWidgetState extends State<ChatItemWidget> {
               widget.onTap();
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 20,
+              padding: const EdgeInsets.only(
+                top: 10,
+                left: 10,
+                right: 20,
+                bottom: 10,
               ),
               decoration: BoxDecoration(
                 border: Border(
@@ -145,6 +174,58 @@ class _ChatItemWidgetState extends State<ChatItemWidget> {
                         ),
                     ],
                   ),
+                  const Gap(10),
+                  PopupMenuButton(
+                    padding: EdgeInsets.all(0),
+                    child: Icon(
+                      Icons.more_vert_rounded,
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case "delete":
+                          delete();
+                          break;
+                        case "profile":
+                          Get.toNamed('/app/profile/${widget.item.userId}',
+                              arguments: {
+                                'options': true,
+                              });
+                          break;
+                        default:
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        const PopupMenuItem(
+                          value: "profile",
+                          child: Row(
+                            children: [
+                              Icon(Icons.person),
+                              SizedBox(width: 10),
+                              Text(
+                                "مشاهده پروفایل",
+                              ),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: "delete",
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "حذف چت",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
+                  ),
                 ],
               ),
             ),
@@ -166,8 +247,8 @@ class _ChatItemWidgetState extends State<ChatItemWidget> {
       String val = data['text'] ?? '';
       val = val.replaceAll('\n', ' ');
 
-      text = val.substring(0, val.length < 20 ? val.length : 20);
-      if (val.length > 20) {
+      text = val.substring(0, val.length < 15 ? val.length : 15);
+      if (val.length > 15) {
         text += '...';
       }
     } else if (type.startsWith('voice')) {

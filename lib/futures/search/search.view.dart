@@ -27,6 +27,13 @@ class SearchView extends GetView<SearchViewController> {
         child: Scaffold(
           appBar: GradientAppBarWidget(
             back: controller.backable.value,
+            onBack: () {
+              if (controller.filters_history.isEmpty) {
+                Get.back();
+              } else {
+                controller.onBack();
+              }
+            },
             title: controller.title.value,
             colors: controller.colors,
             left: controller.filterable.value

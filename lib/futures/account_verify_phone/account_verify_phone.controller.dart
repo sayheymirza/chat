@@ -8,6 +8,7 @@ import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class AccountVerifyPhoneController extends GetxController {
   ProfileService get profile => Get.find(tag: 'profile');
@@ -26,6 +27,23 @@ class AccountVerifyPhoneController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    SmsAutoFill().listenForCode();
+
+    SmsAutoFill().code.listen((value) {
+      code.value = value;
+      codeController.text = value;
+
+      Timer? autoTimer;
+
+      if (autoTimer != null) {
+        autoTimer.cancel();
+      }
+
+      autoTimer = Timer(const Duration(milliseconds: 300), () {
+        submit();
+      });
+    });
 
     var otp = Services.configs.get(key: 'OTP');
 
@@ -52,6 +70,8 @@ class AccountVerifyPhoneController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+
+    SmsAutoFill().unregisterListener();
 
     if (timer != null) {
       timer!.cancel();
@@ -81,7 +101,7 @@ class AccountVerifyPhoneController extends GetxController {
             .remainder(60); // ثانیه‌های باقیمانده را محاسبه می‌کنیم
 
         time.value =
-        '${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
+            '${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
 
         log('[account_verify_phone.controller.dart] ${time.value} remaning');
       }
@@ -97,7 +117,9 @@ class AccountVerifyPhoneController extends GetxController {
   void requestOTP() async {
     disabled.value = true;
 
-    var result = await ApiService.user.requestOTP();
+    var sign = await SmsAutoFill().getAppSignature;
+
+    var result = await ApiService.user.requestOTP(sign: sign);
 
     showSnackbar(message: result.message);
 

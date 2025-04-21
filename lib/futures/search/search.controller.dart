@@ -82,9 +82,9 @@ class SearchViewController extends GetxController {
 
   void goToPage(int value) {
     if (loading.value == true) return;
+    onPageChange();
     page.value = value;
     submit();
-    onPageChange();
   }
 
   Future<void> submit() async {
@@ -137,14 +137,12 @@ class SearchViewController extends GetxController {
 
   void onBack() {
     if (filters_history.isNotEmpty) {
-      var last = filters_history.last;
+      var last = filters_history.removeLast();
 
       filters = last;
       page.value = last.page ?? 1;
 
       submit();
-
-      filters_history.removeLast();
     }
   }
 
