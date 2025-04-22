@@ -6,8 +6,12 @@ const exec = util.promisify(require('node:child_process').exec);
 
 const functions = require('./functions');
 
-const execSync = (command = '') => {
-    return exec(command);
+const execSync = async (command = '') => {
+    const result = await exec(command);
+
+    if (result.stderr) {
+        console.error(result.stderr);
+    }
 }
 
 module.exports = {
@@ -44,38 +48,20 @@ module.exports = {
             choices: apps.map((app) => ({ name: app, value: app }))
         });
 
-        const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'apps', app, 'config.json')));
-
-        try {
-            console.log(`> Changing application id to ${config['id']}`);
-            await execSync(`dart run change_app_package_name:main ${config['id']}`);
-
-            console.log(`> Changing application deep link to ${config['id']}`);
-            await functions.changeDeepLink(config['id']);
-
-            console.log(`> Changing application name to ${config['name']}`);
-            await execSync(`dart run rename_app:main all="${config['name']}"`);
-
-            console.log(`> Changing application api branch to ${config['branch']}`);
-            process.chdir(path.join(__dirname, '..', '..', 'lib', 'app'));
-            await execSync(`git checkout ${config['branch']}`)
-            process.chdir(__dirname);
-
-            console.log(`> Changing application logo`);
-            await execSync(`flutter pub run flutter_launcher_icons -f ./scripts/cli/apps/${app}/flutter_launcher_icons.yaml`);
-            fs.rmSync(path.join(__dirname, `../../android/app/src/main/res/mipmap-anydpi-v26`), {
-                recursive: true,
-                force: true
-            });
-        } catch (error) {
-            console.error(error);
-            process.exit(1);
-        }
+        await functions.info(app);
     },
     async build() {
         const flavor = await select({
             message: 'Choose your flavor:',
             choices: [
+                {
+                    name: 'Google Play AAB',
+                    value: 'google-play-aab'
+                },
+                {
+                    name: 'Google Play',
+                    value: 'google-play'
+                },
                 {
                     name: 'Cafebazaar AAB',
                     value: 'cafebazaar-aab'
@@ -96,8 +82,14 @@ module.exports = {
         });
 
         switch (flavor) {
+            case 'google-play-aab':
+                await exec('flutter build appbundle --flavor google_play  --target lib/flavors/google-play/main.dart');
+                break;
             case 'cafebazaar-aab':
                 await exec('flutter build appbundle --flavor cafebazaar  --target lib/flavors/cafebazaar/main.dart');
+                break;
+            case 'google-play':
+                await exec('flutter build apk --flavor google_play --target lib/flavors/google-play/main.dart --split-per-abi');
                 break;
             case 'cafebazaar':
                 await exec('flutter build apk --flavor cafebazaar --target lib/flavors/cafebazaar/main.dart --split-per-abi');

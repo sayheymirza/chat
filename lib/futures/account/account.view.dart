@@ -243,6 +243,9 @@ class AccountView extends GetView<AccountController> {
       case 'web':
         flavor = 'وب اپلیکیشن';
         break;
+      case 'google-play':
+        flavor = 'گوگل پلی';
+        break;
       default:
     }
 

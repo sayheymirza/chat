@@ -14,7 +14,14 @@
         "type": "dart",
         "program": "lib/main.cafebazaar.dart",
         "args": ["--flavor", "cafebazaar", "--target", "lib/flavors/cafebazaar/main.dart" ]
-      }
+      },
+      {
+        "name": "google-play",
+        "request": "launch",
+        "type": "dart",
+        "program": "lib/main.google-play.dart",
+        "args": ["--flavor", "google_play", "--target", "lib/flavors/google-play/main.dart" ]
+      },
     ],
     "compounds": []
   }

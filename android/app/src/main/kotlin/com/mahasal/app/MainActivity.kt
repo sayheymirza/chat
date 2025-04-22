@@ -1,4 +1,4 @@
-package com.mahasal.app.mahasal
+package com.mahasal.app
 
 import io.flutter.embedding.android.FlutterActivity
 

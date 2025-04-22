@@ -1,0 +1,9 @@
+flutter_launcher_icons:
+  android: "ic_launcher"
+  image_path: "scripts/cli/apps/mahasal/logo.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "scripts/cli/apps/mahasal/logo.png"
+    background_color: "#ffffff"
+    theme_color: "#ffffff"
