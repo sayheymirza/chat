@@ -20,10 +20,10 @@ module.exports = {
             await execSync(`dart run change_app_package_name:main ${config['id']}`);
 
             console.log(`> Changing google services application id to ${config['id']}`);
-            await functions.changeGoogleServices(config['id']);
+            await this.changeGoogleServices(config['id']);
 
             console.log(`> Changing application deep link to ${config['id']}`);
-            await functions.changeDeepLink(config['id']);
+            await this.changeDeepLink(config['id']);
 
             console.log(`> Changing application name to ${config['name']}`);
             await execSync(`dart run rename_app:main all="${config['name']}"`);
