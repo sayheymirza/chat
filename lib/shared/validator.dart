@@ -32,6 +32,35 @@ List<String> englishNumbers = [
   '5'
 ];
 
+List<String> englishLetters = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z'
+];
+
 class CustomValidator {
   static FormFieldValidator<T> justEnglish<T>({
     required String errorText,
@@ -57,9 +86,8 @@ class CustomValidator {
           if (!justEnglishNumber(char)) continue;
           if (skipChars.contains(char)) continue;
 
-          var code = char.codeUnits.first;
-
-          if (!(code >= 1570 && code <= 1773)) {
+          // check char is english (uppercase and lowercase) in english letters
+          if (englishLetters.contains(char.toLowerCase())) {
             return errorText;
           }
         }
