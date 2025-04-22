@@ -9,7 +9,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ChatsView extends GetView<ChatsController> {
-  const ChatsView({super.key});
+  final Function()? onPageChange;
+
+  const ChatsView({
+    super.key,
+    this.onPageChange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +55,10 @@ class ChatsView extends GetView<ChatsController> {
                     page: controller.page.value,
                     onChange: (page) {
                       controller.goToPage(page);
+
+                      if (onPageChange != null) {
+                        onPageChange!();
+                      }
                     },
                   ),
                   const Gap(100),

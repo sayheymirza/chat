@@ -8,8 +8,13 @@ import 'package:get/get.dart';
 
 class SearchView extends GetView<SearchViewController> {
   final String? type;
+  final Function()? onPageChange;
 
-  const SearchView({super.key, this.type});
+  const SearchView({
+    super.key,
+    this.type,
+    this.onPageChange,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,9 @@ class SearchView extends GetView<SearchViewController> {
             left: controller.filterable.value
                 ? TextButton.icon(
                     onPressed: () {
-                      controller.openFilters();
+                      controller.openFilters(
+                        onPageChange: onPageChange,
+                      );
                     },
                     icon: Icon(
                       Icons.filter_alt_rounded,
@@ -80,6 +87,9 @@ class SearchView extends GetView<SearchViewController> {
                         color: controller.color.value,
                         onChange: (page) {
                           controller.goToPage(page);
+                          if (onPageChange != null) {
+                            onPageChange!();
+                          }
                         },
                       ),
                   ],

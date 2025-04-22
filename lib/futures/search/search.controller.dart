@@ -114,7 +114,9 @@ class SearchViewController extends GetxController {
     }
   }
 
-  void openFilters() {
+  void openFilters({
+    Function? onPageChange,
+  }) {
     Get.dialog(
       SearchFilterView(
         value: filters,
@@ -131,6 +133,10 @@ class SearchViewController extends GetxController {
         filters = values;
         page.value = 1;
         submit();
+
+        if (onPageChange != null) {
+          onPageChange();
+        }
       }
     });
   }

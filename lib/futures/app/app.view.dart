@@ -26,7 +26,7 @@ class AppView extends GetView<AppController> {
             Get.bottomSheet(
               DialogBackView(),
             ).then((value) {
-              if (value) {
+              if (value == true) {
                 if (GetPlatform.isAndroid) {
                   SystemNavigator.pop();
                 }
@@ -40,9 +40,16 @@ class AppView extends GetView<AppController> {
           ),
           body: [
             const HomeView(),
-            const ChatsView(),
-            const SearchView(
+            ChatsView(
+              onPageChange: () {
+                controller.setView(controller.view.value);
+              },
+            ),
+            SearchView(
               type: 'search',
+              onPageChange: () {
+                controller.setView(controller.view.value);
+              },
             ),
             const AccountView(),
           ][controller.view.value],
