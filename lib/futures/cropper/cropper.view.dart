@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chat/futures/cropper/cropper.controller.dart';
+import 'package:chat/shared/widgets/image_file.widget.dart';
 import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -95,8 +96,8 @@ class CropperView extends GetView<CropperController> {
         ),
         child: CropImage(
           controller: controller.cropController,
-          image: Image.file(
-            File(Get.arguments['path']),
+          image: CustomImageFile(
+            file: File(Get.arguments['path']),
           ),
         ),
       ),

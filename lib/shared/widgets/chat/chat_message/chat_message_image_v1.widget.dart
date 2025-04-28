@@ -5,6 +5,7 @@ import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
+import 'package:chat/shared/widgets/image_file.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -128,8 +129,8 @@ class _ChatMessageImageV1WidgetState extends State<ChatMessageImageV1Widget> {
                 left: -16,
                 right: -16,
                 bottom: -16,
-                child: Image.file(
-                  File(url),
+                child: CustomImageFile(
+                  file: File(url),
                   fit: BoxFit.cover,
                 ),
               ),

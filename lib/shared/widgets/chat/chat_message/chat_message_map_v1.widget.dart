@@ -4,6 +4,7 @@ import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
+import 'package:chat/shared/widgets/image_file.widget.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageMapV1Widget extends StatefulWidget {
@@ -128,8 +129,8 @@ class _ChatMessageMapV1WidgetState extends State<ChatMessageMapV1Widget> {
                 left: -16,
                 right: -16,
                 bottom: -16,
-                child: Image.file(
-                  File(image),
+                child: CustomImageFile(
+                  file: File(image),
                   fit: BoxFit.cover,
                 ),
               ),

@@ -1,8 +1,10 @@
-import 'dart:io';
+import 'dart:html' as html; // فقط برای وب
+import 'dart:io' as io;
 import 'dart:ui';
 
 import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -26,6 +28,7 @@ class CropperController extends GetxController {
 
   Future<void> submit() async {
     if (cropping.value) return;
+
     try {
       cropping.value = true;
 
@@ -33,31 +36,35 @@ class CropperController extends GetxController {
         quality: FilterQuality.low,
       );
 
-      // write to file in temp
-      final tempDir = await getTemporaryDirectory();
-
-      var path =
-          "${tempDir.path}/cropped.${DateTime.now().millisecondsSinceEpoch}.${Get.arguments['path'].split(".").last}";
-
-      var data = await bitmap.toByteData(
-        format: ImageByteFormat.png,
-      );
-
+      var data = await bitmap.toByteData(format: ImageByteFormat.png);
       var bytes = data!.buffer.asUint8List();
 
       var compressedBytes = await Services.compress.image(bytes: bytes);
 
-      // write file
-      await File(path).writeAsBytes(compressedBytes);
+      String path;
+
+      if (kIsWeb) {
+        // در وب: blob URL بساز
+        final blob = html.Blob([compressedBytes]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        path = url; // مسیر برابر با blob URL
+      } else {
+        // در موبایل/دسکتاپ: فایل واقعی بساز
+        final tempDir = await getTemporaryDirectory();
+
+        path =
+            "${tempDir.path}/cropped.${DateTime.now().millisecondsSinceEpoch}.${Get.arguments['path'].split(".").last}";
+
+        final file = io.File(path);
+        await file.writeAsBytes(compressedBytes);
+      }
 
       Get.back(
-        result: path,
+        result: path, // همیشه یک string میدی
       );
-
-      cropping.value = false;
     } catch (e) {
       print(e);
-
+    } finally {
       cropping.value = false;
     }
   }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
 import 'package:chat/shared/snackbar.dart';
+import 'package:chat/shared/widgets/image_file.widget.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -131,8 +132,8 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
                               left: 0,
                               right: 0,
                               bottom: 0,
-                              child: Image.file(
-                                file!,
+                              child: CustomImageFile(
+                                file: file!,
                                 fit: BoxFit.contain,
                               ),
                             ),

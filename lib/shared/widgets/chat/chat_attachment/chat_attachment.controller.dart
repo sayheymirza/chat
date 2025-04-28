@@ -1,6 +1,8 @@
+import 'dart:html' as html; // فقط برای وب
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -54,25 +56,25 @@ class ChatAttachmentController extends GetxController {
       );
 
       if (result != null) {
-        String path = result.files.first.path!;
-        var size = result.files.first.size;
+        String path = '';
 
-        // if (type == "video" && size >= 1e+8) {
-        //   Get.back();
-        //   showSnackbar(message: 'حجم فایل فیلم زیاد است');
-        //   return;
-        // }
-        //
-        // if (type == "audio" && size >= 2e+7) {
-        //   Get.back();
-        //   showSnackbar(message: 'حجم فایل موزیک زیاد است');
-        //   return;
-        // }
+        if (kIsWeb) {
+          // در وب: blob URL بساز
+          final blob = html.Blob([result.files.first.bytes]);
+          final url = html.Url.createObjectUrlFromBlob(blob);
+          path = url; // مسیر برابر با blob URL
+        } else {
+          path = result.files.first.path!;
+        }
+
+        var size = result.files.first.size;
 
         var data = {};
 
         if (type == "video" || type == "audio") {
-          var controller = VideoPlayerController.file(File(path));
+          var controller = kIsWeb
+              ? VideoPlayerController.networkUrl(Uri.parse(path))
+              : VideoPlayerController.file(File(path));
           await controller.initialize();
           data['duration'] = controller.value.duration.inMilliseconds;
         }
@@ -89,7 +91,8 @@ class ChatAttachmentController extends GetxController {
         );
       }
     } catch (e) {
-      //
+      print('[chat_attachment.controller.dart] error on pick:');
+      print(e.toString());
     }
   }
 
@@ -117,12 +120,13 @@ class ChatAttachmentController extends GetxController {
           result: {
             "action": 'image',
             "path": path,
-            "size": File(path).statSync().size,
+            "size": kIsWeb ? null : File(path).statSync().size,
           },
         );
       }
     } catch (e) {
-      //
+      print('[chat_attachment.controller.dart] error is:');
+      print(e);
     }
   }
 }

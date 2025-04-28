@@ -1,14 +1,17 @@
+import 'dart:async';
 import 'dart:developer';
+import 'dart:html' as html;
 import 'dart:io';
 import 'dart:math' as Math;
 
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:dio/dio.dart' as Dio;
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart';
-import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
+import 'package:path/path.dart';
 
 class HttpService extends GetxService {
   final Dio.Dio client = Dio.Dio();
@@ -149,21 +152,25 @@ class HttpService extends GetxService {
       headers['Authorization'] = 'Bearer $accessToken';
     }
 
-    // Get the file size for progress calculation
-    int fileSize = await file.length();
+    var bytes = await getBytesFromFileOrXFile(file);
 
     // mime
     var fileMime = lookupMimeType(file.path);
 
-    // Create a stream for the file
-    Stream<List<int>> fileStream = file.openRead();
-
     // Use Dio to upload the file in streaming mode
+    // Dio.FormData data = Dio.FormData.fromMap({
+    //   "file": Dio.MultipartFile(
+    //     fileStream, fileSize,
+    //     filename: basename(file.path),
+    //     // mime type
+    //     contentType: MediaType.parse(fileMime ?? 'application/octet-stream'),
+    //   ),
+    // });
+
     Dio.FormData data = Dio.FormData.fromMap({
-      "file": Dio.MultipartFile(
-        fileStream, fileSize,
+      "file": Dio.MultipartFile.fromBytes(
+        bytes.toList(),
         filename: basename(file.path),
-        // mime type
         contentType: MediaType.parse(fileMime ?? 'application/octet-stream'),
       ),
     });
@@ -173,6 +180,8 @@ class HttpService extends GetxService {
     var start = DateTime.now();
 
     log('[http.service.dart#$i] POST $path');
+
+    print('googing to upload ...');
 
     var response = await client.post(
       url,
@@ -197,5 +206,24 @@ class HttpService extends GetxService {
     log('[http.service.dart#$i] POST $path (${end.difference(start).inMilliseconds}ms)');
 
     return response.data;
+  }
+}
+
+Future<Uint8List> getBytesFromFileOrXFile(dynamic file) async {
+  if (kIsWeb) {
+    final response = await html.HttpRequest.request(
+      file.path,
+      responseType: 'arraybuffer',
+    );
+    // Convert NativeByteBuffer → Uint8List
+    final byteBuffer = response.response;
+    return byteBuffer.asUint8List();
+  } else {
+    // برای موبایل/دسکتاپ (غیر وب)
+    if (file is File) {
+      return await file.readAsBytes();
+    } else {
+      throw UnsupportedError('Unsupported file type on mobile');
+    }
   }
 }

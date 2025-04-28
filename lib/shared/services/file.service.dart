@@ -8,6 +8,7 @@ import 'package:chat/shared/services.dart';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -70,33 +71,41 @@ class FileService extends GetxService {
     Function(DUModel result)? onError,
   }) async {
     try {
-      // copy file to cache storage
-      var directory = Directory(
-        '${(await getApplicationCacheDirectory()).path}/files/$category',
-      );
+      String filePath = file.path;
 
-      if (!directory.existsSync()) {
-        directory.createSync(recursive: true);
+      if (!kIsWeb) {
+        // فقط موبایل/دسکتاپ
+        var directory = Directory(
+          '${(await getApplicationCacheDirectory()).path}/files/$category',
+        );
+
+        if (!directory.existsSync()) {
+          directory.createSync(recursive: true);
+        }
+
+        filePath = '${directory.path}/${basename(file.path)}';
+
+        // فایل رو کپی کن
+        if (!File(filePath).existsSync()) {
+          file.copySync(filePath);
+        }
       }
 
-      var filePath = '${directory.path}/${basename(file.path)}';
-
-      // check file is uploading or not
+      // فایل آماده است
       if (uploads.values.any((element) => element.file?.path == filePath)) {
-        // return the current upload
         return getUploadByFile(file);
       }
 
-      // copy file to cache storage
-      file.copySync(filePath);
-
-      file = File(filePath);
-
       var id = uuid();
-      var filename = basename(file.path);
+      var filename = basename(filePath);
       var cancelToken = CancelToken();
 
       log('[file.service.dart] upload started for id $id');
+
+      int fileSize = 0;
+      if (!kIsWeb) {
+        fileSize = await file.length(); // بدون خطا
+      }
 
       uploads[id] = DUModel(
         id: id,
@@ -104,7 +113,7 @@ class FileService extends GetxService {
         category: category,
         filename: filename,
         percent: 0,
-        total: file.statSync().size,
+        total: fileSize,
         sentOrRecived: 0,
         cancelToken: cancelToken,
         onDone: onDone,
@@ -114,7 +123,6 @@ class FileService extends GetxService {
         cache: cache,
       );
 
-      // make the notification
       Services.notification.progress(
         id: id,
         title: "آپلود $filename",
@@ -124,19 +132,13 @@ class FileService extends GetxService {
 
       cancelToken.whenCancel.whenComplete(() {
         log('[file.service.dart] upload canceled for id $id');
-        // delete it from queue
         uploads.remove(id);
-        // dismiss notification
         Services.notification.dismiss(id: id);
 
-        // onError
-        if (uploads[id]?.onError != null) {
-          log('[file.service.dart] upload onError for id $id');
-          uploads[id]!.onError!(uploads[id]!);
+        var upload = uploads[id];
+        if (upload?.onError != null) {
+          upload!.onError!(upload);
         }
-
-        // remove from uploads
-        uploads.remove(id);
       });
 
       var result = await ApiService.data.upload(
@@ -146,19 +148,20 @@ class FileService extends GetxService {
           int total = 0,
           int sent = 0,
         }) {
-          uploads[id]!.percent = percent;
-          uploads[id]!.sentOrRecived = sent;
+          if (uploads[id] != null) {
+            uploads[id]!.percent = percent;
+            uploads[id]!.sentOrRecived = sent;
 
-          Services.notification.progress(
-            id: id,
-            title: "آپلود $filename",
-            progress: percent.toDouble(),
-            channel: 'upload_channel',
-          );
+            Services.notification.progress(
+              id: id,
+              title: "آپلود $filename",
+              progress: percent.toDouble(),
+              channel: 'upload_channel',
+            );
 
-          if (uploads[id]?.onProgress != null) {
-            log('[file.service.dart] upload onProgress for id $id');
-            onProgress!(uploads[id]!);
+            if (uploads[id]?.onProgress != null) {
+              onProgress!(uploads[id]!);
+            }
           }
         },
         cancelToken: cancelToken,
@@ -180,8 +183,8 @@ class FileService extends GetxService {
         category: category,
         filename: filename,
         percent: 100,
-        total: file.statSync().size,
-        sentOrRecived: file.statSync().size,
+        total: fileSize,
+        sentOrRecived: fileSize,
         cancelToken: cancelToken,
         url: result.url,
         fileId: result.fileId,
@@ -189,68 +192,43 @@ class FileService extends GetxService {
         meta: meta,
       );
 
-      // onDone
-      if (uploads[id]!.onDone != null && result.success) {
-        log('[file.service.dart] upload onDone for id $id');
+      if (uploads[id]?.onDone != null && result.success) {
         uploads[id]!.onDone!(output);
       }
 
-      // onProgress
-      if (uploads[id]!.onProgress != null) {
-        log('[file.service.dart] upload onProgress for id $id');
+      if (uploads[id]?.onProgress != null) {
         uploads[id]!.onProgress!(output);
       }
 
-      // onError if result success is false
-      if (uploads[id]!.onError != null && !result.success) {
-        log('[file.service.dart] upload onProgress for id $id');
+      if (uploads[id]?.onError != null && !result.success) {
         uploads[id]!.onError!(output);
       }
 
-      if (result.success &&
-          uploads[id]?.cache == true &&
-          uploads[id]!.file!.existsSync()) {
-        // copy file to cache storage
-        var directory = Directory(
-          '${(await getApplicationCacheDirectory()).path}/files/$category',
-        );
-
-        if (!directory.existsSync()) {
-          directory.createSync(recursive: true);
-        }
-
-        var filePath = '${directory.path}/${basename(file.path)}';
-
+      // اگر موفق و cache خواسته شده
+      if (result.success && uploads[id]?.cache == true && !kIsWeb) {
+        var cacheFilePath = filePath;
         await database.into(database.cacheTable).insert(
               CacheTableCompanion.insert(
                 url: output.url!,
-                file: filePath,
-                size: output.file!.statSync().size,
+                file: cacheFilePath,
+                size: fileSize,
                 category: output.category,
               ),
             );
       }
 
-      uploads[id] = output;
-
-      // remove
       uploads.remove(id);
-
-      // if success (put to cache)
 
       return output;
     } catch (e) {
-      print(e);
+      print('[upload.service.dart] error is: $e');
 
-      // onError
       var model = getUploadByFile(file);
 
       if (model?.onError != null) {
-        log('[file.service.dart] upload onError for id ${model!.id}');
-        model.onError!(model);
+        model!.onError!(model);
       }
 
-      // remove
       if (model != null) {
         uploads.remove(model.id);
       }
@@ -275,6 +253,7 @@ class FileService extends GetxService {
       }
 
       var filename = basename(url);
+
       var directory = Directory(
         '${(await getApplicationCacheDirectory()).path}/downloads/$category',
       );

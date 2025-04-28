@@ -4,6 +4,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class NotificationService extends GetxService {
@@ -69,6 +70,8 @@ class NotificationService extends GetxService {
     required String title,
     String? body,
   }) {
+    if (kIsWeb) return Future.value();
+
     return AwesomeNotifications()
         .isNotificationAllowed()
         .then((isAllowed) async {
@@ -98,6 +101,8 @@ class NotificationService extends GetxService {
     required double progress,
     required String channel,
   }) {
+    if (kIsWeb) return Future.value();
+
     return AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (isAllowed) {
         AwesomeNotifications().createNotification(

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,6 +19,8 @@ class CacheService extends GetxService {
       required int recive,
     })? onPercent,
   }) async {
+    if (kIsWeb) return null;
+
     try {
       var file = await get(url: url);
 
@@ -36,6 +39,8 @@ class CacheService extends GetxService {
   }
 
   Future<File?> get({required String url}) async {
+    if (kIsWeb) return null;
+
     try {
       var query = database.select(database.cacheTable);
 
@@ -74,6 +79,8 @@ class CacheService extends GetxService {
       required int recive,
     })? onPercent,
   }) async {
+    if (kIsWeb) return null;
+
     try {
       var directory = Directory(
         '${(await getApplicationCacheDirectory()).path}/files/$category',
@@ -123,6 +130,8 @@ class CacheService extends GetxService {
     required String category,
     required File file,
   }) async {
+    if (kIsWeb) return;
+
     await database.into(database.cacheTable).insert(
           CacheTableCompanion.insert(
             url: url,
@@ -134,6 +143,8 @@ class CacheService extends GetxService {
   }
 
   Future<void> delete() async {
+    if (kIsWeb) return;
+
     try {
       await database.delete(database.cacheTable).go();
       var directory = Directory(

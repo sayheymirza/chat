@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:html' as html; // فقط برای وب
 import 'dart:io';
 
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -105,29 +107,42 @@ class MapViewController extends GetxController {
   }
 
   void submit() async {
-    // save file in temp
-    var tempDir = await getTemporaryDirectory();
+    late String path;
+    late Uint8List data;
 
-    var image = await screenshotController.captureAndSave(
-      tempDir.path,
-      fileName: 'map-${DateTime.now().millisecondsSinceEpoch}.png',
-    );
+    if (kIsWeb) {
+      data = (await screenshotController.capture())!;
+    } else {
+      // save file in temp
+      var tempDir = await getTemporaryDirectory();
+      path = (await screenshotController.captureAndSave(
+        tempDir.path,
+        fileName: 'map-${DateTime.now().millisecondsSinceEpoch}.png',
+      ))!;
 
-    // open file to ByteData
-    var data = await File(image!).readAsBytes();
+      // open file to ByteData
+      data = await File(path).readAsBytes();
+    }
 
     // compress image
     var compressedBytes = await Services.compress.image(bytes: data);
 
-    // write file
-    await File(image).writeAsBytes(compressedBytes);
+    if (kIsWeb) {
+      // در وب: blob URL بساز
+      final blob = html.Blob([data]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      path = url; // مسیر برابر با blob URL
+    } else {
+      // write file
+      await File(path).writeAsBytes(compressedBytes);
+    }
 
     Get.back(
       result: {
         'lat': position.value.latitude,
         'lon': position.value.longitude,
         'zoom': zoom.value,
-        'path': image,
+        'path': path,
       },
     );
   }

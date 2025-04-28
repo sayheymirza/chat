@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:chat/shared/services.dart';
+import 'package:chat/shared/widgets/image_file.widget.dart';
 import 'package:flutter/material.dart';
 
 class CachedImageWidget extends StatefulWidget {
@@ -29,6 +31,7 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
   bool errored = false;
   int downloading = 0;
   File? file;
+  Timer? timer;
 
   @override
   void initState() {
@@ -44,10 +47,16 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
   void didUpdateWidget(covariant CachedImageWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    load(
-      url: widget.url,
-      category: widget.category,
-    );
+    if (timer != null) {
+      timer!.cancel();
+    }
+
+    timer = Timer(Duration(milliseconds: 100), () {
+      load(
+        url: widget.url,
+        category: widget.category,
+      );
+    });
   }
 
   Future<void> load({
@@ -55,6 +64,8 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
     required String category,
   }) async {
     try {
+      if (file != null) return;
+
       if (!url.startsWith('http')) {
         file = File(url);
         if (mounted) {
@@ -138,8 +149,8 @@ class _CachedImageWidgetState extends State<CachedImageWidget> {
         decoration: BoxDecoration(
           color: widget.background ?? Colors.grey.shade200,
         ),
-        child: Image.file(
-          file!,
+        child: CustomImageFile(
+          file: file!,
           alignment: widget.alignment,
           fit: widget.fit,
           errorBuilder: (context, error, stackTrace) {
