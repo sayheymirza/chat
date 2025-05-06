@@ -1,8 +1,9 @@
 import 'dart:developer';
-import 'dart:html' as html; // فقط برای وب
 import 'dart:io';
 
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/platform/io_cropper_file.dart'
+    if (dart.html) 'package:chat/shared/web/web_cropper_file.dart' as platform;
 import 'package:chat/shared/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -127,15 +128,11 @@ class MapViewController extends GetxController {
     // compress image
     var compressedBytes = await Services.compress.image(bytes: data);
 
-    if (kIsWeb) {
-      // در وب: blob URL بساز
-      final blob = html.Blob([data]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      path = url; // مسیر برابر با blob URL
-    } else {
-      // write file
-      await File(path).writeAsBytes(compressedBytes);
+    if (!kIsWeb) {
+      File(path).deleteSync(recursive: true);
     }
+
+    path = await platform.getFilePath(compressedBytes, 'png');
 
     Get.back(
       result: {

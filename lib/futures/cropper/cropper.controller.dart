@@ -1,12 +1,10 @@
-import 'dart:html' as html; // فقط برای وب
-import 'dart:io' as io;
 import 'dart:ui';
 
+import 'package:chat/shared/platform/io_cropper_file.dart'
+    if (dart.html) 'package:chat/shared/web/web_cropper_file.dart' as platform;
 import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 
 class CropperController extends GetxController {
   CropController cropController = CropController(
@@ -41,23 +39,10 @@ class CropperController extends GetxController {
 
       var compressedBytes = await Services.compress.image(bytes: bytes);
 
-      String path;
-
-      if (kIsWeb) {
-        // در وب: blob URL بساز
-        final blob = html.Blob([compressedBytes]);
-        final url = html.Url.createObjectUrlFromBlob(blob);
-        path = url; // مسیر برابر با blob URL
-      } else {
-        // در موبایل/دسکتاپ: فایل واقعی بساز
-        final tempDir = await getTemporaryDirectory();
-
-        path =
-            "${tempDir.path}/cropped.${DateTime.now().millisecondsSinceEpoch}.${Get.arguments['path'].split(".").last}";
-
-        final file = io.File(path);
-        await file.writeAsBytes(compressedBytes);
-      }
+      String path = await platform.getFilePath(
+        compressedBytes,
+        Get.arguments['path'].split(".").last,
+      );
 
       Get.back(
         result: path, // همیشه یک string میدی

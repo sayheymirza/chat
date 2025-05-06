@@ -1,6 +1,7 @@
-import 'dart:html' as html; // فقط برای وب
 import 'dart:io';
 
+import 'package:chat/shared/widgets/chat/chat_attachment/io_cropper_file.dart'
+    if (dart.web) 'package:chat/shared/widgets/chat/chat_attachment/web_cropper_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -56,16 +57,7 @@ class ChatAttachmentController extends GetxController {
       );
 
       if (result != null) {
-        String path = '';
-
-        if (kIsWeb) {
-          // در وب: blob URL بساز
-          final blob = html.Blob([result.files.first.bytes]);
-          final url = html.Url.createObjectUrlFromBlob(blob);
-          path = url; // مسیر برابر با blob URL
-        } else {
-          path = result.files.first.path!;
-        }
+        String path = getFilePath(result.files.first);
 
         var size = result.files.first.size;
 
