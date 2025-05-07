@@ -6,6 +6,7 @@ import 'package:chat/models/call.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:gap/gap.dart';
@@ -101,61 +102,9 @@ class CallView extends GetView<CallController> {
                   ),
                 ),
               ),
-              InAppWebView(
-                initialSettings: InAppWebViewSettings(
-                  iframeAllow: "camera; microphone",
-                  // for camera and microphone permissions
-                  iframeAllowFullscreen: true,
-                  // if you need fullscreen support
-                  mediaPlaybackRequiresUserGesture: false,
-                  allowsInlineMediaPlayback: true,
-                  transparentBackground: true,
-                ),
-                onPermissionRequest: (controller, permissionRequest) async {
-                  return PermissionResponse(
-                    resources: permissionRequest.resources,
-                    action: PermissionResponseAction.GRANT,
-                  );
-                },
-                onWebViewCreated: (ctx) async {
-                  controller.web = ctx;
-
-                  await ctx.addWebMessageListener(
-                    WebMessageListener(
-                      jsObjectName: "flutter",
-                      onPostMessage:
-                          (message, sourceOrigin, isMainFrame, replyProxy) {
-                        if (message?.data != null &&
-                            message?.type == WebMessageType.STRING) {
-                          var json = jsonDecode(message!.data.toString());
-
-                          var result = onMessage(json);
-
-                          replyProxy.postMessage(
-                            WebMessage(
-                              data: jsonEncode(result),
-                              type: WebMessageType.STRING,
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                  );
-
-                  ctx.addJavaScriptHandler(
-                    handlerName: 'flutter',
-                    callback: (JavaScriptHandlerFunctionData e) {
-                      var d = e.args.firstOrNull;
-                      if (d != null) {
-                        var json = d;
-
-                        return onMessage(json);
-                      }
-                    },
-                  );
-
-                  await ctx.loadUrl(urlRequest: URLRequest(url: WebUri(url)));
-                },
+              webview(
+                url: url,
+                onMessage: onMessage,
               ),
               if (controller.profile.value.avatar != null)
                 Positioned(
@@ -256,6 +205,100 @@ class CallView extends GetView<CallController> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget webview({
+    required String url,
+    required Function(dynamic json) onMessage,
+  }) {
+    return InAppWebView(
+      initialSettings: InAppWebViewSettings(
+        iframeAllow: "camera; microphone",
+        // for camera and microphone permissions
+        iframeAllowFullscreen: true,
+        // if you need fullscreen support
+        mediaPlaybackRequiresUserGesture: false,
+        allowsInlineMediaPlayback: true,
+        transparentBackground: true,
+      ),
+      onPermissionRequest: (controller, permissionRequest) async {
+        return PermissionResponse(
+          resources: permissionRequest.resources,
+          action: PermissionResponseAction.GRANT,
+        );
+      },
+      onWebViewCreated: (ctx) async {
+        controller.web = ctx;
+
+        if (await WebViewFeature.isFeatureSupported(
+            WebViewFeature.WEB_MESSAGE_LISTENER)) {
+          await ctx.addWebMessageListener(
+            WebMessageListener(
+              jsObjectName: "flutter",
+              onPostMessage: (message, sourceOrigin, isMainFrame, replyProxy) {
+                if (message?.data != null &&
+                    message?.type == WebMessageType.STRING) {
+                  var json = jsonDecode(message!.data.toString());
+
+                  var result = onMessage(json);
+
+                  replyProxy.postMessage(
+                    WebMessage(
+                      data: jsonEncode(result),
+                      type: WebMessageType.STRING,
+                    ),
+                  );
+                }
+              },
+            ),
+          );
+        }
+
+        if (await WebViewFeature.isFeatureSupported(
+            WebViewFeature.CREATE_WEB_MESSAGE_CHANNEL)) {
+          var webMessageChannel = await ctx.createWebMessageChannel();
+          var port1 = webMessageChannel!.port1;
+
+          await port1.setWebMessageCallback((message) async {
+            print("Message coming from the JavaScript side: $message");
+            // when it receives a message from the JavaScript side, respond back with another message.
+            await port1.postMessage(
+              WebMessage(data: message!.data + " and back"),
+            );
+          });
+
+          ctx.postWebMessage(
+            message: WebMessage(
+              data: {'event': 'handshake'},
+              ports: [port1],
+            ),
+            targetOrigin: WebUri("*"),
+          );
+        }
+
+        if (!kIsWeb) {
+          ctx.addJavaScriptHandler(
+            handlerName: 'flutter',
+            callback: (JavaScriptHandlerFunctionData e) {
+              var d = e.args.firstOrNull;
+              if (d != null) {
+                var json = d;
+
+                return onMessage(json);
+              }
+            },
+          );
+
+          ctx.postWebMessage(
+            message: WebMessage(
+              data: {'event': 'handshake'},
+            ),
+          );
+        }
+
+        await ctx.loadUrl(urlRequest: URLRequest(url: WebUri(url)));
+      },
     );
   }
 
