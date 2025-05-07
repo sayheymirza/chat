@@ -4,19 +4,15 @@ import 'package:chat/models/call.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
+import 'package:livekit_client/livekit_client.dart';
 
 class CallController extends GetxController {
-  InAppWebViewController? web;
+  // livekit
+  Room room = Room();
 
   RxBool microphone = true.obs;
   RxBool camera = true.obs;
-  RxString selected_camera = "default".obs;
-  RxString selected_speaker = "default".obs;
-
-  RxList<dynamic> devices = [].obs;
 
   Rx<ProfileModel> profile = ProfileModel().obs;
   RxBool profiling = true.obs;
@@ -51,13 +47,61 @@ class CallController extends GetxController {
   }
 
   @override
-  void onClose() {
+  void onClose() async {
     super.onClose();
+
+    await room.dispose();
 
     Services.configs.unset(key: CONSTANTS.CALL_INCALL);
 
     if (timer != null) {
       timer!.cancel();
+    }
+  }
+
+  Future<void> connect({
+    required String url,
+    required String token,
+  }) async {
+    print('[call.controller.dart] connecting ...');
+
+    try {
+      await room.connect(url, token);
+      print('[call.controller.dart] connect success');
+    } catch (e) {
+      print('[call.controller.dart] connect error: $e');
+      return;
+    }
+
+    // check microphone
+    try {
+      if (microphone.value) {
+        await room.localParticipant!.setMicrophoneEnabled(true);
+        print('[call.controller.dart] microphone enabled');
+      } else {
+        await room.localParticipant!.setMicrophoneEnabled(false);
+        print('[call.controller.dart] microphone disabled');
+      }
+    } catch (e) {
+      print('[call.controller.dart] microphone error: $e');
+    }
+
+    try {
+      // check camera
+      if (camera.value) {
+        await room.localParticipant!.setCameraEnabled(true);
+        print('[call.controller.dart] camera enabled');
+      } else {
+        await room.localParticipant!.setCameraEnabled(false);
+        print('[call.controller.dart] camera disabled');
+      }
+    } catch (e) {
+      print('[call.controller.dart] camera error: $e');
+    }
+
+    // update Getx Obx (when room updated)
+    if (camera.value) {
+      profiling.value = false;
     }
   }
 
@@ -92,64 +136,39 @@ class CallController extends GetxController {
 
   Future<void> microphoneToggle() async {
     microphone.value = !microphone.value;
+
+    try {
+      if (microphone.value) {
+        await room.localParticipant!.setMicrophoneEnabled(true);
+        print('[call.controller.dart] microphone enabled');
+      } else {
+        await room.localParticipant!.setMicrophoneEnabled(false);
+        print('[call.controller.dart] microphone disabled');
+      }
+    } catch (e) {
+      print('[call.controller.dart] microphone error: $e');
+    }
   }
 
   Future<void> cameraToggle() async {
     camera.value = !camera.value;
+
+    try {
+      // check camera
+      if (camera.value) {
+        await room.localParticipant!.setCameraEnabled(true);
+        print('[call.controller.dart] camera enabled');
+      } else {
+        await room.localParticipant!.setCameraEnabled(false);
+        print('[call.controller.dart] camera disabled');
+      }
+    } catch (e) {
+      print('[call.controller.dart] camera error: $e');
+    }
   }
 
   Future<void> hangup() async {
     Services.call.action(type: CALL_ACTIONS.END);
     Services.call.close();
-  }
-
-  Future<void> openDevicesDialog() async {
-    var _devices = [...devices.value];
-
-    var result = await Get.bottomSheet(
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(12),
-            topLeft: Radius.circular(12),
-          ),
-        ),
-        child: ListView(
-          children: [
-            for (var device in _devices)
-              ListTile(
-                onTap: () {
-                  Get.back(result: device);
-                },
-                leading: device['kind'] == 'audioinput'
-                    ? Icon(Icons.speaker)
-                    : Icon(Icons.camera_alt_rounded),
-                title: Text(
-                  device['label'].isEmpty ? 'Default' : device['label'],
-                  style: TextStyle(
-                    color: selected_camera.value == device['deviceId'] ||
-                            selected_speaker.value == device['deviceId']
-                        ? Get.theme.colorScheme.primary
-                        : Colors.black,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-
-    print(result);
-
-    if (result != null) {
-      if (result['kind'] == 'audioinput') {
-        selected_speaker.value = result['deviceId'];
-      }
-
-      if (result['kind'] == 'videoinput') {
-        selected_camera.value = result['deviceId'];
-      }
-    }
   }
 }

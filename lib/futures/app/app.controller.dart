@@ -159,6 +159,7 @@ class AppController extends GetxController {
       }
 
       if (data.event == EVENTS.SOCKET_INCOMING_CALL_DECLINE) {
+        return;
         Services.sound.stop(type: 'ringtone');
         Services.sound.play(type: 'beep-beep');
         Services.sound.stop(type: 'dialing');
@@ -173,6 +174,7 @@ class AppController extends GetxController {
       }
 
       if (data.event == EVENTS.SOCKET_INCOMING_CALL_END) {
+        return;
         Services.sound.stop(type: 'ringtone');
         Services.sound.stop(type: 'dialing');
         Services.call.close();

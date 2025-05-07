@@ -1,16 +1,11 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:chat/futures/call/call.controller.dart';
-import 'package:chat/models/call.model.dart';
-import 'package:chat/shared/constants.dart';
-import 'package:chat/shared/services.dart';
+import 'package:chat/futures/call/participant.view.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+
+import 'video.widget.dart';
 
 class CallView extends GetView<CallController> {
   const CallView({super.key});
@@ -19,15 +14,10 @@ class CallView extends GetView<CallController> {
   Widget build(BuildContext context) {
     Get.put(CallController());
 
+    var url = 'https://livekit.catroom.ir';
     var token = Get.parameters['token'] ?? Get.arguments?['token'];
 
-    var mode = Get.parameters['mode'] ?? Get.arguments['mode'] ?? 'video';
-    var url = Services.configs.get(key: CONSTANTS.STORAGE_CALL_URL);
-
-    url = url.replaceAll('\$1', token);
-    url = url.replaceAll('\$2', mode);
-
-    print(url);
+    var mode = Get.parameters['mode'] ?? Get.arguments?['mode'] ?? 'video';
 
     if (mode == "audio") {
       controller.microphone.value = true;
@@ -37,47 +27,12 @@ class CallView extends GetView<CallController> {
       controller.camera.value = true;
     }
 
-    onMessage(dynamic json) {
-      var event = json['event'];
-      var data = json['data'];
+    print('tring connect to ...');
 
-      log('[call.view.dart] got $event event with $data');
-
-      if (event == 'init') {
-        return {
-          'event': 'init',
-          'data': {
-            'token': token,
-            'mode': mode,
-          },
-        };
-      }
-
-      if (event == 'state') {
-        print('state is $data');
-        if (data == 'connected') {
-          Services.sound.stop(type: 'ringtone');
-          Services.sound.stop(type: 'dialing');
-          controller.durationing();
-        }
-      }
-
-      if (event == 'options') {
-        Services.call.action(type: CALL_ACTIONS.HEARTBEAT);
-
-        // controller.devices.value = data['devices'];
-
-        return {
-          'event': 'options',
-          'data': {
-            'video': controller.camera.value,
-            'audio': controller.microphone.value,
-            'audio_device': controller.selected_speaker.value,
-            'video_device': controller.selected_camera.value,
-          }
-        };
-      }
-    }
+    controller.connect(
+      url: url,
+      token: token,
+    );
 
     return Obx(
       () => PopScope(
@@ -102,10 +57,40 @@ class CallView extends GetView<CallController> {
                   ),
                 ),
               ),
-              webview(
-                url: url,
-                onMessage: onMessage,
+              if (controller.camera.value &&
+                  controller.room.localParticipant != null)
+                SizedBox(
+                  width: Get.width,
+                  height: Get.height,
+                  child: VideoView(
+                    participant: controller.room.localParticipant!,
+                  ),
+                ),
+              // remote participant video small on top right
+              Positioned(
+                top: Get.mediaQuery.padding.top + 20,
+                right: 20,
+                child: Row(children: [
+                  // ...controller.room.remoteParticipants.values
+                  //     .map((_, participant) {
+                  //   return ParticipantView(
+                  //     participant: participant,
+                  //   );
+                  // }),
+
+                  ...controller.room.remoteParticipants.values
+                      .map((participant) {
+                    return SizedBox(
+                      width: 100,
+                      height: 140,
+                      child: ParticipantView(
+                        participant: participant,
+                      ),
+                    );
+                  }),
+                ]),
               ),
+
               if (controller.profile.value.avatar != null)
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 100,
@@ -205,100 +190,6 @@ class CallView extends GetView<CallController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget webview({
-    required String url,
-    required Function(dynamic json) onMessage,
-  }) {
-    return InAppWebView(
-      initialSettings: InAppWebViewSettings(
-        iframeAllow: "camera; microphone",
-        // for camera and microphone permissions
-        iframeAllowFullscreen: true,
-        // if you need fullscreen support
-        mediaPlaybackRequiresUserGesture: false,
-        allowsInlineMediaPlayback: true,
-        transparentBackground: true,
-      ),
-      onPermissionRequest: (controller, permissionRequest) async {
-        return PermissionResponse(
-          resources: permissionRequest.resources,
-          action: PermissionResponseAction.GRANT,
-        );
-      },
-      onWebViewCreated: (ctx) async {
-        controller.web = ctx;
-
-        if (await WebViewFeature.isFeatureSupported(
-            WebViewFeature.WEB_MESSAGE_LISTENER)) {
-          await ctx.addWebMessageListener(
-            WebMessageListener(
-              jsObjectName: "flutter",
-              onPostMessage: (message, sourceOrigin, isMainFrame, replyProxy) {
-                if (message?.data != null &&
-                    message?.type == WebMessageType.STRING) {
-                  var json = jsonDecode(message!.data.toString());
-
-                  var result = onMessage(json);
-
-                  replyProxy.postMessage(
-                    WebMessage(
-                      data: jsonEncode(result),
-                      type: WebMessageType.STRING,
-                    ),
-                  );
-                }
-              },
-            ),
-          );
-        }
-
-        if (await WebViewFeature.isFeatureSupported(
-            WebViewFeature.CREATE_WEB_MESSAGE_CHANNEL)) {
-          var webMessageChannel = await ctx.createWebMessageChannel();
-          var port1 = webMessageChannel!.port1;
-
-          await port1.setWebMessageCallback((message) async {
-            print("Message coming from the JavaScript side: $message");
-            // when it receives a message from the JavaScript side, respond back with another message.
-            await port1.postMessage(
-              WebMessage(data: message!.data + " and back"),
-            );
-          });
-
-          ctx.postWebMessage(
-            message: WebMessage(
-              data: {'event': 'handshake'},
-              ports: [port1],
-            ),
-            targetOrigin: WebUri("*"),
-          );
-        }
-
-        if (!kIsWeb) {
-          ctx.addJavaScriptHandler(
-            handlerName: 'flutter',
-            callback: (JavaScriptHandlerFunctionData e) {
-              var d = e.args.firstOrNull;
-              if (d != null) {
-                var json = d;
-
-                return onMessage(json);
-              }
-            },
-          );
-
-          ctx.postWebMessage(
-            message: WebMessage(
-              data: {'event': 'handshake'},
-            ),
-          );
-        }
-
-        await ctx.loadUrl(urlRequest: URLRequest(url: WebUri(url)));
-      },
     );
   }
 

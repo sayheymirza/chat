@@ -16,15 +16,19 @@ class CallService extends GetxService {
   }
 
   void action({required String type, String? userId}) {
-    var call = Services.configs.get(key: CONSTANTS.CALL_INCALL);
+    try {
+      var call = Services.configs.get(key: CONSTANTS.CALL_INCALL);
 
-    ApiService.socket.send(
-      event: CALL_EVENTS.ACTION,
-      data: {
-        'action': type,
-        'user_id': userId ?? call['userId'] ?? call['user_id'],
-      },
-    );
+      ApiService.socket.send(
+        event: CALL_EVENTS.ACTION,
+        data: {
+          'action': type,
+          'user_id': userId ?? call['userId'] ?? call['user_id'],
+        },
+      );
+    } catch (e) {
+      //
+    }
   }
 
   void make({
