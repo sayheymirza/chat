@@ -48,6 +48,8 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
       }
     });
 
+    print(widget.message.data['url']);
+
     controller.load(
         url: widget.message.data['url'],
         message: widget.message,
@@ -128,7 +130,7 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
           message.data['file_id'] = result.fileId;
           message.status = "sending";
 
-          Services.message.update(message: message);
+          Services.message.update(message: message).then(print);
         }
       },
     );

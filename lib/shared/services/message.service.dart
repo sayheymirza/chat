@@ -82,15 +82,15 @@ class MessageService extends GetxService {
       for (var message in result.messages) {
         var data = MessageTableCompanion(
           message_id: drift.Value(message.messageId!),
-          local_id: drift.Value(message.localId),
+          local_id: drift.Value(message.localId!),
           chat_id: drift.Value(message.chatId!),
           status: drift.Value(message.status!),
           sender_id: drift.Value(message.senderId!),
           sent_at: drift.Value(message.sentAt!),
           type: drift.Value(message.type!),
-          data: drift.Value(message.data),
-          meta: drift.Value(message.meta),
-          theme: drift.Value(message.theme),
+          data: drift.Value(message.data!),
+          meta: drift.Value(message.meta!),
+          theme: drift.Value(message.theme!),
           seq: drift.Value(double.parse(message.seq.toString())),
         );
 
@@ -126,6 +126,7 @@ class MessageService extends GetxService {
 
       return datas;
     } catch (e) {
+      print('error on sync api with database');
       print(e);
 
       return [];
@@ -449,6 +450,8 @@ class MessageService extends GetxService {
 
       return result.isNotEmpty;
     } catch (error) {
+      print('[message.service.dart] error on update message');
+      print(error);
       return false;
     }
   }

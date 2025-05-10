@@ -6,6 +6,8 @@ class CONSTANTS {
 
   static String CURRENT_CHAT = "chat:id";
 
+  static String STORAGE_PROFILE = 'profile';
+
   static String STORAGE_ENDPOINT_API = "endpoint:api";
   static String STORAGE_ENDPOINT_SOCKET = "endpoint:socket";
   static String STORAGE_ACCESS_TOKEN = "app:access_token";
@@ -13,6 +15,8 @@ class CONSTANTS {
   static String STORAGE_SETTINGS_SOUND_CHAT = "settings:sound_chat";
   static String STORAGE_SETTINGS_SOUND_CALL = "settings:sound_call";
   static String STORAGE_SETTINGS_VIBRATION = "settings:vibration";
+
+  static String STORAGE_LIVEKIT_URL = "livekit:url";
 
   static String STORAGE_MAP_TYPE = "map:type";
   static String STORAGE_MAP_URL = "map:url";
@@ -54,8 +58,6 @@ class CONSTANTS {
 
   static String STORAGE_LATEST_VERSION = 'version:latest';
   static String STORAGE_DEPRECATED_VERSION = 'version:deprecated';
-
-  static String STORAGE_CALL_URL = 'call:URL';
 
   static String STORAGE_VERIFY_PHONE_DESCRIPTION =
       'app:verify_phone_description';

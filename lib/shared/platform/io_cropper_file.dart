@@ -4,6 +4,7 @@ import 'dart:typed_data'; // فقط برای وب
 import 'package:path_provider/path_provider.dart';
 
 Future<String> getFilePath(Uint8List compressedBytes, String ext) async {
+  print("getFilePath on mobile");
   // در موبایل/دسکتاپ: فایل واقعی بساز
   final tempDir = await getTemporaryDirectory();
 

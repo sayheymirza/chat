@@ -5,8 +5,9 @@ import 'dart:math' as Math;
 
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
-import 'package:chat/shared/platform/io_file_reader.dart'
-    if (dart.html) 'package:chat/shared/web/web_file_reader.dart' as platform;
+import 'package:chat/shared/platform/web_file_reader.dart'
+    if (dart.library.io) 'package:chat/shared/web/io_file_reader.dart'
+    as platform;
 import 'package:dio/dio.dart' as Dio;
 import 'package:get/get.dart';
 import 'package:http_parser/http_parser.dart';
@@ -181,6 +182,7 @@ class HttpService extends GetxService {
       ),
       cancelToken: cancelToken,
       onSendProgress: (int sent, int total) {
+        print('onSendProgress: $sent / $total');
         var progress = Math.min(((100 * sent) / total).ceil(), 100);
 
         callback(

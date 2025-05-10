@@ -43,6 +43,19 @@ class PlayerController {
   }) async {
     // File? result;
 
+    // if url start with blob
+    if (url.startsWith('blob')) {
+      try {
+        controller = VideoPlayerController.networkUrl(Uri.parse(url));
+        await controller!.initialize();
+
+        durationing();
+      } catch (e) {
+        //
+      }
+      return;
+    }
+
     if (url.startsWith('https')) {
       var result = await Services.cache.load(
         url: url,

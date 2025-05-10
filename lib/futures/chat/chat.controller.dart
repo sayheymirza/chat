@@ -48,13 +48,18 @@ class ChatController extends GetxController {
   void onInit() {
     super.onInit();
 
+    chatId = Get.parameters['id'];
+
+    if (chatId == null) {
+      Get.back();
+      return;
+    }
+
     // save chat id to storage
     Services.configs.set(
       key: CONSTANTS.CURRENT_CHAT,
-      value: Get.parameters['id'],
+      value: chatId,
     );
-
-    chatId = Get.parameters['id'];
 
     load();
 
@@ -138,6 +143,8 @@ class ChatController extends GetxController {
   }
 
   Future<void> load() async {
+    if (chatId == null) return;
+
     try {
       sync();
       listenChat();
@@ -151,6 +158,8 @@ class ChatController extends GetxController {
 
   Future<void> sync() async {
     var id = chatId!;
+
+    print('[chat.controller.dart] sync chat messages');
 
     var last = await Services.message.lastByChatId(chatId: id);
     var page = 1;
@@ -198,6 +207,8 @@ class ChatController extends GetxController {
   }
 
   Future<void> markAllAsSeen() {
+    if (chatId == null) return Future.value();
+
     return Services.chat.see(chatId: chatId!);
   }
 

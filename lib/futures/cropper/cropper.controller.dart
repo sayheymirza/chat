@@ -1,7 +1,8 @@
 import 'dart:ui';
 
-import 'package:chat/shared/platform/io_cropper_file.dart'
-    if (dart.html) 'package:chat/shared/web/web_cropper_file.dart' as platform;
+import 'package:chat/shared/platform/web_cropper_file.dart'
+    if (dart.library.io) 'package:chat/shared/platform/io_cropper_file.dart'
+    as platform;
 import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
 import 'package:get/get.dart';

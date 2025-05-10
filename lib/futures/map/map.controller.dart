@@ -2,8 +2,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:chat/shared/constants.dart';
-import 'package:chat/shared/platform/io_cropper_file.dart'
-    if (dart.html) 'package:chat/shared/web/web_cropper_file.dart' as platform;
+import 'package:chat/shared/platform/web_cropper_file.dart'
+    if (dart.library.io) 'package:chat/shared/platform/io_cropper_file.dart'
+    as platform;
 import 'package:chat/shared/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_map/flutter_map.dart';

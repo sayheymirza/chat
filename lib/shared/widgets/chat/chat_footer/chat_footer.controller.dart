@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:chat/models/chat/chat.message.audio.v1.dart';
 import 'package:chat/models/chat/chat.message.image.v1.dart';
@@ -12,11 +11,11 @@ import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
 import 'package:chat/shared/widgets/chat/chat_attachment/chat_attachment.view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
-import 'package:video_player/video_player.dart';
 
 class ChatFooterController extends GetxController {
   RxBool visableSendButton = false.obs;
@@ -149,31 +148,87 @@ class ChatFooterController extends GetxController {
     });
   }
 
+  void startRecordingDuration() {
+    DateTime time = DateTime(200, 1, 1, 0, 0, 0);
+
+    recordingDuration.value = '00:00';
+
+    recordingInterval = Timer.periodic(const Duration(seconds: 1), (_) {
+      time = time.add(const Duration(seconds: 1));
+
+      var second = time.second.toString();
+      var minute = time.minute.toString();
+
+      second = second.length == 1 ? '0$second' : second;
+      minute = minute.length == 1 ? '0$minute' : minute;
+
+      recordingDuration.value = '$minute:$second';
+    });
+  }
+
   Future<void> startRecording() async {
     try {
       if (recoring.value == true) return;
 
       if (await record.hasPermission() && visableVoiceButton.value) {
-        DateTime time = DateTime(200, 1, 1, 0, 0, 0);
+        startRecordingDuration();
 
-        var tempDir = await getTemporaryDirectory();
+        // if (kIsWeb) {
+        //   // Web-specific implementation but stream way
+        //   var result = await record.startStream(
+        //     const RecordConfig(
+        //       encoder: AudioEncoder.pcm16bits,
+        //     ),
+        //   );
 
-        var output =
-            '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.wav';
+        //   if (result == null) {
+        //     showSnackbar(message: 'دسترسی به میکروفون نداریم');
+        //     return;
+        //   }
 
-        recordingDuration.value = '00:00';
+        //   final bytes = <int>[];
 
-        recordingInterval = Timer.periodic(const Duration(seconds: 1), (_) {
-          time = time.add(const Duration(seconds: 1));
+        //   result.listen((Uint8List event) => bytes.addAll(event),
+        //       onDone: () async {
+        //     if (bytes.isEmpty) return;
 
-          var second = time.second.toString();
-          var minute = time.minute.toString();
+        //     print('${bytes.length} bytes received');
 
-          second = second.length == 1 ? '0$second' : second;
-          minute = minute.length == 1 ? '0$minute' : minute;
+        //     var path = await platform.getFilePath(
+        //       Uint8List.fromList(bytes),
+        //       'wav',
+        //     );
 
-          recordingDuration.value = '$minute:$second';
-        });
+        //     print(path);
+
+        //     if (path == null) return;
+
+        //     var [minute, seconds] = recordingDuration.value.split(':');
+        //     var duration = int.parse(minute) * 60 + int.parse(seconds);
+
+        //     // generate waveframe
+        //     Services.waveframe.process(path: path).then((waveform) {
+        //       Services.message.save(
+        //         message: ChatMessageVoiceV1Model(
+        //           sentAt: DateTime.now(),
+        //           duration: duration * 1000,
+        //           size: bytes.length,
+        //           url: path,
+        //           waveform: waveform.map((e) => e.toDouble()).toList(),
+        //         ),
+        //       );
+        //     });
+        //   });
+        // } else {
+
+        var output = '';
+
+        if (!kIsWeb) {
+          var tempDir = await getTemporaryDirectory();
+
+          output =
+              '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.wav';
+        }
 
         await record.start(
           const RecordConfig(
@@ -181,6 +236,7 @@ class ChatFooterController extends GetxController {
           ),
           path: output,
         );
+        // }
 
         recoring.value = true;
       } else {
@@ -189,7 +245,8 @@ class ChatFooterController extends GetxController {
         stopRecording();
       }
     } catch (e) {
-      //
+      print('error on start recording: $e');
+      print(e);
     }
   }
 
@@ -204,37 +261,42 @@ class ChatFooterController extends GetxController {
       String? path = await record.stop();
 
       if (path != null) {
-        var file = File(path);
+        List<int> waveframe = [];
 
-        var controller = VideoPlayerController.file(file);
-        await controller.initialize();
+        var [minute, seconds] = recordingDuration.value.split(':');
+        var duration = int.parse(minute) * 60 + int.parse(seconds);
 
         // if duration is less than 1 second
-        if (controller.value.duration.inMilliseconds < 300) {
+        if (duration < 1) {
+          cancelRecoring();
           showSnackbar(message: 'ویس کوتاه است');
           return;
         }
 
-        // generate waveframe
-        var waveframe = await Services.waveframe.process(path: path);
+        if (!kIsWeb) {
+          waveframe = await Services.waveframe.process(path: path);
+        }
+
+        print(path);
 
         Services.message.save(
           message: ChatMessageVoiceV1Model(
             sentAt: DateTime.now(),
-            duration: controller.value.duration.inMilliseconds,
-            size: File(path).statSync().size,
+            duration: duration * 1000,
+            size: 0,
             url: path,
             waveform: waveframe.map((e) => e.toDouble()).toList(),
           ),
         );
       }
-
       // after 1 seconds set recording to false
       await Future.delayed(const Duration(milliseconds: 300));
 
       recoring.value = false;
     } catch (e) {
       cancelRecoring();
+
+      print('error on stop recording: $e');
 
       debugPrint(e.toString());
     }

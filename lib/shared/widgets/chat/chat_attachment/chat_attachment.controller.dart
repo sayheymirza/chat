@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:chat/shared/widgets/chat/chat_attachment/io_cropper_file.dart'
-    if (dart.web) 'package:chat/shared/widgets/chat/chat_attachment/web_cropper_file.dart';
+import 'package:chat/shared/widgets/chat/chat_attachment/web_cropper_file.dart'
+    if (dart.library.io) 'package:chat/shared/widgets/chat/chat_attachment/io_cropper_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -57,7 +57,7 @@ class ChatAttachmentController extends GetxController {
       );
 
       if (result != null) {
-        String path = getFilePath(result.files.first);
+        String path = await getFilePath(result.files.first);
 
         var size = result.files.first.size;
 

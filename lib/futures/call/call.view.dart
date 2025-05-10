@@ -14,26 +14,6 @@ class CallView extends GetView<CallController> {
   Widget build(BuildContext context) {
     Get.put(CallController());
 
-    var url = 'https://livekit.catroom.ir';
-    var token = Get.parameters['token'] ?? Get.arguments?['token'];
-
-    var mode = Get.parameters['mode'] ?? Get.arguments?['mode'] ?? 'video';
-
-    if (mode == "audio") {
-      controller.microphone.value = true;
-      controller.camera.value = false;
-    } else {
-      controller.microphone.value = true;
-      controller.camera.value = true;
-    }
-
-    print('tring connect to ...');
-
-    controller.connect(
-      url: url,
-      token: token,
-    );
-
     return Obx(
       () => PopScope(
         canPop: false,
@@ -57,39 +37,32 @@ class CallView extends GetView<CallController> {
                   ),
                 ),
               ),
+              // remote participant video full screen
               if (controller.camera.value &&
-                  controller.room.localParticipant != null)
+                  controller.room.remoteParticipants.isNotEmpty)
                 SizedBox(
                   width: Get.width,
                   height: Get.height,
                   child: VideoView(
-                    participant: controller.room.localParticipant!,
+                    participant:
+                        controller.room.remoteParticipants.values.first,
                   ),
                 ),
-              // remote participant video small on top right
-              Positioned(
-                top: Get.mediaQuery.padding.top + 20,
-                right: 20,
-                child: Row(children: [
-                  // ...controller.room.remoteParticipants.values
-                  //     .map((_, participant) {
-                  //   return ParticipantView(
-                  //     participant: participant,
-                  //   );
-                  // }),
 
-                  ...controller.room.remoteParticipants.values
-                      .map((participant) {
-                    return SizedBox(
-                      width: 100,
-                      height: 140,
-                      child: ParticipantView(
-                        participant: participant,
-                      ),
-                    );
-                  }),
-                ]),
-              ),
+              // local participant video small on top right
+              if (controller.camera.value &&
+                  controller.room.localParticipant != null)
+                Positioned(
+                  top: Get.mediaQuery.padding.top + 20,
+                  right: 20,
+                  child: SizedBox(
+                    width: 100,
+                    height: 140,
+                    child: ParticipantView(
+                      participant: controller.room.localParticipant!,
+                    ),
+                  ),
+                ),
 
               if (controller.profile.value.avatar != null)
                 Positioned(

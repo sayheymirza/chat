@@ -27,6 +27,15 @@ class CallController extends GetxController {
     super.onInit();
 
     askPermissions();
+
+    // listen to room events (when remote participant added)
+    room.events.on((event) {
+      if (event is RoomEvent) {
+        if (event is ParticipantConnectedEvent) {
+          durationing();
+        }
+      }
+    });
   }
 
   @override
@@ -44,6 +53,10 @@ class CallController extends GetxController {
         profile.value = user;
       }
     }
+
+    await askPermissions();
+
+    start();
   }
 
   @override
@@ -57,6 +70,26 @@ class CallController extends GetxController {
     if (timer != null) {
       timer!.cancel();
     }
+  }
+
+  void start() {
+    var url = Services.configs.get(key: CONSTANTS.STORAGE_LIVEKIT_URL);
+    var token = Get.parameters['token'] ?? Get.arguments?['token'];
+
+    var mode = Get.parameters['mode'] ?? Get.arguments?['mode'] ?? 'video';
+
+    if (mode == "audio") {
+      microphone.value = true;
+      camera.value = false;
+    } else {
+      microphone.value = true;
+      camera.value = true;
+    }
+
+    connect(
+      url: url,
+      token: token,
+    );
   }
 
   Future<void> connect({
