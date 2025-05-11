@@ -66,6 +66,7 @@ dependencies:
   flutter_html_v3: ^3.0.6
   sms_autofill: ^2.4.1
   livekit_client: ^2.3.1+hotfix.1
+  js: ^0.7.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

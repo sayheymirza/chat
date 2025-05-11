@@ -182,7 +182,6 @@ class HttpService extends GetxService {
       ),
       cancelToken: cancelToken,
       onSendProgress: (int sent, int total) {
-        print('onSendProgress: $sent / $total');
         var progress = Math.min(((100 * sent) / total).ceil(), 100);
 
         callback(

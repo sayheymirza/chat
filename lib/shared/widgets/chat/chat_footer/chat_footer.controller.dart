@@ -273,9 +273,7 @@ class ChatFooterController extends GetxController {
           return;
         }
 
-        if (!kIsWeb) {
-          waveframe = await Services.waveframe.process(path: path);
-        }
+        waveframe = await Services.waveframe.process(path: path);
 
         print(path);
 

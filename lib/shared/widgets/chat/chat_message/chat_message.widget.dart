@@ -235,12 +235,27 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
               ),
             ),
             const Gap(8),
-            Text(
-              '${formatBytes(message.meta['sent'])}/${formatBytes(message.meta['total'])}',
-              style: TextStyle(
-                fontSize: 12,
+            // if sent or total is 0
+            if (message.meta['sent'] == 0 ||
+                message.meta['total'] == 0 ||
+                message.meta['sent'] == null ||
+                message.meta['total'] == null)
+              Text(
+                'در حال آپلود',
+                style: TextStyle(
+                  fontSize: 12,
+                ),
               ),
-            ),
+            if (message.meta['sent'] != 0 &&
+                message.meta['total'] != 0 &&
+                message.meta['sent'] != null &&
+                message.meta['total'] != null)
+              Text(
+                '${formatBytes(message.meta['sent'])}/${formatBytes(message.meta['total'])}',
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
           ],
         );
       default:
