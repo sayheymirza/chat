@@ -6,7 +6,9 @@ Future<List<int>> generateWaveform({required String path}) async {
   try {
     final result = await promiseToFuture(
         callMethod(context['window'], 'generateWaveform', [path]));
-    return List<double>.from(result).map((e) => e.toInt()).toList();
+
+    print('result: $result');
+    return List<double>.from(result).map((e) => (e * 100).toInt()).toList();
   } catch (e) {
     print('Error generating waveform on web: $e');
     return [];
