@@ -230,8 +230,6 @@ class ChatFooterController extends GetxController {
 
         waveframe = await Services.waveframe.process(path: path);
 
-        print(path);
-
         Services.message.save(
           message: ChatMessageVoiceV1Model(
             sentAt: DateTime.now(),
