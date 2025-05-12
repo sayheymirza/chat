@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -30,16 +31,55 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>وب اپلیکیشن ماه عسل</title>
   <link rel="manifest" href="manifest.json">
 
-  <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
+  <script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js"
+    defer></script>
   <script type="application/javascript" src="coi-serviceworker.min.js"></script>
   <script type="application/javascript" src="waveform-data.min.js"></script>
+
+  <style>
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .loading-text {
+      text-align: center;
+    }
+
+    .loading.hidden {
+      display: none;
+    }
+  </style>
 </head>
+
 <body>
+  <div id="loading" class="loading">
+    <div class="loading-text">
+      در حال بارگذاری...
+      <br>
+      <small style="font-size: 16px;">لطفا صبر کنید</small>
+    </div>
+  </div>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    window.addEventListener('load', function () {
+      // Hide loading after Flutter app is initialized
+      window.addEventListener('flutter-first-frame', function () {
+        var loading = document.getElementById('loading');
+        loading.classList.add('hidden');
+      });
+    });
+  </script>
 </body>
+
 </html>
