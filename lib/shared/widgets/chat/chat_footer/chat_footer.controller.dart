@@ -173,66 +173,21 @@ class ChatFooterController extends GetxController {
       if (await record.hasPermission() && visableVoiceButton.value) {
         startRecordingDuration();
 
-        // if (kIsWeb) {
-        //   // Web-specific implementation but stream way
-        //   var result = await record.startStream(
-        //     const RecordConfig(
-        //       encoder: AudioEncoder.pcm16bits,
-        //     ),
-        //   );
-
-        //   if (result == null) {
-        //     showSnackbar(message: 'دسترسی به میکروفون نداریم');
-        //     return;
-        //   }
-
-        //   final bytes = <int>[];
-
-        //   result.listen((Uint8List event) => bytes.addAll(event),
-        //       onDone: () async {
-        //     if (bytes.isEmpty) return;
-
-        //     print('${bytes.length} bytes received');
-
-        //     var path = await platform.getFilePath(
-        //       Uint8List.fromList(bytes),
-        //       'wav',
-        //     );
-
-        //     print(path);
-
-        //     if (path == null) return;
-
-        //     var [minute, seconds] = recordingDuration.value.split(':');
-        //     var duration = int.parse(minute) * 60 + int.parse(seconds);
-
-        //     // generate waveframe
-        //     Services.waveframe.process(path: path).then((waveform) {
-        //       Services.message.save(
-        //         message: ChatMessageVoiceV1Model(
-        //           sentAt: DateTime.now(),
-        //           duration: duration * 1000,
-        //           size: bytes.length,
-        //           url: path,
-        //           waveform: waveform.map((e) => e.toDouble()).toList(),
-        //         ),
-        //       );
-        //     });
-        //   });
-        // } else {
-
         var output = '';
 
         if (!kIsWeb) {
           var tempDir = await getTemporaryDirectory();
 
           output =
-              '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.wav';
+              '${tempDir.path}/record-${DateTime.now().millisecondsSinceEpoch}.opus';
         }
 
         await record.start(
           const RecordConfig(
-            encoder: AudioEncoder.wav,
+            encoder: AudioEncoder.opus,
+            bitRate: 128000,
+            sampleRate: 44100,
+            numChannels: 1,
           ),
           path: output,
         );
