@@ -6,7 +6,7 @@ import 'dart:math' as Math;
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/platform/web_file_reader.dart'
-    if (dart.library.io) 'package:chat/shared/web/io_file_reader.dart'
+    if (dart.library.io) 'package:chat/shared/platform/io_file_reader.dart'
     as platform;
 import 'package:dio/dio.dart' as Dio;
 import 'package:get/get.dart';
