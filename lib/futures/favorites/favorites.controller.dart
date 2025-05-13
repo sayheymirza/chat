@@ -11,7 +11,7 @@ class FavoritesController extends GetxController
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxBool loading = false.obs;
-  List<dynamic> pagination_history = [];
+  RxList<dynamic> pagination_history = <dynamic>[].obs;
 
   @override
   void onInit() {

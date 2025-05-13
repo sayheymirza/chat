@@ -133,9 +133,8 @@ class CallController extends GetxController {
     }
 
     // update Getx Obx (when room updated)
-    if (camera.value) {
-      profiling.value = false;
-    }
+    profiling.value = !camera.value;
+    update();
   }
 
   void durationing() async {
@@ -198,6 +197,10 @@ class CallController extends GetxController {
     } catch (e) {
       print('[call.controller.dart] camera error: $e');
     }
+
+    // update Getx Obx (when room updated)
+    profiling.value = !camera.value;
+    update();
   }
 
   Future<void> hangup() async {

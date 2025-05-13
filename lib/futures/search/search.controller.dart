@@ -24,7 +24,8 @@ class SearchViewController extends GetxController {
   ApiUserSearchFilterRequestModel filters =
       ApiUserSearchFilterRequestModel.empty;
 
-  List<ApiUserSearchFilterRequestModel> filters_history = [];
+  RxList<ApiUserSearchFilterRequestModel> filters_history =
+      <ApiUserSearchFilterRequestModel>[].obs;
 
   String? type;
 
@@ -139,6 +140,12 @@ class SearchViewController extends GetxController {
         }
       }
     });
+  }
+
+  void onForceBack() {
+    // clear all histories and Get.back
+    filters_history.value = [];
+    Get.back();
   }
 
   void onBack() {

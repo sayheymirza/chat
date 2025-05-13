@@ -38,8 +38,7 @@ class CallView extends GetView<CallController> {
                 ),
               ),
               // remote participant video full screen
-              if (controller.camera.value &&
-                  controller.room.remoteParticipants.isNotEmpty)
+              if (controller.room.remoteParticipants.isNotEmpty)
                 SizedBox(
                   width: Get.width,
                   height: Get.height,
@@ -49,9 +48,22 @@ class CallView extends GetView<CallController> {
                   ),
                 ),
 
+              // local participant video full screen if no remote participant
+              if (controller.camera.value &&
+                  controller.room.localParticipant != null &&
+                  controller.room.remoteParticipants.isEmpty)
+                SizedBox(
+                  width: Get.width,
+                  height: Get.height,
+                  child: VideoView(
+                    participant: controller.room.localParticipant!,
+                  ),
+                ),
+
               // local participant video small on top right
               if (controller.camera.value &&
-                  controller.room.localParticipant != null)
+                  controller.room.localParticipant != null &&
+                  controller.room.remoteParticipants.isNotEmpty)
                 Positioned(
                   top: Get.mediaQuery.padding.top + 20,
                   right: 20,
@@ -68,10 +80,7 @@ class CallView extends GetView<CallController> {
                 Positioned(
                   top: MediaQuery.of(context).padding.top + 100,
                   child: AnimatedOpacity(
-                    opacity: controller.profiling.value &&
-                            controller.camera.value == false
-                        ? 1
-                        : 0,
+                    opacity: controller.profiling.value ? 1 : 0,
                     duration: Duration(seconds: 1),
                     child: Column(
                       children: [

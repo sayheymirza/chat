@@ -85,6 +85,10 @@ class DefaultFirebaseOptions {
 
 class FirebaseService extends GetxService {
   Future<void> init() async {
+    if (kIsWeb) {
+      return;
+    }
+
     log('[firebase.service.dart] firebase');
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

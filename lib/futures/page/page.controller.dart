@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:chat/shared/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as Dio;
 
 class PageViewController extends GetxController {
   RxString data = ''.obs;
@@ -18,15 +20,30 @@ class PageViewController extends GetxController {
     loading.value = true;
     errored.value = false;
 
-    var file = await Services.cache.load(
-      url: value,
-      category: 'page',
-    );
+    if (kIsWeb) {
+      // with http download text
+      try {
+        var response = await Dio.Dio().get(value);
 
-    if (file != null) {
-      data.value = file.readAsStringSync();
+        if (response.statusCode == 200) {
+          data.value = response.data;
+        } else {
+          errored.value = true;
+        }
+      } catch (e) {
+        errored.value = true;
+      }
     } else {
-      errored.value = true;
+      var file = await Services.cache.load(
+        url: value,
+        category: 'page',
+      );
+
+      if (file != null) {
+        data.value = file.readAsStringSync();
+      } else {
+        errored.value = true;
+      }
     }
 
     loading.value = false;

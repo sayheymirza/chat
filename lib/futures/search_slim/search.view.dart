@@ -18,16 +18,20 @@ class SearchSlimView extends GetView<SearchViewSlimController> {
 
     return Obx(
       () => PopScope(
-        canPop: controller.filters_history.isEmpty,
+        canPop: controller.filters_history.value.isEmpty,
         onPopInvokedWithResult: (_, __) {
+          print(controller.filters_history.value.isEmpty);
           controller.onBack();
         },
         child: Scaffold(
           appBar: GradientAppBarWidget(
             back: controller.backable.value,
-            onBack: () {
-              controller.onBack();
-            },
+            onBack: controller.filters_history.value.isEmpty
+                ? null
+                : () {
+                    print(controller.filters_history.value.isEmpty);
+                    controller.onBack();
+                  },
             title: controller.title.value,
             colors: controller.colors,
             left: controller.filterable.value

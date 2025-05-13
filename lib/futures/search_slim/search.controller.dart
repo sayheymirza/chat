@@ -23,7 +23,8 @@ class SearchViewSlimController extends GetxController {
   ApiUserSearchFilterRequestModel filters =
       ApiUserSearchFilterRequestModel.empty;
 
-  List<ApiUserSearchFilterRequestModel> filters_history = [];
+  RxList<ApiUserSearchFilterRequestModel> filters_history =
+      <ApiUserSearchFilterRequestModel>[].obs;
 
   void init() {
     filterable.value = true;

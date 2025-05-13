@@ -57,7 +57,13 @@ class SearchView extends GetView<SearchViewController> {
                       style: TextStyle(color: Get.theme.colorScheme.onPrimary),
                     ),
                   )
-                : null,
+                : IconButton(
+                    onPressed: () => controller.onForceBack(),
+                    icon: Icon(
+                      Icons.home,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
           body: Stack(
             children: [
