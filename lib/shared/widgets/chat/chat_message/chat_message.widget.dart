@@ -4,6 +4,7 @@ import 'package:chat/shared/formats/date.format.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/chat/chat_delete_message_dialog/chat_delete_message_dialog.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message.controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -389,7 +390,8 @@ class ChatMessageWidget extends GetView<ChatMessageController> {
               ),
             ),
           if (message.data['url'] != null &&
-              message.data['url'].startsWith('http'))
+              message.data['url'].startsWith('http') &&
+              kIsWeb == false)
             PopupMenuItem(
               child: ListTile(
                 onTap: () {
