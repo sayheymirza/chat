@@ -28,6 +28,7 @@ class AvatarWidget extends StatelessWidget {
         ),
       ),
       child: CachedImageWidget(
+        key: ValueKey(url), // اضافه کردن key بر اساس url
         url: url,
         category: "avatar",
       ),

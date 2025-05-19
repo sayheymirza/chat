@@ -35,6 +35,7 @@ class UserWidget extends StatelessWidget {
           children: [
             // avatar
             AvatarWidget(
+              key: ValueKey(item.avatar), // اضافه کردن key بر اساس url
               url: item.avatar!,
               seen: item.seen!,
             ),
