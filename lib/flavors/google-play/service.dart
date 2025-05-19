@@ -7,7 +7,7 @@ import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FlavorDirect extends FlavorAbstract {
+class FlavorGooglePlay extends FlavorAbstract {
   @override
   listen() {
     event.on<EventModel>().listen((data) {
