@@ -5,6 +5,7 @@ import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class BlocksView extends GetView<BlocksController> {
@@ -14,36 +15,54 @@ class BlocksView extends GetView<BlocksController> {
   Widget build(BuildContext context) {
     Get.put(BlocksController());
 
-    return Scaffold(
-      appBar: GradientAppBarWidget(
-        back: true,
-        title: 'بلاکی ها',
-      ),
-      body: Column(
-        children: [
-          TabBar(
-            controller: controller.tab,
-            onTap: (_) {
-              controller.onTabChange();
-            },
-            tabs: const [
-              Tab(
-                text: "بلاکی های من",
+    return Obx(
+      () => PopScope(
+        canPop: controller.pagination_history.isEmpty,
+        onPopInvokedWithResult: (_, __) {
+          if (controller.pagination_history.isEmpty) {
+            Get.back();
+          } else {
+            controller.onBack();
+          }
+        },
+        child: Scaffold(
+          appBar: GradientAppBarWidget(
+            back: true,
+            title: 'بلاکی ها',
+            left: IconButton(
+              onPressed: () => controller.onForceBack(),
+              icon: Icon(
+                Icons.home,
+                color: Colors.white,
+                size: 32,
               ),
-              Tab(
-                text: "بلاک کنندگان من",
+            ),
+          ),
+          body: Column(
+            children: [
+              TabBar(
+                controller: controller.tab,
+                onTap: (_) {
+                  controller.onTabChange();
+                },
+                tabs: const [
+                  Tab(
+                    text: "بلاکی های من",
+                  ),
+                  Tab(
+                    text: "بلاک کنندگان من",
+                  ),
+                ],
+              ),
+              tabView(
+                loading: controller.loading.value,
+                profiles: controller.profiles,
+                lastPage: controller.lastPage.value,
+                page: controller.page.value,
               ),
             ],
           ),
-          Obx(
-            () => tabView(
-              loading: controller.loading.value,
-              profiles: controller.profiles,
-              lastPage: controller.lastPage.value,
-              page: controller.page.value,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -82,6 +101,7 @@ class BlocksView extends GetView<BlocksController> {
                   controller.goToPage(page);
                 },
               ),
+            const Gap(20),
           ],
         ),
       ),

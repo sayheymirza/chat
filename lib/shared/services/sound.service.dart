@@ -65,16 +65,22 @@ class SoundService extends GetxService {
     }
 
     if (type == "ringtone") {
-      if (ringtoneController != null) {
-        ringtoneController!.unload();
-      }
+      try {
+        if (ringtoneController != null) {
+          ringtoneController!.unload();
+        }
 
-      var url = Services.configs.get(key: CONSTANTS.AUDIO_RINGTONE);
-      if (url == null) return;
-      ringtoneController = PlayerController(onStateChange: () {});
-      await ringtoneController!.load(url: url);
-      ringtoneController!.controller!.setLooping(true);
-      ringtoneController!.play();
+        var url = Services.configs.get(key: CONSTANTS.AUDIO_RINGTONE);
+        if (url == null) return;
+        ringtoneController = PlayerController(onStateChange: () {});
+        if (ringtoneController != null) {
+          await ringtoneController!.load(url: url);
+          ringtoneController!.controller!.setLooping(true);
+          ringtoneController!.play();
+        }
+      } catch (e) {
+        //
+      }
     }
 
     if (type == "message") {

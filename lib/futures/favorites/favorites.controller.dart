@@ -29,6 +29,12 @@ class FavoritesController extends GetxController
     submit();
   }
 
+  void onForceBack() {
+    // clear all histories and Get.back
+    pagination_history.value = [];
+    Get.back();
+  }
+
   void goToPage(int value) {
     if (loading.value == true) return;
     onPageChange(tab.index);

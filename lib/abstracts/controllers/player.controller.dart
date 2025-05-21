@@ -30,9 +30,13 @@ class PlayerController {
   });
 
   Future<void> unload() async {
-    if (controller != null) {
-      await controller!.pause();
-      await controller!.dispose();
+    try {
+      if (controller != null) {
+        await controller!.pause();
+        await controller!.dispose();
+      }
+    } catch (e) {
+      //
     }
   }
 
@@ -124,23 +128,31 @@ class PlayerController {
   }
 
   void play() async {
-    await controller!.play();
+    try {
+      await controller!.play();
 
-    playing = true;
+      playing = true;
 
-    durationing();
-    timer = Timer.periodic(Duration(milliseconds: 100), (_) {
       durationing();
-    });
+      timer = Timer.periodic(Duration(milliseconds: 100), (_) {
+        durationing();
+      });
+    } catch (e) {
+      //
+    }
   }
 
   void pause() async {
-    await controller!.pause();
+    try {
+      await controller!.pause();
 
-    playing = false;
+      playing = false;
 
-    if (timer != null) {
-      timer!.cancel();
+      if (timer != null) {
+        timer!.cancel();
+      }
+    } catch (e) {
+      //
     }
   }
 

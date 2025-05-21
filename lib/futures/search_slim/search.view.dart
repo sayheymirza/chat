@@ -4,6 +4,7 @@ import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class SearchSlimView extends GetView<SearchViewSlimController> {
@@ -77,6 +78,7 @@ class SearchSlimView extends GetView<SearchViewSlimController> {
                           controller.goToPage(page);
                         },
                       ),
+                    const Gap(20),
                   ],
                 ),
               ),

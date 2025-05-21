@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_incoming_call/dialog_incoming_call.view.dart';
 import 'package:chat/models/call.model.dart';
@@ -9,6 +11,7 @@ import 'package:get/get.dart';
 
 class CallService extends GetxService {
   void close() {
+    print(Get.currentRoute);
     // if path is /app/call (pop or back)
     if (Get.currentRoute == '/app/call') {
       Get.back();
@@ -81,6 +84,12 @@ class CallService extends GetxService {
     required String chatId,
     required String userId,
   }) async {
+    var result = Services.configs.get(key: CONSTANTS.CALL_INCOMMING);
+
+    if (result == true) {
+      return;
+    }
+
     Services.sound.play(type: 'ringtone');
 
     Services.configs.set(key: CONSTANTS.CALL_INCOMMING, value: true);

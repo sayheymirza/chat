@@ -5,6 +5,7 @@ import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class FavoritesView extends GetView<FavoritesController> {
@@ -35,6 +36,14 @@ class FavoritesView extends GetView<FavoritesController> {
               }
             },
             title: 'علاقه مندی ها',
+            left: IconButton(
+              onPressed: () => controller.onForceBack(),
+              icon: Icon(
+                Icons.home,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
           ),
           body: Column(
             children: [
@@ -99,6 +108,7 @@ class FavoritesView extends GetView<FavoritesController> {
                   controller.goToPage(page);
                 },
               ),
+            const Gap(20),
           ],
         ),
       ),

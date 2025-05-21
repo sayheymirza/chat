@@ -35,6 +35,12 @@ class CallController extends GetxController {
           durationing();
         }
       }
+      // if i connected to room and room is not empty
+      if (event is RoomConnectedEvent) {
+        if (room.remoteParticipants.isNotEmpty) {
+          durationing();
+        }
+      }
     });
   }
 

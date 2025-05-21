@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    namespace = "com.mahasal.app"
+    namespace = "com.mahasal.app.mahasal"
     compileSdk = 34 // flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.mahasal.app"
+        applicationId = "com.mahasal.app.mahasal"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23 // flutter.minSdkVersion
@@ -67,21 +67,21 @@ android {
     productFlavors {
         direct {
             dimension "build"
-            applicationId "com.mahasal.app"
+            applicationId "com.mahasal.app.mahasal"
             versionCode flutter.versionCode.toInteger()
             versionName flutter.versionName
         }
 
         cafebazaar {
             dimension "build"
-            applicationId "com.mahasal.app"
+            applicationId "com.mahasal.app.mahasal"
             versionCode flutter.versionCode.toInteger()
             versionName flutter.versionName
         }
 
         google_play {
             dimension "build"
-            applicationId "com.mahasal.app"
+            applicationId "com.mahasal.app.mahasal"
             versionCode flutter.versionCode.toInteger()
             versionName flutter.versionName
         }

@@ -699,9 +699,9 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
     Widget? image,
   }) {
     return Container(
-      width: 'type'.tr == 'dating' ? 130 : 110,
       padding: const EdgeInsets.symmetric(
         vertical: 8,
+        horizontal: 12,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -716,22 +716,22 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
           Text(
             text,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
               color: Colors.grey.shade800,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 6),
           if (icon != null)
             Icon(
               icon,
               color: iconColor,
-              size: 20,
+              size: 16,
             ),
           if (image != null)
             SizedBox(
-              width: 20,
-              height: 20,
+              width: 16,
+              height: 16,
               child: image,
             ),
         ],

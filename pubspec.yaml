@@ -67,6 +67,8 @@ dependencies:
   sms_autofill: ^2.4.1
   livekit_client: ^2.3.1+hotfix.1
   js: ^0.7.1
+  flutter_poolakey:
+    path: ./lib/flavors/cafebazaar/flutter_poolakey
 dev_dependencies:
   flutter_test:
     sdk: flutter

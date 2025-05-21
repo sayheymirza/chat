@@ -17,6 +17,7 @@ import 'package:restart_app/restart_app.dart';
 class AppController extends GetxController {
   SocketService get socket => Get.find(tag: 'api:socket');
   StreamSubscription<EventModel>? subevents;
+  Timer? incompingTimer;
 
   RxInt view = 0.obs;
 
@@ -147,18 +148,26 @@ class AppController extends GetxController {
       }
 
       if (data.event == EVENTS.SOCKET_INCOMING_CALL) {
-        Services.call.incoming(
-          call: IncomingCallModel(
-            avatar: data.value['avatar'],
-            fullname: data.value['name'],
-            mode: data.value['mode'],
-          ),
-          chatId: data.value['chat_id'].toString(),
-          userId: data.value['user_id'].toString(),
-        );
+        if (incompingTimer != null) {
+          incompingTimer!.cancel();
+        }
+
+        incompingTimer = Timer(Duration(seconds: 1), () {
+          Services.call.incoming(
+            call: IncomingCallModel(
+              avatar: data.value['avatar'],
+              fullname: data.value['name'],
+              mode: data.value['mode'],
+            ),
+            chatId: data.value['chat_id'].toString(),
+            userId: data.value['user_id'].toString(),
+          );
+        });
       }
 
       if (data.event == EVENTS.SOCKET_INCOMING_CALL_DECLINE) {
+        log('[app.controller.dart] incoming call decline');
+
         Services.sound.stop(type: 'ringtone');
         Services.sound.play(type: 'beep-beep');
         Services.sound.stop(type: 'dialing');
@@ -173,6 +182,8 @@ class AppController extends GetxController {
       }
 
       if (data.event == EVENTS.SOCKET_INCOMING_CALL_END) {
+        log('[app.controller.dart] incoming call end');
+
         Services.sound.stop(type: 'ringtone');
         Services.sound.stop(type: 'dialing');
         Services.call.close();

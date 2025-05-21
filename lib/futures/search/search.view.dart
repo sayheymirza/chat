@@ -4,6 +4,7 @@ import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class SearchView extends GetView<SearchViewController> {
@@ -62,6 +63,7 @@ class SearchView extends GetView<SearchViewController> {
                     icon: Icon(
                       Icons.home,
                       color: Colors.white,
+                      size: 32,
                     ),
                   ),
           ),
@@ -98,6 +100,9 @@ class SearchView extends GetView<SearchViewController> {
                           }
                         },
                       ),
+                    Gap(
+                      type == null ? 0 : 20,
+                    ),
                   ],
                 ),
               ),
