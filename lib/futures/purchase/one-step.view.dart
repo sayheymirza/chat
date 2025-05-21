@@ -118,10 +118,6 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
                 if (Services.profile.profile.value.plan?.specialDays != 0 ||
                     Services.profile.profile.value.plan?.adDays != 0)
                   expansion(
-                    disabled:
-                        (Services.profile.profile.value.plan?.specialDays ==
-                                0 ||
-                            Services.profile.profile.value.plan?.adDays == 0),
                     expanded: controller.expanded.value == 3,
                     icon: const Icon(
                       Icons.chat,
