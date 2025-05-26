@@ -57,6 +57,7 @@ class SearchViewController extends GetxController {
         backable.value = true;
         filterable.value = false;
         break;
+      case 'search':
       default:
         filterable.value = true;
         backable.value = false;
@@ -92,11 +93,7 @@ class SearchViewController extends GetxController {
     if (loading.value == true) return;
     try {
       loading.value = true;
-      var type = this.type ?? 'newest';
-
-      if (type == 'search') {
-        type = 'newest';
-      }
+      var type = this.type ?? 'search';
 
       var result = await ApiService.user.search(
         page: page.value,
