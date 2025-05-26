@@ -135,26 +135,6 @@
         var loading = document.getElementById('loading');
         loading.classList.add('hidden');
       });
-
-      // Prevent the browser back button from closing the web app
-      // This adds an initial entry to the history stack.
-      if (window.history && window.history.pushState) {
-        history.pushState(null, document.title, location.href);
-        
-        // When the back button is pressed, this event is triggered.
-        window.addEventListener('popstate', function (event) {
-          // By pushing the state again, we effectively prevent
-          // navigating to the previous page in the browser's history.
-          history.pushState(null, document.title, location.href);
-          
-          // Note: This prevents leaving the app via the back button.
-          // For in-app navigation (like going to a previous screen
-          // within your Flutter app), Flutter's routing system
-          // (e.g., Navigator or go_router) should handle that.
-          // This script primarily addresses the issue of the app closing
-          // when the user is at the initial route of the Flutter app.
-        });
-      }
     });
   </script>
 </body>
