@@ -1,10 +1,11 @@
+import 'dart:html' as html;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// Widget to handle back button behavior in Flutter Web
 /// Prevents the browser tab from closing when user presses back button
-class WebBackHandler extends StatelessWidget {
+class WebBackHandler extends StatefulWidget {
   final Widget child;
 
   const WebBackHandler({
@@ -13,28 +14,43 @@ class WebBackHandler extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  State<WebBackHandler> createState() => _WebBackHandlerState();
+}
+
+class _WebBackHandlerState extends State<WebBackHandler> {
+  late html.EventListener _popStateListener;
+
+  @override
+  void initState() {
+    super.initState();
     if (kIsWeb) {
-      return PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) async {
-          if (didPop) return;
-
-          // Handle back navigation
-          await _handleBackNavigation();
-        },
-        child: child,
-      );
+      _initWebHistory();
     }
-
-    // For non-web platforms, return child as is
-    return child;
   }
 
-  Future<void> _handleBackNavigation() async {
+  void _initWebHistory() {
+    // Push an initial state to the history
+    html.window.history.pushState({'flutter': 'app'}, '', null);
+
+    // Listen for popstate events (when user clicks back/forward)
+    _popStateListener = (html.Event event) {
+      _handleBrowserBack();
+    };
+
+    html.window.addEventListener('popstate', _popStateListener);
+  }
+
+  void _handleBrowserBack() {
+    // Push another state to prevent actually going back
+    html.window.history.pushState({'flutter': 'app'}, '', null);
+
+    // Handle the back navigation within the app
+    _handleAppBack();
+  }
+
+  void _handleAppBack() {
     // Check if we can go back in GetX navigation stack
     if (Get.routing.previous.isNotEmpty) {
-      // Go back to previous page using GetX
       Get.back();
       return;
     }
@@ -45,18 +61,18 @@ class WebBackHandler extends StatelessWidget {
       return;
     }
 
-    // If we're at the root, show confirmation dialog or navigate to home
-    await _handleRootNavigation();
+    // If we're at the root, handle accordingly
+    _handleRootNavigation();
   }
 
-  Future<void> _handleRootNavigation() async {
-    // Option 1: Navigate to home/app page instead of closing
+  void _handleRootNavigation() {
+    // Navigate to app main page if not already there
     if (Get.currentRoute != '/app' && Get.currentRoute != '/') {
       Get.offAllNamed('/app');
       return;
     }
 
-    // Option 2: Show exit confirmation dialog
+    // If already at root, show exit confirmation
     _showExitConfirmation();
   }
 
@@ -76,7 +92,7 @@ class WebBackHandler extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // Navigate to home page instead of closing the tab
+              // Navigate to splash or home page
               Get.offAllNamed('/');
             },
             child: Text('exit'.tr),
@@ -84,5 +100,18 @@ class WebBackHandler extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    if (kIsWeb) {
+      html.window.removeEventListener('popstate', _popStateListener);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
