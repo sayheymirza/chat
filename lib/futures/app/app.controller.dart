@@ -202,6 +202,12 @@ class AppController extends GetxController {
     viewsHistory.add(view.value);
     view.value = value;
     log('[app.controller.dart] view changed to $value');
+    // add to navigation history
+    Get.toNamed(
+      '/app',
+      parameters: {'view': value.toString()},
+      preventDuplicates: false,
+    );
   }
 
   void back() {
