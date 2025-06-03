@@ -3,8 +3,6 @@ import 'package:chat/app/shared/theme.dart';
 import 'package:chat/pages.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
-import 'package:chat/shared/simple_web_back_blocker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
@@ -19,11 +17,6 @@ class App extends StatelessWidget {
 
     if (navigationBarHeight == 0) {
       navigationBarHeight = val;
-    }
-
-    // Initialize simple web back blocker for web platform
-    if (kIsWeb) {
-      SimpleWebBackBlocker.init();
     }
 
     return GetMaterialApp(
