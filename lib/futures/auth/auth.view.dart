@@ -81,7 +81,8 @@ class _AuthViewState extends State<AuthView> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "/auth/login");
+                      Get.back();
+                      Get.toNamed("/auth/login");
                     },
                     child: const Text(
                       "ورود",
@@ -97,7 +98,8 @@ class _AuthViewState extends State<AuthView> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "/auth/register");
+                      Get.back();
+                      Get.toNamed("/auth/register");
                     },
                     child: const Text(
                       "ثبت نام",
@@ -121,6 +123,7 @@ class _AuthViewState extends State<AuthView> {
                   ),
                 ),
                 onTap: () {
+                  Get.back();
                   Get.toNamed(link["path"]);
                 },
               ),

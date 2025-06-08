@@ -8,6 +8,7 @@ import 'package:chat/models/call.model.dart';
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
@@ -203,11 +204,7 @@ class AppController extends GetxController {
     view.value = value;
     log('[app.controller.dart] view changed to $value');
     // add to navigation history
-    Get.toNamed(
-      '/app',
-      parameters: {'view': value.toString()},
-      preventDuplicates: false,
-    );
+    NavigationToNamed('/app', params: 'view=$value');
   }
 
   void back() {
