@@ -8,6 +8,8 @@ import 'package:web/web.dart' as web; // Add
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 void main() {
+  setUrlStrategy(PathUrlStrategy());
+
   WidgetsFlutterBinding.ensureInitialized();
 
   log('[flavors/web/main.dart] web flavor is listening');
@@ -17,8 +19,6 @@ void main() {
 
   CONSTANTS.PAYMENT_CALLBACK =
       "${web.window.location.protocol}//${web.window.location.host}/#/payment";
-
-  setUrlStrategy(PathUrlStrategy());
 
   run();
 }
