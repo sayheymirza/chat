@@ -32,7 +32,12 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      getPages: pages,
+      onGenerateRoute: (settings) {
+        print(settings.name);
+      },
+      routes: {
+        for (var page in pages) page.name: (_) => page.page(),
+      },
       translations: I18NTranslations(),
       locale: Locale(
         'fa',
