@@ -1,3 +1,4 @@
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,7 @@ class AccountDeleteLeaveChooseView extends StatelessWidget {
             title: const Text('حذف حساب کاربری'),
             onTap: () {
               Get.toNamed('/app/account_delete_leave/delete');
+              NavigationToNamed('/app/account_delete_leave/delete');
             },
           ),
           const Divider(),
@@ -33,6 +35,7 @@ class AccountDeleteLeaveChooseView extends StatelessWidget {
             title: const Text('انصراف از عضویت'),
             onTap: () {
               Get.toNamed('/app/account_delete_leave/leave');
+              NavigationToNamed('/app/account_delete_leave/leave');
             },
           ),
         ],

@@ -27,7 +27,7 @@
         "request": "launch",
         "type": "dart",
         "program": "lib/main.web.dart",
-        "args": [ "--target", "lib/flavors/web/main.dart", "--web-port", "8080"  ]
+        "args": [ "--target", "lib/flavors/web/main.dart"  ]
       },
     ],
     "compounds": []

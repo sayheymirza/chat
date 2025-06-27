@@ -130,15 +130,40 @@
   </div>
   <script src="flutter_bootstrap.js" async></script>
   <script>
-    function NavigationToNamed(path = '', params = '') {      
+    let popedState = false;
+
+    function NavigationToNamed(path = '', params = '') {
       let query = `?${params}`
 
-      if(query.length == 1) {
+      if (query.length == 1 || params == null || params.length == 1 || params == {}) {
         query = '';
-      } 
+      }
 
       window.history.pushState(params ?? {}, "", `${path}${query}`);
     }
+
+    function NavigationBack() {
+      if (popedState == false) {
+        window.history.back();
+      }
+    }
+
+    function NavigationOpenedDialog() {
+      const path = window.location.pathname + window.location.search + '#dialog';
+      console.log(path);
+      
+      window.history.pushState(null, "", path);
+    }
+
+    window.addEventListener('popstate', function (event) {
+      if (window.sendBackButtonEventToFlutter) {
+        popedState = true;
+        setTimeout(() => {
+          popedState = false;
+        }, 100);
+        window.sendBackButtonEventToFlutter(window.location.pathname + window.location.search);
+      }
+    });
 
     window.addEventListener('load', function () {
       // Hide loading after Flutter app is initialized

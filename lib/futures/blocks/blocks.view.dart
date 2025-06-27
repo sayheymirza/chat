@@ -1,5 +1,6 @@
 import 'package:chat/futures/blocks/blocks.controller.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
@@ -21,6 +22,7 @@ class BlocksView extends GetView<BlocksController> {
         onPopInvokedWithResult: (_, __) {
           if (controller.pagination_history.isEmpty) {
             Get.back();
+            NavigationBack();
           } else {
             controller.onBack();
           }
@@ -83,6 +85,7 @@ class BlocksView extends GetView<BlocksController> {
               UserWidget(
                 item: item,
                 onTap: () {
+                  NavigationToNamed('/app/profile/${item.id}');
                   Get.toNamed(
                     '/app/profile/${item.id}',
                     arguments: {

@@ -35,22 +35,26 @@ class PermissionService extends GetxService {
   }
 
   Future<bool> has(String permission) async {
-    switch (permission) {
-      case "camera":
-        return Permission.camera.isGranted;
-      case "mic":
-      case "microphone":
-        return Permission.microphone.isGranted;
-      case "gps":
-        return Permission.locationWhenInUse.isGranted;
-      case "storage":
-        return (await Permission.storage.isGranted) ||
-            (await Permission.accessMediaLocation.isGranted) ||
-            (await Permission.manageExternalStorage.isGranted);
-      case "notification":
-        return Permission.notification.isGranted;
-      default:
-        return Future.value(false);
+    try {
+      switch (permission) {
+        case "camera":
+          return await Permission.camera.isGranted;
+        case "mic":
+        case "microphone":
+          return await Permission.microphone.isGranted;
+        case "gps":
+          return await Permission.locationWhenInUse.isGranted;
+        case "storage":
+          return (await Permission.storage.isGranted) ||
+              (await Permission.accessMediaLocation.isGranted) ||
+              (await Permission.manageExternalStorage.isGranted);
+        case "notification":
+          return await Permission.notification.isGranted;
+        default:
+          return Future.value(false);
+      }
+    } catch (e) {
+      return Future.value(false);
     }
   }
 

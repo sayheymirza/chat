@@ -9,6 +9,10 @@ class EventModel {
 }
 
 class EVENTS {
+  static String NAVIGATION_BACK = 'navigation:back';
+  static String NAVIGATION_PUSH = 'navigation:push';
+  static String NAVIGATION_DIALOG = 'navigation:dialog';
+
   static String FEEDBACK = 'app:feedback';
   static String SHOW_APP_IN_STORE = 'app:show-app-in-store';
   static String UPDATE = 'app:update';

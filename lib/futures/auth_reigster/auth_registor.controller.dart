@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/web_navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/validator.dart';
@@ -56,11 +60,28 @@ class AuthRegisterController extends GetxController {
   RxList cities = [].obs;
   RxBool isSingle = false.obs;
 
+  StreamSubscription<EventModel>? subevents;
+
   @override
   void onReady() {
     super.onReady();
 
     loadDropdowns();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        if (step.value != 0) {
+          step.value -= 1;
+        }
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents!.cancel();
   }
 
   Future<void> setCitiesByProvider(String value) async {
@@ -143,6 +164,7 @@ class AuthRegisterController extends GetxController {
 
     if (step < 6) {
       step.value += 1;
+      NavigationToNamed('/auth/register', params: 'step=${step.value}');
       return;
     }
 

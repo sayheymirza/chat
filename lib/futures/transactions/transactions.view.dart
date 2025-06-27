@@ -1,6 +1,7 @@
 import 'package:chat/futures/transactions/transactions.controller.dart';
 import 'package:chat/models/invoice.model.dart';
 import 'package:chat/shared/formats/number.format.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
@@ -23,6 +24,7 @@ class TransactionsView extends GetView<TransactionsController> {
         onPopInvokedWithResult: (_, __) {
           if (controller.page.value == 1) {
             Get.back();
+            NavigationBack();
           } else {
             controller.goToPage(controller.page.value - 1);
           }
@@ -33,6 +35,7 @@ class TransactionsView extends GetView<TransactionsController> {
             onBack: () {
               if (controller.page.value == 1) {
                 Get.back();
+                NavigationBack();
               } else {
                 controller.goToPage(controller.page.value - 1);
               }
@@ -130,6 +133,7 @@ class TransactionsView extends GetView<TransactionsController> {
               child: OutlinedButton(
                 onPressed: () {
                   Get.toNamed('/app/transactions/${item.id}');
+                  NavigationToNamed('/app/transactions/${item.id}');
                 },
                 child: const Text('جزئیات بیشتر'),
               ),

@@ -35,8 +35,8 @@ WORKDIR /app/
 RUN flutter pub get --verbose
 # RUN flutter pub outdated
 # RUN flutter pub upgrade --major-versions
-RUN npm install --verbose
-RUN npm run cli:web
+# RUN npm install --verbose
+# RUN npm run cli:web
 
 RUN flutter build web --target lib/flavors/web/main.dart --verbose
 

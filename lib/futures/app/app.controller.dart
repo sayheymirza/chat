@@ -25,6 +25,8 @@ class AppController extends GetxController {
   bool purchasing = false;
   List<int> viewsHistory = [];
 
+  bool dialoging = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -45,6 +47,34 @@ class AppController extends GetxController {
     socket.listen();
 
     subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_DIALOG) {
+        dialoging = true;
+      }
+
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        String currentPath = data.value;
+
+        print('$currentPath, ${Get.currentRoute}');
+
+        if (dialoging) {
+          dialoging = false;
+          return;
+        }
+
+        if (currentPath.startsWith('/app/purchase/one-step')) {
+          return;
+        }
+
+        Get.back();
+
+        // if ((currentPath.startsWith('/app') || currentPath == '/') &&
+        //     Get.currentRoute.startsWith('/app')) {
+        //   back();
+        // } else {
+        //   Get.back();
+        // }
+      }
+
       if (data.event == SOCKET_EVENTS.CONNECTED) {
         Services.message.sendAll();
       }
@@ -111,7 +141,7 @@ class AppController extends GetxController {
       }
 
       if (data.event == EVENTS.SOCKET_ROUTE_BACK) {
-        Get.back();
+        NavigationBack();
       }
 
       if (data.event == EVENTS.SOCKET_NOTIFICATION) {
@@ -200,6 +230,8 @@ class AppController extends GetxController {
   }
 
   void setView(int value) {
+    if (view.value == value) return;
+
     viewsHistory.add(view.value);
     view.value = value;
     log('[app.controller.dart] view changed to $value');
@@ -208,9 +240,11 @@ class AppController extends GetxController {
   }
 
   void back() {
-    var last = viewsHistory.removeLast();
-    view.value = last;
-    log('[app.controller.dart] view backed to $last');
+    if (viewsHistory.isNotEmpty) {
+      var last = viewsHistory.removeLast();
+      view.value = last;
+      log('[app.controller.dart] view backed to $last');
+    }
   }
 
   Future<void> consumeNotConsumedPurchase({

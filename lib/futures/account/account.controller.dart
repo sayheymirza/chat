@@ -108,10 +108,6 @@ class AccountController extends GetxController {
     }
   }
 
-  void deleteOrLeaveAccount() {
-    Get.toNamed('/app/account_delete_leave/choose');
-  }
-
   void versioning() {
     Services.access.generatePackageInfo().then((value) {
       version.value = value.version;

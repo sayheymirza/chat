@@ -1,3 +1,5 @@
+import 'package:chat/shared/platform/navigation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -52,9 +54,18 @@ class GradientAppBarWidget extends StatelessWidget
                   Icons.arrow_back,
                   color: Colors.white,
                 ),
-                onPressed: () => onBack != null ? onBack!() : Get.back(),
+                onPressed: () {
+                  if (onBack != null) {
+                    onBack!();
+                  } else {
+                    if (kIsWeb) {
+                      NavigationBack();
+                    }
+                    Get.back();
+                  }
+                },
               ),
-            if (right != null) Expanded(child: right!),
+            if (right != null) right!,
             if (title != null)
               Expanded(
                 child: Text(

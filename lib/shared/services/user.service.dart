@@ -346,42 +346,50 @@ class UserService extends GetxService {
   }
 
   Future<void> saveFromSearch({required ProfileSearchModel profile}) async {
-    await database.transaction(() async {
-      // get one by id
-      var user = await (database.select(database.userTable)
-            ..where((row) => row.id.equals(profile.id.toString())))
-          .getSingleOrNull();
+    try {
+      await database.transaction(() async {
+        try {
+          // get one by id
+          var user = await (database.select(database.userTable)
+                ..where((row) => row.id.equals(profile.id.toString())))
+              .getSingleOrNull();
 
-      if (user == null) {
-        // create user
-        await database.into(database.userTable).insert(
-              UserTableCompanion.insert(
-                id: profile.id!.toString(),
-                status: 'unknown',
-                avatar: profile.avatar!,
-                fullname: profile.fullname!,
-                last: DateTime.now().toString(),
-                seen: profile.seen!,
-                data: profile.toJson(),
-                verified: drift.Value(profile.verified ?? false),
+          if (user == null) {
+            // create user
+            await database.into(database.userTable).insert(
+                  UserTableCompanion.insert(
+                    id: profile.id!.toString(),
+                    status: 'unknown',
+                    avatar: profile.avatar!,
+                    fullname: profile.fullname!,
+                    last: DateTime.now().toString(),
+                    seen: profile.seen!,
+                    data: profile.toJson(),
+                    verified: drift.Value(profile.verified ?? false),
+                  ),
+                );
+
+            log('[user.service.dart] create user ${profile.id} from search as seen ${profile.seen}');
+          } else {
+            // update user
+            await (database.update(database.userTable)
+                  ..where((row) => row.id.equals(profile.id.toString())))
+                .writeReturning(
+              UserTableCompanion(
+                avatar: drift.Value(profile.avatar!),
+                fullname: drift.Value(profile.fullname!),
+                seen: drift.Value(profile.seen!),
               ),
             );
 
-        log('[user.service.dart] create user ${profile.id} from search as seen ${profile.seen}');
-      } else {
-        // update user
-        await (database.update(database.userTable)
-              ..where((row) => row.id.equals(profile.id.toString())))
-            .writeReturning(
-          UserTableCompanion(
-            avatar: drift.Value(profile.avatar!),
-            fullname: drift.Value(profile.fullname!),
-            seen: drift.Value(profile.seen!),
-          ),
-        );
-
-        log('[user.service.dart] update user ${profile.id} from search as seen ${profile.seen}');
-      }
-    });
+            log('[user.service.dart] update user ${profile.id} from search as seen ${profile.seen}');
+          }
+        } catch (e) {
+          //
+        }
+      });
+    } catch (e) {
+      //
+    }
   }
 }

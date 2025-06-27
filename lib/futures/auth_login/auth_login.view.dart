@@ -1,5 +1,6 @@
 import 'package:chat/futures/auth_login/auth_login.controller.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/or.widget.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,13 @@ class AuthLoginView extends GetView<AuthLoginController> {
       appBar: AppBar(
         title: Image.asset("lib/app/assets/images/auth_logo.png"),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+            NavigationBack();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       bottomNavigationBar: footer(),
       body: Obx(
@@ -154,6 +162,7 @@ class AuthLoginView extends GetView<AuthLoginController> {
             child: ElevatedButton(
               onPressed: () {
                 Get.toNamed('/auth/forgot');
+                NavigationToNamed('/auth/forgot');
               },
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.all(Colors.pink),

@@ -1,6 +1,7 @@
 import 'package:chat/futures/auth_forgot/auth_forgot.controller.dart';
 import 'package:chat/futures/dialog_sms_send_error/dialog_sms_send_error.view.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -19,6 +20,13 @@ class AuthForgotView extends GetView<AuthForgotController> {
       appBar: AppBar(
         title: Image.asset("lib/app/assets/images/auth_logo.png"),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+            NavigationBack();
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
       ),
       bottomNavigationBar: footer(),
       body: Obx(

@@ -1,4 +1,5 @@
 import 'package:chat/futures/account_delete_leave/account_delete_leave.controller.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,10 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                 Gap(16),
                 //   back button
                 IconButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () {
+                    Get.back();
+                    NavigationBack();
+                  },
                   icon: Icon(
                     Icons.arrow_back_rounded,
                     color: Colors.white,
@@ -92,10 +96,9 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                 maxLines: 3,
                 enabled: !controller.disabled.value,
                 decoration: InputDecoration(
-                  hintText: controller.texts['placeholder'],
-                  border: const OutlineInputBorder(),
-                  helperText: "حداقل 5 حرف بنویسید"
-                ),
+                    hintText: controller.texts['placeholder'],
+                    border: const OutlineInputBorder(),
+                    helperText: "حداقل 5 حرف بنویسید"),
                 onChanged: (value) {
                   controller.description = value;
                 },

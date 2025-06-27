@@ -1,4 +1,5 @@
 import 'package:chat/futures/dialog_logout/dialog_logout.controller.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -50,6 +51,7 @@ class DialogLogoutView extends GetView<DialogLogoutController> {
                           ? null
                           : () {
                               Get.back(canPop: !controller.disabled.value);
+                              NavigationBack();
                             },
                       style: const ButtonStyle(
                         minimumSize: WidgetStatePropertyAll(Size(64, 46)),

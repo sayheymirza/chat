@@ -1,5 +1,6 @@
 import 'package:chat/futures/contact/contact.controller.dart';
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/contact_form/contact_form.widget.dart';
@@ -16,9 +17,21 @@ class ContactView extends GetView<ContactController> {
     Get.put(ContactController());
 
     return Scaffold(
-      appBar: const GradientAppBarWidget(
-        back: true,
+      appBar: GradientAppBarWidget(
         title: 'تماس با ما',
+        back: Get.arguments != null ? false : true,
+        right: Get.arguments != null
+            ? IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  NavigationBack();
+                  Get.back();
+                },
+              )
+            : null,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),

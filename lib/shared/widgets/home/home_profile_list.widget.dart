@@ -1,4 +1,5 @@
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/user.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -63,6 +64,7 @@ class HomeProfileListWidget extends StatelessWidget {
               OutlinedButton(
                 onPressed: () {
                   Get.toNamed('/app/search/$buttonType');
+                  NavigationToNamed('/app/search/$buttonType');
                 },
                 style: ButtonStyle(
                   minimumSize: WidgetStatePropertyAll(Size(56, 32)),
@@ -124,6 +126,7 @@ class HomeProfileListWidget extends StatelessWidget {
           UserWidget(
             item: item,
             onTap: () {
+              NavigationToNamed('/app/profile/${item.id}');
               Get.toNamed(
                 '/app/profile/${item.id}',
                 arguments: {

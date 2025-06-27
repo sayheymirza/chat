@@ -18,7 +18,6 @@ class AdminChatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(item.updatedAt.toString());
     return GestureDetector(
       onTap: () {
         onTap();

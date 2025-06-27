@@ -5,11 +5,14 @@ import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/dropdowns/dropdowns.widget.dart';
 import 'package:chat/shared/widgets/stepper.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+
+import '../../shared/platform/navigation.dart';
 
 class AuthRegisterView extends GetView<AuthRegisterController> {
   const AuthRegisterView({super.key});
@@ -30,6 +33,20 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
           appBar: AppBar(
             title: Image.asset("lib/app/assets/images/auth_logo.png"),
             centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                if (controller.step.value != 0) {
+                  if (kIsWeb) {
+                    NavigationBack();
+                  } else {
+                    controller.step.value -= 1;
+                  }
+                } else {
+                  Get.back();
+                }
+              },
+              icon: Icon(Icons.arrow_back),
+            ),
           ),
           bottomNavigationBar: footer(),
           body: step(),
@@ -707,7 +724,11 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
                 child: OutlinedButton(
                   onPressed: !controller.disabled.value
                       ? () {
-                          controller.step.value -= 1;
+                          if (kIsWeb) {
+                            NavigationBack();
+                          } else {
+                            controller.step.value -= 1;
+                          }
                         }
                       : null,
                   child: const Text(

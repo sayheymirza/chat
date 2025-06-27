@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/search_filter/search_filter.view.dart';
 import 'package:chat/models/apis/user.model.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -25,6 +30,26 @@ class SearchViewSlimController extends GetxController {
 
   RxList<ApiUserSearchFilterRequestModel> filters_history =
       <ApiUserSearchFilterRequestModel>[].obs;
+
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        popFilters();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents!.cancel();
+  }
 
   void init() {
     filterable.value = true;
@@ -50,9 +75,9 @@ class SearchViewSlimController extends GetxController {
 
   void goToPage(int value) {
     if (loading.value == true) return;
+    onPageChange();
     page.value = value;
     submit();
-    onPageChange();
   }
 
   Future<void> submit() async {
@@ -93,18 +118,26 @@ class SearchViewSlimController extends GetxController {
 
         filters = values;
         page.value = 1;
+        navigate();
         submit();
       }
     });
   }
 
   void onBack() {
+    if (filters_history.isEmpty) {
+      Get.back();
+    }
+
+    NavigationBack();
+  }
+
+  void popFilters() {
     if (filters_history.isNotEmpty) {
       var last = filters_history.last;
 
       filters = last;
       page.value = last.page ?? 1;
-
       submit();
 
       filters_history.removeLast();
@@ -117,5 +150,14 @@ class SearchViewSlimController extends GetxController {
         'page': page.value,
       }),
     );
+    navigate();
+  }
+
+  void navigate() {
+    // convert filters_hstory to query params
+    var query =
+        'avatar=${filters_history.last.avatar}&city=${filters_history.last.city}&province=${filters_history.last.province}&minAge=${filters_history.last.minAge}&maxAge=${filters_history.last.maxAge}&marital=${filters_history.last.marital}&page=${filters_history.last.page}';
+
+    NavigationToNamed('/search', params: query);
   }
 }

@@ -2,6 +2,7 @@ import 'package:chat/futures/account/account.controller.dart';
 import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/futures/dialog_logout/dialog_logout.view.dart';
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class AccountView extends GetView<AccountController> {
                   icon: Icons.forum_rounded,
                   color: Colors.cyan,
                   onTap: () {
+                    NavigationToNamed('/app/admin/chat');
                     Get.toNamed('/app/admin/chat');
                   },
                   suffix: StreamBuilder(
@@ -205,9 +207,7 @@ class AccountView extends GetView<AccountController> {
                   title: 'غیر فعال سازی و حذف',
                   icon: Icons.delete,
                   color: Colors.red,
-                  onTap: () {
-                    controller.deleteOrLeaveAccount();
-                  },
+                  page: '/app/account_delete_leave/choose',
                 ),
                 // dev log
                 if (controller.profile.profile.value.permissions
@@ -313,6 +313,7 @@ class AccountView extends GetView<AccountController> {
     return GestureDetector(
       onTap: () {
         Get.toNamed('/app/purchase/one-step');
+        NavigationToNamed('/app/purchase/one-step');
       },
       child: Container(
         margin: const EdgeInsets.symmetric(
@@ -359,6 +360,12 @@ class AccountView extends GetView<AccountController> {
         if (page != null) {
           try {
             Get.toNamed(page, arguments: arguments);
+            NavigationToNamed(
+              page,
+              params: arguments.keys
+                  .map((key) => '$key=${arguments[key]}')
+                  .join('&'),
+            );
           } catch (e) {
             //
           }

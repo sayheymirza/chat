@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:chat/models/chat/admin.model.dart';
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 
@@ -14,12 +17,43 @@ class AdminChatsController extends GetxController {
 
   List<int> page_history = [];
 
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        pop();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents!.cancel();
+  }
+
   @override
   void onReady() {
     super.onReady();
 
     Services.adminChat.syncAPIWithDatabase();
     load();
+  }
+
+  void pop() {
+    if (page_history.isNotEmpty) {
+      var last = page_history.last;
+
+      page.value = last;
+      load();
+
+      page_history.removeLast();
+    }
   }
 
   void onBack() {
@@ -31,6 +65,7 @@ class AdminChatsController extends GetxController {
 
       page_history.removeLast();
     } else {
+      NavigationBack();
       Get.back();
     }
   }
@@ -43,6 +78,7 @@ class AdminChatsController extends GetxController {
   }
 
   void open({required String id}) {
+    NavigationToNamed('/app/admin/chat/$id');
     Get.toNamed('/app/admin/chat/$id')!.then((_) => load());
   }
 
@@ -70,6 +106,8 @@ class AdminChatsController extends GetxController {
 
       chats.value = result.chats ?? [];
       lastPage.value = result.last ?? 0;
+
+      NavigationToNamed('/app/admin/chat', params: 'page=${page.value}');
     }
   }
 }

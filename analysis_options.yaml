@@ -2,6 +2,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     avoid_print: ignore
+    avoid_web_libraries_in_flutter: ignore
     camel_case_types: ignore
     constant_identifier_names: ignore
     depend_on_referenced_packages: ignore
@@ -13,3 +14,4 @@ analyzer:
     unnecessary_null_comparison: ignore
     unnecessary_question_mark: ignore
     unused_element: ignore
+    use_function_type_syntax_for_parameters: ignore

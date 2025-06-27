@@ -1,3 +1,4 @@
+import 'package:chat/shared/platform/web_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -83,6 +84,7 @@ class _AuthViewState extends State<AuthView> {
                     onPressed: () {
                       Get.back();
                       Get.toNamed("/auth/login");
+                      NavigationToNamed('/auth/login');
                     },
                     child: const Text(
                       "ورود",
@@ -100,6 +102,7 @@ class _AuthViewState extends State<AuthView> {
                     onPressed: () {
                       Get.back();
                       Get.toNamed("/auth/register");
+                      NavigationToNamed('/auth/register');
                     },
                     child: const Text(
                       "ثبت نام",
@@ -125,6 +128,7 @@ class _AuthViewState extends State<AuthView> {
                 onTap: () {
                   Get.back();
                   Get.toNamed(link["path"]);
+                  NavigationToNamed(link['path']);
                 },
               ),
           ],
@@ -225,6 +229,7 @@ class _AuthViewState extends State<AuthView> {
               ElevatedButton(
                 onPressed: () {
                   Get.toNamed('/auth/login');
+                  NavigationToNamed('/auth/login');
                 },
                 child: const Text(
                   "ورود به حساب کاربری",
@@ -244,6 +249,7 @@ class _AuthViewState extends State<AuthView> {
               ElevatedButton(
                 onPressed: () {
                   Get.toNamed('/auth/register');
+                  NavigationToNamed('/auth/register');
                 },
                 child: const Text(
                   "ایجاد حساب کاربری",
@@ -263,6 +269,7 @@ class _AuthViewState extends State<AuthView> {
               ElevatedButton(
                 onPressed: () {
                   Get.toNamed('/auth/forgot');
+                  NavigationToNamed('/auth/forgot');
                 },
                 child: const Text(
                   "فراموشی رمز عبور",

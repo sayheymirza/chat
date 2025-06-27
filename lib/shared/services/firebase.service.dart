@@ -131,7 +131,11 @@ class FirebaseService extends GetxService {
   }
 
   Future<String?> get token async {
-    return FirebaseMessaging.instance.getToken();
+    try {
+      return await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      return null;
+    }
   }
 
   // request for notifications access

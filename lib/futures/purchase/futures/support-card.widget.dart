@@ -1,3 +1,4 @@
+import 'package:chat/shared/platform/web_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -40,7 +41,8 @@ class PurchaseSupportCardWidget extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                Get.toNamed('/page/contact');
+                Get.toNamed('/page/contact', arguments: 'webable');
+                NavigationToNamed('/page/contact');
               },
               style: const ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(Colors.white),

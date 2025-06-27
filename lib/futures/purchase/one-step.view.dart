@@ -6,6 +6,7 @@ import 'package:chat/futures/purchase/one-step.controller.dart';
 import 'package:chat/futures/purchase/purchase.controller.dart';
 import 'package:chat/models/plan.model.dart';
 import 'package:chat/shared/formats/number.format.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
@@ -37,13 +38,15 @@ class PurchaseOneStepView extends GetView<PurchaseOneStepController> {
             onBack: () {
               if (controller.index.value == 0) {
                 Get.back(canPop: true);
+                NavigationBack();
               } else {
                 controller.back();
               }
             },
             left: TextButton(
               onPressed: () {
-                Get.toNamed('/page/plans');
+                Get.toNamed('/page/plans', arguments: 'webable');
+                NavigationToNamed('/page/plans');
               },
               child: const Text(
                 'راهنمای بسته ها',

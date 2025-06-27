@@ -1,8 +1,13 @@
+import 'dart:async';
+
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class DialogConfirmView extends StatelessWidget {
+class DialogConfirmView extends StatefulWidget {
   final String title;
   final String subtitle;
   final String cancel;
@@ -15,6 +20,26 @@ class DialogConfirmView extends StatelessWidget {
     this.cancel = 'انصراف',
     this.submit = 'تایید',
   });
+
+  @override
+  State<DialogConfirmView> createState() => _DialogConfirmViewState();
+}
+
+class _DialogConfirmViewState extends State<DialogConfirmView> {
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void initState() {
+    super.initState();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        Get.back();
+      }
+    });
+
+    NavigationOpenedDialog();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +61,7 @@ class DialogConfirmView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title,
+              widget.title,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -44,7 +69,7 @@ class DialogConfirmView extends StatelessWidget {
             ),
             const Gap(8),
             Text(
-              subtitle,
+              widget.subtitle,
             ),
             const Spacer(),
             Row(
@@ -53,16 +78,18 @@ class DialogConfirmView extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Get.back();
+                    NavigationBack();
                   },
-                  child: Text(cancel),
+                  child: Text(widget.cancel),
                 ),
                 const Gap(4),
                 ElevatedButton(
                   onPressed: () {
                     Get.back(result: true);
+                    NavigationBack();
                   },
                   child: Text(
-                    submit,
+                    widget.submit,
                     style: TextStyle(
                       color: Get.theme.colorScheme.onPrimary,
                     ),

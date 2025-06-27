@@ -1,4 +1,5 @@
 import 'package:chat/futures/page/page.controller.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -25,8 +26,14 @@ class PageView extends GetView<PageViewController> {
       () => Scaffold(
         backgroundColor: Colors.white,
         appBar: GradientAppBarWidget(
-          back: true,
           title: title,
+          back: true,
+          onBack: () {
+            NavigationBack();
+            if (Get.arguments != null && Get.arguments.runtimeType == String) {
+              Get.back();
+            }
+          },
         ),
         body: Stack(
           children: [
