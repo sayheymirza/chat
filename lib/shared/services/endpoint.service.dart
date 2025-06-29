@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 class EndpointService extends GetxService {
   final List<String> sites = [
     "https://config.mah-asal2024.workers.dev/",
+    "https://mah-asal.storage.c2.liara.space/endpoint.txt"
   ];
 
   Future<bool> init() async {
