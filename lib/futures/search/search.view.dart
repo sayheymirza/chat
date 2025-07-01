@@ -1,5 +1,4 @@
 import 'package:chat/futures/search/search.controller.dart';
-import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:chat/shared/widgets/pagination.widget.dart';
@@ -35,12 +34,7 @@ class SearchView extends GetView<SearchViewController> {
           appBar: GradientAppBarWidget(
             back: controller.backable.value,
             onBack: () {
-              if (controller.filters_history.isEmpty) {
-                Get.back();
-                NavigationBack();
-              } else {
-                controller.onBack();
-              }
+              controller.onBack();
             },
             title: controller.title.value,
             colors: controller.colors,

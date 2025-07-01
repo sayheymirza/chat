@@ -7,6 +7,7 @@ import 'package:chat/models/event.model.dart';
 import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/event.dart';
 import 'package:chat/shared/platform/navigation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -125,11 +126,19 @@ class SearchViewSlimController extends GetxController {
   }
 
   void onBack() {
-    if (filters_history.isEmpty) {
-      Get.back();
-    }
+    if (kIsWasm) {
+      if (filters_history.isEmpty) {
+        Get.back();
+      }
 
-    NavigationBack();
+      NavigationBack();
+    } else {
+      if (filters_history.isEmpty) {
+        Get.back();
+      } else {
+        popFilters();
+      }
+    }
   }
 
   void popFilters() {
