@@ -22,23 +22,13 @@ class TransactionsView extends GetView<TransactionsController> {
       () => PopScope(
         canPop: controller.page.value == 1,
         onPopInvokedWithResult: (_, __) {
-          if (controller.page.value == 1) {
-            Get.back();
-            NavigationBack();
-          } else {
-            controller.goToPage(controller.page.value - 1);
-          }
+          controller.onBack();
         },
         child: Scaffold(
           appBar: GradientAppBarWidget(
             back: controller.page.value == 1,
             onBack: () {
-              if (controller.page.value == 1) {
-                Get.back();
-                NavigationBack();
-              } else {
-                controller.goToPage(controller.page.value - 1);
-              }
+              controller.onBack();
             },
             title: "تراکنش ها",
           ),

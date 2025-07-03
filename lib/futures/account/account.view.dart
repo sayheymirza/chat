@@ -200,6 +200,8 @@ class AccountView extends GetView<AccountController> {
                       const DialogLogoutView(),
                       isScrollControlled: true,
                     );
+
+                    NavigationPopDialog();
                   },
                 ),
                 // disable or delete account (red)

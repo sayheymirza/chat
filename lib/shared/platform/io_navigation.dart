@@ -6,6 +6,8 @@ void NavigationBack() {
   Get.back();
 }
 
+void NavigationPopDialog() {}
+
 void NavigationOpenedDialog() {}
 
 void NavigationListenOnBack() {}

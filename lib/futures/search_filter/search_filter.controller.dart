@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat/models/apis/user.model.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/database/database.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -10,6 +14,29 @@ import 'package:get/get.dart';
 class SearchFilterController extends GetxController {
   GlobalKey<FormBuilderState> searchFilterFormKey =
       GlobalKey<FormBuilderState>();
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    if (subevents == null) {
+      NavigationOpenedDialog();
+
+      subevents = event.on<EventModel>().listen((data) async {
+        if (data.event == EVENTS.NAVIGATION_BACK) {
+          Get.back();
+        }
+      });
+    }
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents!.cancel();
+  }
 
   RxMap<String, List> dropdownsItems = {
     'marital': [

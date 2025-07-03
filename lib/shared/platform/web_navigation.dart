@@ -15,6 +15,11 @@ void NavigationBack() {
   callMethod(context['window'], 'NavigationBack', []);
 }
 
+void NavigationPopDialog() {
+  print('popdialog');
+  callMethod(context['window'], 'NavigationPopDialog', []);
+}
+
 void NavigationOpenedDialog() {
   print('openeddialog');
   callMethod(context['window'], 'NavigationOpenedDialog', []);

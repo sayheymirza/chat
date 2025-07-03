@@ -1,5 +1,11 @@
+import 'dart:async';
+
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,12 +19,27 @@ class FavoritesController extends GetxController
   RxBool loading = false.obs;
   RxList<dynamic> pagination_history = <dynamic>[].obs;
 
+  StreamSubscription<EventModel>? subevents;
+
   @override
   void onInit() {
     super.onInit();
     tab = TabController(vsync: this, length: 2);
 
     submit();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        onBack();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents!.cancel();
   }
 
   void onTabChange() {
@@ -26,11 +47,18 @@ class FavoritesController extends GetxController
     profiles.value = List<ProfileSearchModel>.empty();
     lastPage.value = 0;
     onPageChange(tab.index == 0 ? 1 : 0);
+    navigate();
     submit();
   }
 
   void onForceBack() {
     // clear all histories and Get.back
+    if (pagination_history.isNotEmpty) {
+      for (var i = 0; i < pagination_history.length - 1; i++) {
+        NavigationBack();
+      }
+    }
+
     pagination_history.value = [];
     Get.back();
   }
@@ -39,6 +67,7 @@ class FavoritesController extends GetxController
     if (loading.value == true) return;
     onPageChange(tab.index);
     page.value = value;
+    navigate();
     submit();
   }
 
@@ -71,14 +100,25 @@ class FavoritesController extends GetxController
   }
 
   void onBack() {
-    var last = pagination_history.removeLast();
+    if (pagination_history.isNotEmpty) {
+      var last = pagination_history.removeLast();
 
-    print(last);
+      page.value = last['page'];
+      // tab.index = last['tab'];
+      tab.animateTo(last['tab']);
 
-    page.value = last['page'];
-    // tab.index = last['tab'];
-    tab.animateTo(last['tab']);
+      submit();
+    } else {
+      Get.back();
+    }
+  }
 
-    submit();
+  void navigate() {
+    if (kIsWeb) {
+      NavigationToNamed(
+        '/app/favorites',
+        params: 'page=${page.value}&tab=${tab.index}',
+      );
+    }
   }
 }

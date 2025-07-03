@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:chat/models/chat/chat.model.dart';
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,7 @@ class ChatsController extends GetxController {
   RxInt limit = 12.obs;
   RxBool loading = false.obs;
   StreamSubscription<ChatListModel>? stream;
+  StreamSubscription<EventModel>? subevents;
 
   List<int> page_history = [];
 
@@ -21,9 +23,13 @@ class ChatsController extends GetxController {
   void onInit() {
     super.onInit();
 
-    event.on<EventModel>().listen((data) async {
+    subevents = event.on<EventModel>().listen((data) async {
       if (data.event == 'reload_chats') {
         load(statusing: false);
+      }
+
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        onBack();
       }
     });
   }
@@ -31,6 +37,7 @@ class ChatsController extends GetxController {
   @override
   void onClose() {
     stream?.cancel();
+    subevents?.cancel();
     super.onClose();
   }
 
@@ -49,10 +56,12 @@ class ChatsController extends GetxController {
     if (loading.value == true) return;
     page_history.add(page.value);
     page.value = value;
+    navigation();
     load();
   }
 
   void open({required String id}) {
+    NavigationToNamed('/app/chat/$id');
     Get.toNamed('/app/chat/$id')!.then((_) => load());
   }
 
@@ -78,5 +87,9 @@ class ChatsController extends GetxController {
     Services.user.statuses(userIds: ids);
 
     log('[chats.controller.dart] list of users are $ids');
+  }
+
+  void navigation() {
+    NavigationToNamed('/app', params: 'view=1&page=${page.value}');
   }
 }

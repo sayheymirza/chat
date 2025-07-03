@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/platform/web_cropper_file.dart'
     if (dart.library.io) 'package:chat/shared/platform/io_cropper_file.dart'
     as platform;
 import 'package:chat/shared/services.dart';
 import 'package:crop_image/crop_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class CropperController extends GetxController {
@@ -44,6 +46,10 @@ class CropperController extends GetxController {
         compressedBytes,
         Get.arguments['path'].split(".").last,
       );
+
+      if (kIsWeb) {
+        NavigationBack();
+      }
 
       Get.back(
         result: path, // همیشه یک string میدی

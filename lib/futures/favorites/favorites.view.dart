@@ -20,22 +20,13 @@ class FavoritesView extends GetView<FavoritesController> {
       () => PopScope(
         canPop: controller.pagination_history.isEmpty,
         onPopInvokedWithResult: (_, __) {
-          if (controller.pagination_history.isEmpty) {
-            Get.back();
-            NavigationBack();
-          } else {
-            controller.onBack();
-          }
+          controller.onBack();
         },
         child: Scaffold(
           appBar: GradientAppBarWidget(
             back: true,
             onBack: () {
-              if (controller.pagination_history.isEmpty) {
-                Get.back();
-              } else {
-                controller.onBack();
-              }
+              controller.onBack();
             },
             title: 'علاقه مندی ها',
             left: IconButton(

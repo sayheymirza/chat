@@ -42,7 +42,12 @@ class _AppState extends State<App> {
           return;
         }
 
-        if (currentPath.startsWith('/app/purchase/one-step')) {
+        if (currentPath.startsWith('/app/favorites') ||
+            currentPath.startsWith('/app/blocks') ||
+            currentPath.startsWith('/app/transactions') ||
+            currentPath.startsWith('/app/search') ||
+            currentPath.startsWith('/search') ||
+            currentPath.startsWith('/app/purchase/one-step')) {
           return;
         }
 

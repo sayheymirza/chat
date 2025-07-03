@@ -163,10 +163,12 @@ class SearchViewSlimController extends GetxController {
   }
 
   void navigate() {
-    // convert filters_hstory to query params
-    var query =
-        'avatar=${filters_history.last.avatar}&city=${filters_history.last.city}&province=${filters_history.last.province}&minAge=${filters_history.last.minAge}&maxAge=${filters_history.last.maxAge}&marital=${filters_history.last.marital}&page=${filters_history.last.page}';
+    if (kIsWeb) {
+      // convert filters_hstory to query params
+      var query =
+          'avatar=${filters_history.last.avatar}&city=${filters_history.last.city}&province=${filters_history.last.province}&minAge=${filters_history.last.minAge}&maxAge=${filters_history.last.maxAge}&marital=${filters_history.last.marital}&page=${filters_history.last.page}';
 
-    NavigationToNamed('/search', params: query);
+      NavigationToNamed('/search', params: query);
+    }
   }
 }

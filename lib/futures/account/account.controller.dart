@@ -7,6 +7,7 @@ import 'package:chat/futures/dialog_pick_image/dialog_pick_image.view.dart';
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/formats/number.format.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/services/profile.service.dart';
 import 'package:chat/shared/snackbar.dart';
@@ -49,6 +50,8 @@ class AccountController extends GetxController {
         deletable: profile.profile.value.defaultAvatar == false,
       ),
     ).then((value) {
+      NavigationPopDialog();
+
       if (value == null) return;
 
       if (value['action'] == 'file') {
@@ -58,6 +61,8 @@ class AccountController extends GetxController {
       if (value['action'] == 'delete') {
         deleteAvatar();
       }
+
+      NavigationPopDialog();
     });
   }
 
@@ -93,6 +98,8 @@ class AccountController extends GetxController {
         submit: 'تایید و حذف',
       ),
     );
+
+    NavigationPopDialog();
 
     if (status != true) return;
 

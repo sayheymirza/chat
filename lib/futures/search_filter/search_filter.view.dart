@@ -1,6 +1,8 @@
 import 'package:chat/futures/search_filter/search_filter.controller.dart';
 import 'package:chat/models/apis/user.model.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/dropdowns/dropdowns.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:gap/gap.dart';
@@ -21,6 +23,18 @@ class SearchFilterView extends GetView<SearchFilterController> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            if (kIsWeb) {
+              NavigationBack();
+            } else {
+              Get.back();
+            }
+          },
+          icon: Icon(
+            Icons.arrow_back_rounded,
+          ),
+        ),
         title: const Text(
           'فیلتر ها',
           style: TextStyle(fontSize: 16),
