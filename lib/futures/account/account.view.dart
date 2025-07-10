@@ -463,7 +463,9 @@ class AccountView extends GetView<AccountController> {
                     url: controller.profile.profile.value.avatar!,
                   ),
                   useSafeArea: false,
-                );
+                ).then((_) {
+                  NavigationPopDialog();
+                });
               },
               child: AnimatedOpacity(
                 opacity: controller.avatarDisabled.value ? 0.4 : 1,

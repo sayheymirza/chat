@@ -1,5 +1,6 @@
 import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/futures/profile_slim/profile.controller.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/title.widget.dart';
 import 'package:flutter/material.dart';
@@ -414,7 +415,9 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                   url: avatar,
                 ),
                 useSafeArea: false,
-              );
+              ).then((_) {
+                NavigationPopDialog();
+              });
             },
             child: SizedBox(
               width: double.infinity,

@@ -435,7 +435,9 @@ class ProfileView extends GetView<ProfileController> {
                   url: avatar,
                 ),
                 useSafeArea: false,
-              );
+              ).then((_) {
+                NavigationPopDialog();
+              });
             },
             child: SizedBox(
               width: double.infinity,

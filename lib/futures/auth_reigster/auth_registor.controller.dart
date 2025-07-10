@@ -11,6 +11,7 @@ import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
@@ -82,6 +83,18 @@ class AuthRegisterController extends GetxController {
     super.onClose();
 
     subevents!.cancel();
+  }
+
+  void onBack() {
+    NavigationBack();
+
+    if (!kIsWeb) {
+      if (step.value != 0) {
+        step.value -= 1;
+      } else {
+        Get.back();
+      }
+    }
   }
 
   Future<void> setCitiesByProvider(String value) async {

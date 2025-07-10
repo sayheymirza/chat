@@ -73,6 +73,7 @@ class SearchSlimView extends GetView<SearchViewSlimController> {
                         onChange: (page) {
                           controller.goToPage(page);
                         },
+                        onReset: () {},
                       ),
                     const Gap(20),
                   ],

@@ -41,6 +41,7 @@ class DialogLogoutController extends GetxController {
         Restart.restartApp();
       }
     } catch (e) {
+      print(e);
       disabled.value = false;
       showSnackbar(message: 'خطا در هنگام خروج از حساب کاربری رخ داد');
       //

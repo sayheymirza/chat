@@ -6,6 +6,7 @@ class PaginationWidget extends StatefulWidget {
   final int last;
   final int page;
   final Function(int page) onChange;
+  final Function()? onReset;
   final Color? color;
   final bool elevation;
   final bool hidden;
@@ -15,6 +16,7 @@ class PaginationWidget extends StatefulWidget {
     required this.last,
     required this.page,
     required this.onChange,
+    this.onReset,
     this.elevation = false,
     this.hidden = false,
     this.color,
@@ -199,6 +201,9 @@ class _PaginationWidgetState extends State<PaginationWidget> {
                     ElevatedButton(
                       onPressed: () {
                         setPage(1);
+                        if (widget.onReset != null) {
+                          widget.onReset!();
+                        }
                       },
                       style: ButtonStyle(
                         minimumSize: const WidgetStatePropertyAll(Size(46, 46)),

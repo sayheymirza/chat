@@ -1,6 +1,12 @@
+import 'dart:async';
+
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -22,6 +28,28 @@ class DialogImageView extends StatefulWidget {
 
 class _DialogImageViewState extends State<DialogImageView> {
   bool downloading = false;
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (subevents == null) {
+      NavigationOpenedDialog();
+
+      subevents = event.on<EventModel>().listen((data) async {
+        if (data.event == EVENTS.NAVIGATION_BACK) {
+          Get.back();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subevents!.cancel();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +70,18 @@ class _DialogImageViewState extends State<DialogImageView> {
           Positioned(
             top: Get.mediaQuery.padding.top + 16,
             right: 16,
-            child: IconButton(onPressed: () => Get.back(), icon: Icon(Icons.close_rounded, color: Colors.black,)),
+            child: IconButton(
+                onPressed: () {
+                  if (kIsWeb) {
+                    NavigationPopDialog();
+                  } else {
+                    Get.back();
+                  }
+                },
+                icon: Icon(
+                  Icons.close_rounded,
+                  color: Colors.black,
+                )),
           ),
           if (widget.downloadable)
             Positioned(

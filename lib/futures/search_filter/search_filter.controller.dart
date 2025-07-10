@@ -66,16 +66,18 @@ class SearchFilterController extends GetxController {
   ].obs;
 
   void patchValue(ApiUserSearchFilterRequestModel filter) {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      searchFilterFormKey.currentState!.patchValue(filter.toJson());
-
+    Future.delayed(const Duration(milliseconds: 50), () async {
       // if province was not null, load cities
       if (filter.province != null) {
-        setCitiesByProvider(filter.province!);
+        await setCitiesByProvider(filter.province!);
       }
-    });
 
-    log('[search_filter.controller.dart] patch value');
+      await Future.delayed(const Duration(milliseconds: 50), () {});
+
+      searchFilterFormKey.currentState!.patchValue(filter.toJson());
+
+      log('[search_filter.controller.dart] patch value');
+    });
   }
 
   void submit() {

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat/futures/dialog_image/dialog_image.view.dart';
 import 'package:chat/models/chat/chat.message.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
@@ -110,7 +111,9 @@ class _ChatMessageImageV1WidgetState extends State<ChatMessageImageV1Widget> {
             url: url,
           ),
           useSafeArea: false,
-        );
+        ).then((_) {
+          NavigationPopDialog();
+        });
       },
       child: Container(
         width: 300,

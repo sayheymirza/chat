@@ -57,9 +57,9 @@ class SearchView extends GetView<SearchViewController> {
                 : IconButton(
                     onPressed: () => controller.onForceBack(),
                     icon: Icon(
-                      Icons.home,
+                      Icons.logout_rounded,
                       color: Colors.white,
-                      size: 32,
+                      size: 24,
                     ),
                   ),
           ),

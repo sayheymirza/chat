@@ -42,7 +42,8 @@ class _AppState extends State<App> {
           return;
         }
 
-        if (currentPath.startsWith('/app/favorites') ||
+        if (currentPath.startsWith('/auth/register') ||
+            currentPath.startsWith('/app/favorites') ||
             currentPath.startsWith('/app/blocks') ||
             currentPath.startsWith('/app/transactions') ||
             currentPath.startsWith('/app/search') ||

@@ -2,6 +2,7 @@ import 'package:chat/app/apis/api.dart';
 import 'package:chat/models/firebase.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -24,7 +25,9 @@ class AppService extends GetxService {
   Future<void> logout() async {
     ApiService.socket.disconnect();
 
-    await Services.firebase.event(type: FIREBASE_EVENT_TYPE.LOGOUT);
+    if (!kIsWeb) {
+      await Services.firebase.event(type: FIREBASE_EVENT_TYPE.LOGOUT);
+    }
     await ApiService.user.logout();
 
     await Future.wait([

@@ -198,10 +198,13 @@ class PurchaseController extends GetxController {
 
       disabled.value = false;
 
-      if (result != null) {
-        Services.launch.launch(result, mode: "external");
-      } else {
-        showSnackbar(message: 'خطا در انتقال به درگاه پرداخت رخ داد');
+      if (result != null && result['status']) {
+        Services.launch.launch(
+          result['result']['payment_url'],
+          mode: "external",
+        );
+      } else if (result != null) {
+        showSnackbar(message: result['message']);
       }
     } catch (e) {
       disabled.value = false;

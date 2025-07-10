@@ -35,15 +35,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
             centerTitle: true,
             leading: IconButton(
               onPressed: () {
-                if (controller.step.value != 0) {
-                  if (kIsWeb) {
-                    NavigationBack();
-                  } else {
-                    controller.step.value -= 1;
-                  }
-                } else {
-                  Get.back();
-                }
+                controller.onBack();
               },
               icon: Icon(Icons.arrow_back),
             ),

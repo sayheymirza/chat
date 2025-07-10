@@ -162,6 +162,8 @@ class SearchViewSlimController extends GetxController {
     navigate();
   }
 
+  void resetPaignationHistory() {}
+
   void navigate() {
     if (kIsWeb) {
       // convert filters_hstory to query params
