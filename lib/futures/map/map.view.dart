@@ -1,5 +1,7 @@
 import 'package:chat/futures/map/map.controller.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cache/flutter_map_cache.dart';
@@ -21,7 +23,11 @@ class MapView extends GetView<MapViewController> {
           backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () {
-              Get.back();
+              if (kIsWeb) {
+                NavigationBack();
+              } else {
+                Get.back();
+              }
             },
             icon: const Icon(
               Icons.arrow_back,
@@ -65,9 +71,7 @@ class MapView extends GetView<MapViewController> {
                       ? SizedBox(
                           width: 24,
                           height: 24,
-                          child: CircularProgressIndicator(
-
-                          ),
+                          child: CircularProgressIndicator(),
                         )
                       : Icon(
                           controller.gps.value == "ready"

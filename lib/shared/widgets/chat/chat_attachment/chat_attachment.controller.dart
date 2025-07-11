@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/chat/chat_attachment/web_cropper_file.dart'
     if (dart.library.io) 'package:chat/shared/widgets/chat/chat_attachment/io_cropper_file.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +14,33 @@ import 'package:path/path.dart';
 import 'package:video_player/video_player.dart';
 
 class ChatAttachmentController extends GetxController {
+  StreamSubscription<EventModel>? subevents;
+  bool backed = false;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    if (subevents == null) {
+      NavigationOpenedDialog();
+
+      subevents = event.on<EventModel>().listen((data) async {
+        if (data.event == EVENTS.NAVIGATION_BACK) {
+          if (!backed) {
+            Get.back();
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    subevents!.cancel();
+  }
+
   void imageFromGallery() {
     image(source: ImageSource.gallery);
   }
@@ -27,6 +58,8 @@ class ChatAttachmentController extends GetxController {
   }
 
   void pickMap() {
+    NavigationToNamed('/app/map');
+
     Get.toNamed(
       '/app/map',
       arguments: {
@@ -35,6 +68,8 @@ class ChatAttachmentController extends GetxController {
     )!
         .then((value) {
       if (value != null) {
+        backed = true;
+
         Get.back(
           result: {
             "action": "map",
@@ -71,6 +106,8 @@ class ChatAttachmentController extends GetxController {
           data['duration'] = controller.value.duration.inMilliseconds;
         }
 
+        backed = true;
+
         // pop it
         Get.back(
           result: {
@@ -100,12 +137,15 @@ class ChatAttachmentController extends GetxController {
       if (file != null) {
         var path = file.path;
         if (editable) {
+          NavigationToNamed('/app/cropper', params: "path=${file.path}");
           // open cropper
           path = await Get.toNamed<dynamic>(
             "/app/cropper",
             arguments: {"path": file.path},
           );
         }
+
+        backed = true;
 
         // pop it
         Get.back(

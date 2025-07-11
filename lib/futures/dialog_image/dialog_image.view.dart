@@ -1,7 +1,3 @@
-import 'dart:async';
-
-import 'package:chat/models/event.model.dart';
-import 'package:chat/shared/event.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
@@ -28,27 +24,17 @@ class DialogImageView extends StatefulWidget {
 
 class _DialogImageViewState extends State<DialogImageView> {
   bool downloading = false;
-  StreamSubscription<EventModel>? subevents;
 
   @override
   void initState() {
     super.initState();
 
-    if (subevents == null) {
-      NavigationOpenedDialog();
-
-      subevents = event.on<EventModel>().listen((data) async {
-        if (data.event == EVENTS.NAVIGATION_BACK) {
-          Get.back();
-        }
-      });
-    }
+    NavigationOpenedDialog();
   }
 
   @override
   void dispose() {
     super.dispose();
-    subevents!.cancel();
   }
 
   @override

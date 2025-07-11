@@ -7,6 +7,7 @@ import 'package:chat/models/chat/chat.message.map.v1.dart';
 import 'package:chat/models/chat/chat.message.text.v1.dart';
 import 'package:chat/models/chat/chat.message.video.v1.dart';
 import 'package:chat/models/chat/chat.message.voice.v1.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
@@ -98,6 +99,7 @@ class ChatFooterController extends GetxController {
       ),
       isScrollControlled: true,
     ).then((value) {
+      // NavigationPopDialog();
       if (value != null) {
         switch (value['action']) {
           case 'audio':

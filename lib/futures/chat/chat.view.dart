@@ -205,7 +205,7 @@ class ChatView extends GetView<ChatController> {
                 ),
                 const Gap(14),
                 SizedBox(
-                  width: Get.width - 300,
+                  width: Get.width - 240,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
