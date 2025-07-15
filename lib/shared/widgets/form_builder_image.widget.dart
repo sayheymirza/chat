@@ -59,12 +59,18 @@ class _FormBuilderImageWidgetState extends State<FormBuilderImage> {
           if (result.success) {
             url = result.url;
             field.didChange(url);
+            setState(() {
+              uploadProgress = 0;
+              uploading = false;
+            });
+            showSnackbar(message: 'فایل با موفقیت آپلود شد');
           } else {
-            uploadProgress = 0;
-            uploading = false;
+            setState(() {
+              uploadProgress = 0;
+              uploading = false;
+            });
             showSnackbar(message: 'خطا در هنگام آپلود رخ داد');
           }
-          setState(() {});
         } catch (e) {
           file = null;
           uploadProgress = 0;

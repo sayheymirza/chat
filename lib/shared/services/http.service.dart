@@ -172,8 +172,6 @@ class HttpService extends GetxService {
 
     log('[http.service.dart#$i] POST $path');
 
-    print('googing to upload ...');
-
     var response = await client.post(
       url,
       data: data,

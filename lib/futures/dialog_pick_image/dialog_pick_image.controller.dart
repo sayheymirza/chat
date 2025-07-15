@@ -51,7 +51,7 @@ class DialogPickImageController extends GetxController {
           );
         }
 
-        NavigationPopDialog();
+        // NavigationPopDialog();
 
         // pop it
         Get.back(

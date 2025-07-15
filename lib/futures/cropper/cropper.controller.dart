@@ -47,9 +47,9 @@ class CropperController extends GetxController {
         Get.arguments['path'].split(".").last,
       );
 
-      if (kIsWeb) {
-        NavigationBack();
-      }
+      // if (kIsWeb) {
+      //   NavigationBack();
+      // }
 
       Get.back(
         result: path, // همیشه یک string میدی
