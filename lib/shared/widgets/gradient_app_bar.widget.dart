@@ -77,6 +77,7 @@ class GradientAppBarWidget extends StatelessWidget
                   ),
                 ),
               ),
+            const Spacer(),
             if (left != null) left!,
           ],
         ),

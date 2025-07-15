@@ -204,53 +204,48 @@ class ChatView extends GetView<ChatController> {
                   size: 42,
                 ),
                 const Gap(14),
-                SizedBox(
-                  width: Get.width - 240,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Gap(6),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Gap(6),
+                    Text(
+                      data.user!.fullname!,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Gap(2),
+                    if (data.status == 'typing')
                       Text(
-                        data.user!.fullname!,
+                        "در حال نوشتن ...",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const Gap(2),
-                      if (data.status == 'typing')
-                        Text(
-                          "در حال نوشتن ...",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                    if (data.status == 'normal' && data.user?.seen == "online")
+                      Text(
+                        "آنلاین",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
-                      if (data.status == 'normal' &&
-                          data.user?.seen == "online")
-                        Text(
-                          "آنلاین",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    if (data.status == 'normal' && data.user?.seen != "online")
+                      Text(
+                        formatAgo(data.user!.lastAt.toString()),
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
-                      if (data.status == 'normal' &&
-                          data.user?.seen != "online")
-                        Text(
-                          formatAgo(data.user!.lastAt.toString()),
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                    ],
-                  ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
                 ),
               ],
             ),
