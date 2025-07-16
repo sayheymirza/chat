@@ -1,9 +1,36 @@
+import 'dart:async';
+
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class DialogDeleteChatView extends StatelessWidget {
+class DialogDeleteChatView extends StatefulWidget {
   const DialogDeleteChatView({super.key});
+
+  @override
+  State<DialogDeleteChatView> createState() => _DialogDeleteChatViewState();
+}
+
+class _DialogDeleteChatViewState extends State<DialogDeleteChatView> {
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (subevents == null) {
+      NavigationOpenedDialog();
+
+      subevents = event.on<EventModel>().listen((data) async {
+        if (data.event == EVENTS.NAVIGATION_BACK) {
+          Get.back();
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

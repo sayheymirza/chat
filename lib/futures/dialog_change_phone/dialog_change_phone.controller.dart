@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/web_navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +14,23 @@ class DialogChangePhoneController extends GetxController {
   GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
 
   RxBool disabled = false.obs;
+
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    if (subevents == null) {
+      NavigationOpenedDialog();
+
+      subevents = event.on<EventModel>().listen((data) async {
+        if (data.event == EVENTS.NAVIGATION_BACK) {
+          Get.back();
+        }
+      });
+    }
+  }
 
   void submit() async {
     if (formKey.currentState!.saveAndValidate()) {
