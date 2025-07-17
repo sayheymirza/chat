@@ -15,6 +15,7 @@ class AccountDeleteLeaveController extends GetxController {
     'info_title': '',
     'info_text': '',
     'info_color': Colors.grey.shade100,
+    'height': 250,
   }.obs;
 
   @override
@@ -33,6 +34,7 @@ class AccountDeleteLeaveController extends GetxController {
         'info_color': Colors.red.shade100,
         'gradient_from': Colors.red.shade500,
         'gradient_to': Colors.red.shade700,
+        'height': 250,
       } as Map<String, dynamic>;
     }
     if (type == 'leave') {
@@ -45,6 +47,7 @@ class AccountDeleteLeaveController extends GetxController {
         'info_color': Colors.yellow.shade100,
         'gradient_from': Colors.orange.shade500,
         'gradient_to': Colors.orange.shade700,
+        'height': 290,
       } as Map<String, dynamic>;
     }
   }

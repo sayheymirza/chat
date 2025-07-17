@@ -1,5 +1,6 @@
 import 'package:chat/futures/account_delete_leave/account_delete_leave.controller.dart';
 import 'package:chat/shared/platform/navigation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,7 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
       () => Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: Size(Get.width, 250),
+          preferredSize: Size(Get.width, controller.texts['height']),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -34,8 +35,11 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                 //   back button
                 IconButton(
                   onPressed: () {
-                    Get.back();
-                    NavigationBack();
+                    if (kIsWeb) {
+                      Get.back();
+                    } else {
+                      NavigationBack();
+                    }
                   },
                   icon: Icon(
                     Icons.arrow_back_rounded,
@@ -63,6 +67,7 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
             ),
           ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: Container(
           width: Get.width - 32,
           margin: const EdgeInsets.only(bottom: 10),
