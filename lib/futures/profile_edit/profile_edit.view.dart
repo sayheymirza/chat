@@ -1,4 +1,5 @@
 import 'package:chat/futures/profile_edit/profile_edit.controller.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/dropdowns/dropdowns.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
@@ -50,7 +51,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
       body: Obx(
         () => SingleChildScrollView(
           padding: EdgeInsets.only(
-            bottom: Get.bottomBarHeight + 32,
+            bottom: navigationBarHeight + 32,
           ),
           child: Column(
             children: [
