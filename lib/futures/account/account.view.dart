@@ -5,6 +5,7 @@ import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -103,12 +104,13 @@ class AccountView extends GetView<AccountController> {
                   color: Colors.blue,
                   page: "/app/security",
                 ),
-                item(
-                  title: 'فضای ذخیره سازی',
-                  icon: Icons.folder_copy,
-                  color: Colors.blueGrey.shade600,
-                  page: "/app/storage",
-                ),
+                if (!kIsWeb)
+                  item(
+                    title: 'فضای ذخیره سازی',
+                    icon: Icons.folder_copy,
+                    color: Colors.blueGrey.shade600,
+                    page: "/app/storage",
+                  ),
                 // favorites (pink)
                 item(
                   title: 'علاقه مندی ها',
