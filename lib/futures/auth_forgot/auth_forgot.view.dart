@@ -3,6 +3,7 @@ import 'package:chat/futures/dialog_sms_send_error/dialog_sms_send_error.view.da
 import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -89,13 +90,13 @@ class AuthForgotView extends GetView<AuthForgotController> {
 
   Widget footer() {
     return Container(
-      height: 180,
+      height: kIsWeb ? 140 : 180,
       width: Get.width,
       color: Colors.white,
       padding: EdgeInsets.only(
         left: 32,
         right: 32,
-        bottom: navigationBarHeight + 32,
+        bottom: kIsWeb ? 32 : navigationBarHeight + 32,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

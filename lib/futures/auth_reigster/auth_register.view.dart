@@ -705,7 +705,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
       () => Padding(
         padding: EdgeInsets.only(
           right: 32,
-          bottom: navigationBarHeight + 32,
+          bottom: kIsWeb ? 32 : navigationBarHeight + 32,
         ),
         child: Row(
           children: [

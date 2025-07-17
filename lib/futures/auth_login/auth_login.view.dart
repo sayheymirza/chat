@@ -3,6 +3,7 @@ import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/validator.dart';
 import 'package:chat/shared/widgets/or.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -115,13 +116,13 @@ class AuthLoginView extends GetView<AuthLoginController> {
 
   Widget footer() {
     return Container(
-      height: 240,
+      height: kIsWeb ? 200 : 240,
       width: Get.width,
       color: Colors.white,
       padding: EdgeInsets.only(
         left: 32,
         right: 32,
-        bottom: navigationBarHeight + 32,
+        bottom: kIsWeb ? 32 : navigationBarHeight + 32,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
