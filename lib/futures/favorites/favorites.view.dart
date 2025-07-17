@@ -32,7 +32,7 @@ class FavoritesView extends GetView<FavoritesController> {
             left: IconButton(
               onPressed: () => controller.onForceBack(),
               icon: Icon(
-                Icons.home,
+                Icons.logout,
                 color: Colors.white,
                 size: 32,
               ),

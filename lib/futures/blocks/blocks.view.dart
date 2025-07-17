@@ -34,7 +34,7 @@ class BlocksView extends GetView<BlocksController> {
             left: IconButton(
               onPressed: () => controller.onForceBack(),
               icon: Icon(
-                Icons.home,
+                Icons.logout,
                 color: Colors.white,
                 size: 32,
               ),
