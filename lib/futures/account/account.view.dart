@@ -169,6 +169,22 @@ class AccountView extends GetView<AccountController> {
                   color: Colors.blue,
                   page: "/page/contact",
                 ),
+                if (kIsWeb &&
+                    (Services.configs.get<String>(
+                                key: CONSTANTS.STORAGE_LINK_WEBLOG) ??
+                            '')
+                        .isNotEmpty)
+                  item(
+                    title: 'دانلود اپلیکیشن',
+                    icon: Icons.download,
+                    color: Colors.blue,
+                    onTap: () {
+                      controller.openLink(
+                        CONSTANTS.STORAGE_LINK_WEBLOG,
+                        path: '/download',
+                      );
+                    },
+                  ),
                 if ((Services.configs
                             .get<String>(key: CONSTANTS.STORAGE_LINK_WEBLOG) ??
                         '')
@@ -177,7 +193,7 @@ class AccountView extends GetView<AccountController> {
                     title: 'وبلاگ',
                     icon: Icons.article,
                     color: Colors.purple,
-                    onTap: () async {
+                    onTap: () {
                       controller.openLink(CONSTANTS.STORAGE_LINK_WEBLOG);
                     },
                   ),
@@ -189,7 +205,7 @@ class AccountView extends GetView<AccountController> {
                     title: 'ورود به وب',
                     icon: Icons.language,
                     color: Colors.green,
-                    onTap: () async {
+                    onTap: () {
                       controller.openLink(CONSTANTS.STORAGE_LINK_WEBSITE);
                     },
                   ),

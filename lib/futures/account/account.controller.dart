@@ -130,10 +130,10 @@ class AccountController extends GetxController {
     });
   }
 
-  void openLink(String key) {
+  void openLink(String key, {String path = ''}) {
     var link = Services.configs.get(key: key);
     if (link != null) {
-      Services.launch.launch(link);
+      Services.launch.launch('$link$path');
     }
   }
 
