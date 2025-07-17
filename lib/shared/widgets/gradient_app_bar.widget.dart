@@ -65,7 +65,7 @@ class GradientAppBarWidget extends StatelessWidget
                   }
                 },
               ),
-            if (right != null) right!,
+            if (right != null) Expanded(child: right!),
             if (title != null)
               Expanded(
                 child: Text(
@@ -75,9 +75,10 @@ class GradientAppBarWidget extends StatelessWidget
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            const Spacer(),
             if (left != null) left!,
           ],
         ),
