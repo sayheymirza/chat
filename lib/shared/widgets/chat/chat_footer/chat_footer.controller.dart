@@ -7,11 +7,11 @@ import 'package:chat/models/chat/chat.message.map.v1.dart';
 import 'package:chat/models/chat/chat.message.text.v1.dart';
 import 'package:chat/models/chat/chat.message.video.v1.dart';
 import 'package:chat/models/chat/chat.message.voice.v1.dart';
-import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
 import 'package:chat/shared/widgets/chat/chat_attachment/chat_attachment.view.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,7 +25,11 @@ class ChatFooterController extends GetxController {
   RxBool visableEmojis = false.obs;
 
   String messageText = '';
-  TextEditingController messageController = TextEditingController();
+  EmojiTextEditingController messageController = EmojiTextEditingController(
+    emojiTextStyle: DefaultEmojiTextStyle.copyWith(
+      fontFamily: "NotoColorEmoji",
+    ),
+  );
   FocusNode messageFocus = FocusNode();
 
   AudioRecorder record = AudioRecorder();

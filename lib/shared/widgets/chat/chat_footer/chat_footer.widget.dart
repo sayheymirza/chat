@@ -329,6 +329,9 @@ class ChatFooterWidget extends GetView<ChatFooterController> {
           config: Config(
             height: 290,
             checkPlatformCompatibility: true,
+            emojiTextStyle: DefaultEmojiTextStyle.copyWith(
+              fontFamily: "NotoColorEmoji",
+            ),
             emojiViewConfig: const EmojiViewConfig(
               backgroundColor: Colors.white,
               columns: 11,

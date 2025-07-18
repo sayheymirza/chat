@@ -4,6 +4,9 @@ import 'package:chat/shared/widgets/chat/chat_message/chat_message.widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
+const EmojiRegex =
+    r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])';
+
 class ChatMessageTextV1Widget extends StatefulWidget {
   final ChatMessageModel message;
   final bool action;
@@ -65,9 +68,57 @@ class _ChatMessageTextV1WidgetState extends State<ChatMessageTextV1Widget> {
                   );
                 }).toList(),
               )
-            : Text(
-                widget.message.data['text'],
-              ),
+            : textMessage(),
+      ),
+    );
+  }
+
+  Widget textMessage() {
+    final text = widget.message.data['text'] as String;
+    final spans = <TextSpan>[];
+    final regex = RegExp(EmojiRegex);
+    var lastMatchEnd = 0;
+
+    // Find all emoji matches and split text accordingly
+    regex.allMatches(text).forEach((match) {
+      // Add non-emoji text before this match
+      if (match.start > lastMatchEnd) {
+        spans.add(TextSpan(
+          text: text.substring(lastMatchEnd, match.start),
+          style: const TextStyle(
+            fontFamily: "YekanBakh",
+            fontSize: 16,
+          ),
+        ));
+      }
+
+      // Add the emoji
+      spans.add(TextSpan(
+        text: match.group(0),
+        style: const TextStyle(
+          fontFamily: "NotoColorEmoji",
+          fontSize: 16,
+        ),
+      ));
+
+      lastMatchEnd = match.end;
+    });
+
+    // Add any remaining non-emoji text
+    if (lastMatchEnd < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastMatchEnd),
+        style: const TextStyle(
+          fontFamily: "YekanBakh",
+          fontSize: 16,
+        ),
+      ));
+    }
+
+    return RichText(
+      text: TextSpan(
+        children: spans,
+        style: DefaultTextStyle.of(context).style,
       ),
     );
   }

@@ -34,7 +34,7 @@ dependencies:
   fl_chart: ^0.69.0
   awesome_notifications: ^0.9.3+1
   timeago: ^3.7.0
-  emoji_picker_flutter: ^3.1.0
+  emoji_picker_flutter: ^4.3.0
   file_picker: ^8.1.2
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
@@ -84,6 +84,9 @@ flutter:
     - family: YekanBakh
       fonts:
         - asset: lib/assets/fonts/YekanBakhFaNum-Regular.ttf
+    - family: NotoColorEmoji
+      fonts:
+        - asset: lib/assets/fonts/NotoColorEmoji-Regular.ttf
   assets:
     - lib/assets/images/empty.png
     - lib/assets/images/confetti.png
