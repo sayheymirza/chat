@@ -1,4 +1,11 @@
 // statefull class for chat_delete_message_dialog
+// ignore_for_file: library_private_types_in_public_api
+
+import 'dart:async';
+
+import 'package:chat/models/event.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +19,23 @@ class ChatDeleteMessageDialog extends StatefulWidget {
 
 class _ChatDeleteMessageDialogState extends State<ChatDeleteMessageDialog> {
   bool all = false;
+
+  StreamSubscription<EventModel>? subevents;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (subevents == null) {
+      NavigationOpenedDialog();
+
+      subevents = event.on<EventModel>().listen((data) async {
+        if (data.event == EVENTS.NAVIGATION_BACK) {
+          Get.back();
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

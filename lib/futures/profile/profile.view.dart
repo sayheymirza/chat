@@ -3,6 +3,7 @@ import 'package:chat/futures/profile/profile.controller.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/title.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -398,7 +399,11 @@ class ProfileView extends GetView<ProfileController> {
             right: 10,
             child: IconButton(
               onPressed: () {
-                Get.back();
+                if (kIsWeb) {
+                  NavigationBack();
+                } else {
+                  Get.back();
+                }
               },
               icon: const Icon(Icons.arrow_back),
             ),

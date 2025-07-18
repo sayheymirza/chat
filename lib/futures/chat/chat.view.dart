@@ -1,5 +1,6 @@
 import 'package:chat/futures/chat/chat.controller.dart';
 import 'package:chat/shared/formats/date.format.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/avatar.widget.dart';
 import 'package:chat/shared/widgets/chat/chat_body/chat_body.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
@@ -191,6 +192,7 @@ class ChatView extends GetView<ChatController> {
           right: GestureDetector(
             onTap: data.permission.contains('CAN_SEE_PROFILE')
                 ? () {
+                    NavigationToNamed('/app/profile/${data.userId}');
                     Get.toNamed('/app/profile/${data.userId}', arguments: {
                       'options': true,
                     });
@@ -314,6 +316,7 @@ class ChatView extends GetView<ChatController> {
                         controller.delete();
                         break;
                       case "profile":
+                        NavigationToNamed('/app/profile/${data.userId}');
                         Get.toNamed('/app/profile/${data.userId}', arguments: {
                           'options': true,
                         });
