@@ -31,7 +31,7 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Gap(16),
+                Gap(Get.mediaQuery.padding.top),
                 //   back button
                 IconButton(
                   onPressed: () {
@@ -67,31 +67,6 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
             ),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        floatingActionButton: Container(
-          width: Get.width - 32,
-          margin: const EdgeInsets.only(bottom: 10),
-          child: ElevatedButton(
-            onPressed: controller.disabled.value
-                ? null
-                : () {
-                    controller.submit();
-                  },
-            child: controller.disabled.value
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 3,
-                    ),
-                  )
-                : Text(
-                    controller.texts['button']!,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-          ),
-        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -112,6 +87,35 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                   controller.disabled.value = false;
                 },
               ),
+              Container(
+                width: Get.width - 32,
+                margin: EdgeInsets.only(
+                  bottom: 10,
+                  top: Get.mediaQuery.size.height -
+                      controller.texts['height'] -
+                      200,
+                ),
+                child: ElevatedButton(
+                  onPressed: controller.disabled.value
+                      ? null
+                      : () {
+                          controller.submit();
+                        },
+                  child: controller.disabled.value
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          ),
+                        )
+                      : Text(
+                          controller.texts['button']!,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                ),
+              )
             ],
           ),
         ),
