@@ -181,11 +181,11 @@
     window.addEventListener('load', function () {
       // Check if build hash has changed
       const storedHash = localStorage.getItem('buildHash');
-      if (storedHash && storedHash !== BUILD_HASH) {
+      if (storedHash && storedHash.toString() !== BUILD_HASH.toString()) {
         // Clear cache and reload
         if ('caches' in window) {
-          caches.keys().then(function(names) {
-            names.forEach(function(name) {
+          caches.keys().then(function (names) {
+            names.forEach(function (name) {
               caches.delete(name);
             });
           });
