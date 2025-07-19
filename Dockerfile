@@ -38,7 +38,7 @@ RUN flutter pub get --verbose
 # RUN npm install --verbose
 # RUN npm run cli:web
 
-RUN flutter build web --target lib/flavors/web/main.dart --verbose
+RUN flutter build web --target lib/flavors/web/main.dart --verbose ; ./postbuild.sh
 
 # Record the exposed port
 EXPOSE 9000

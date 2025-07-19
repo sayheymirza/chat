@@ -130,6 +130,7 @@
   </div>
   <script src="flutter_bootstrap.js" async></script>
   <script>
+    const BUILD_HASH = null;  // This will be replaced by postbuild script
     let popedState = false;
     let paymentState;
 
@@ -178,6 +179,22 @@
     });
 
     window.addEventListener('load', function () {
+      // Check if build hash has changed
+      const storedHash = localStorage.getItem('buildHash');
+      if (storedHash && storedHash !== BUILD_HASH) {
+        // Clear cache and reload
+        if ('caches' in window) {
+          caches.keys().then(function(names) {
+            names.forEach(function(name) {
+              caches.delete(name);
+            });
+          });
+        }
+        window.location.reload(true);
+      }
+      // Store new hash
+      localStorage.setItem('buildHash', BUILD_HASH);
+
       if (window.location.href.includes('/payment')) {
         const path = window.location.pathname + window.location.search;
         paymentState = path;
