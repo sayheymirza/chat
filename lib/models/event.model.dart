@@ -20,6 +20,7 @@ class EVENTS {
   static String PURCHASE_RESULT = 'app:purchase:result';
   static String PURCHASE_NOT_CONSUMED = 'app:purchase:not-consumed';
   static String PURCHASE_NOT_CONSUMED_LIST = 'app:purchase:not-consumed-list';
+  static String LOGOUT = 'app:logout';
 
   static String SOCKET_SEND_NOT_CONSUMED_PRODUCTS = "SEND_PURCHASES";
   static String SOCKET_CLEAR_CACHE = "CLEAR_APP_CACHE";

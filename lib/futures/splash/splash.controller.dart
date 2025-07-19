@@ -5,8 +5,10 @@ import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/formats/number.format.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class SplashController extends GetxController {
@@ -42,11 +44,33 @@ class SplashController extends GetxController {
     // check access token exists in storage or not
     var accessToken = Services.configs.get(key: CONSTANTS.STORAGE_ACCESS_TOKEN);
 
+    if (kIsWeb) {
+      var state = GetPaymentState();
+
+      if (state != null) {
+        var status = state.toLowerCase().contains('ok') ||
+                state.toLowerCase().contains('true')
+            ? 'ok'
+            : 'nok';
+        NavigationToNamed('/payment');
+        // move to /app
+        Get.offNamed(
+          '/payment',
+          parameters: {
+            'status': status,
+          },
+        );
+        return;
+      }
+    }
+
     if (accessToken != null) {
+      NavigationToNamed('/app');
       // move to /app
       Get.offNamed('/app');
     } else {
       // move to /auth
+      NavigationToNamed('/auth');
       Get.offNamed('/auth');
     }
   }

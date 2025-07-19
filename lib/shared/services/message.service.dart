@@ -529,7 +529,7 @@ class MessageService extends GetxService {
       var count = await database.delete(database.messageTable).go();
       log('[message.service.dart] clear over $count messages');
     } catch (e) {
-      //
+      print(e);
     }
   }
 

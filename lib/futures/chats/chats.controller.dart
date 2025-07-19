@@ -28,6 +28,12 @@ class ChatsController extends GetxController {
         load(statusing: false);
       }
 
+      if (data.event == EVENTS.LOGOUT) {
+        chats.value = [];
+        lastPage.value = 0;
+        page.value = 1;
+      }
+
       if (data.event == EVENTS.NAVIGATION_BACK) {
         onBack();
       }

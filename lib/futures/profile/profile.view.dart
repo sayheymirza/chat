@@ -492,8 +492,11 @@ class ProfileView extends GetView<ProfileController> {
         const Gap(8),
         GestureDetector(
           onTap: () {
-            NavigationBack();
-            Get.back();
+            if (kIsWeb) {
+              NavigationBack();
+            } else {
+              Get.back();
+            }
           },
           child: SizedBox(
             width: 48,

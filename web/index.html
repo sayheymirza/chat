@@ -131,6 +131,13 @@
   <script src="flutter_bootstrap.js" async></script>
   <script>
     let popedState = false;
+    let paymentState;
+
+    function GetPaymentState() {
+      const state = paymentState;
+      paymentState = null;
+      return state;
+    }
 
     function NavigationToNamed(path = '', params = '') {
       let query = `?${params}`
@@ -149,15 +156,14 @@
     }
 
     function NavigationPopDialog() {
-      if(window.location.hash == '#dialog') {
+      if (window.location.hash == '#dialog') {
         NavigationBack();
       }
     }
 
     function NavigationOpenedDialog() {
       const path = window.location.pathname + window.location.search + '#dialog';
-      console.log(path);
-      
+
       window.history.pushState(null, "", path);
     }
 
@@ -172,6 +178,11 @@
     });
 
     window.addEventListener('load', function () {
+      if (window.location.href.includes('/payment')) {
+        const path = window.location.pathname + window.location.search;
+        paymentState = path;
+      }
+
       // Hide loading after Flutter app is initialized
       window.addEventListener('flutter-first-frame', function () {
         var loading = document.getElementById('loading');

@@ -11,3 +11,7 @@ void NavigationPopDialog() {}
 void NavigationOpenedDialog() {}
 
 void NavigationListenOnBack() {}
+
+String? GetPaymentState() {
+  return null;
+}

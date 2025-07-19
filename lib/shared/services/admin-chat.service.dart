@@ -355,7 +355,7 @@ class AdminChatService extends GetxService {
       var count = await database.delete(database.adminChatTable).go();
       log('[admin-chat.service.dart] clear over $count admin chats');
     } catch (e) {
-      //
+      print(e);
     }
   }
 }

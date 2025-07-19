@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:chat/app/apis/api.dart';
 import 'package:chat/futures/dialog_send_sms/dialog_send_sms.view.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:flutter/material.dart';
@@ -210,6 +211,7 @@ class ProfileController extends GetxController {
   }
 
   void sendDefaultMessage({required String id}) async {
+    NavigationToNamed('/app/default-message', params: 'id=$id');
     Get.toNamed(
       '/app/default-message',
       arguments: {

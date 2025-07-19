@@ -1,6 +1,8 @@
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/models/firebase.model.dart';
 import 'package:chat/shared/constants.dart';
+import 'package:chat/shared/database/database.dart';
 import 'package:chat/shared/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -31,14 +33,11 @@ class AppService extends GetxService {
     await ApiService.user.logout();
 
     await Future.wait([
-      Services.configs.unset(key: CONSTANTS.STORAGE_ACCESS_TOKEN),
-      Services.configs.unset(key: CONSTANTS.STORAGE_FIREBASE_TOKEN),
-      Services.chat.clear(),
-      Services.adminChat.clear(),
-      Services.message.clear(),
-      Services.sync.clear(),
-      Services.log.clear(),
+      Services.configs.clear(),
+      database.deleteEverything(),
     ]);
+
+    Services.event.fire(event: EVENTS.LOGOUT);
   }
 
   Future<void> copy(String value) async {

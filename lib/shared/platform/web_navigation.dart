@@ -29,6 +29,10 @@ void NavigationOpenedDialog() {
   );
 }
 
+String? GetPaymentState() {
+  return callMethod(context['window'], 'GetPaymentState', []);
+}
+
 @JS('sendBackButtonEventToFlutter')
 external set _sendBackButtonEventToFlutter(void Function(String location));
 

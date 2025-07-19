@@ -495,7 +495,7 @@ class ChatService extends GetxService {
       var count = await database.delete(database.chatTable).go();
       log('[chat.service.dart] clear over $count chats');
     } catch (e) {
-      //
+      print(e);
     }
   }
 
