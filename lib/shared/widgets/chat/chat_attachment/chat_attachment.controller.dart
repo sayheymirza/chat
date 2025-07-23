@@ -1,16 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/event.dart';
 import 'package:chat/shared/platform/navigation.dart';
-import 'package:chat/shared/widgets/chat/chat_attachment/web_cropper_file.dart'
-    if (dart.library.io) 'package:chat/shared/widgets/chat/chat_attachment/io_cropper_file.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:chat/shared/platform/upload.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
 import 'package:video_player/video_player.dart';
 
 class ChatAttachmentController extends GetxController {
@@ -50,11 +48,11 @@ class ChatAttachmentController extends GetxController {
   }
 
   void pickAudio() {
-    pick(formats: ['mp3'], type: 'audio');
+    pick(formats: 'audio/*', type: 'audio');
   }
 
   void pickVideo() {
-    pick(formats: ['mp4'], type: 'video');
+    pick(formats: 'video/*', type: 'video');
   }
 
   void pickMap() {
@@ -81,48 +79,55 @@ class ChatAttachmentController extends GetxController {
   }
 
   void pick({
-    required List<String> formats,
+    required String formats,
     required String type,
-  }) async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: formats,
-        allowCompression: false,
-      );
+  }) {
+    // FilePickerResult? result = await FilePicker.platform.pickFiles(
+    //   type: FileType.custom,
+    //   allowedExtensions: formats,
+    //   allowCompression: false,
+    // );
 
-      if (result != null) {
-        String path = await getFilePath(result.files.first);
+    // if (result != null) {
+    //   String path = await getFilePath(result.files.first);
 
-        var size = result.files.first.size;
+    //   var size = result.files.first.size;
 
-        var data = {};
+    ChooseAFile(
+      access: formats,
+      onPick: (result) async {
+        try {
+          var source = jsonDecode(result);
 
-        if (type == "video" || type == "audio") {
-          var controller = kIsWeb
-              ? VideoPlayerController.networkUrl(Uri.parse(path))
-              : VideoPlayerController.file(File(path));
-          await controller.initialize();
-          data['duration'] = controller.value.duration.inMilliseconds;
+          var data = {};
+          var path = source['blob'];
+
+          if (!kIsWeb) {
+            var controller = VideoPlayerController.file(File(path));
+            await controller.initialize();
+            data['duration'] = controller.value.duration.inMilliseconds;
+          } else {
+            data['duration'] = 0;
+          }
+
+          backed = true;
+
+          // pop it
+          Get.back(
+            result: {
+              "action": type,
+              "path": path,
+              "size": source['size'],
+              "name": source['filename'],
+              ...data,
+            },
+          );
+        } catch (e) {
+          print('[chat_attachment.controller.dart] error on pick:');
+          print(e.toString());
         }
-
-        backed = true;
-
-        // pop it
-        Get.back(
-          result: {
-            "action": type,
-            "path": path,
-            "size": size,
-            "name": basename(path),
-            ...data,
-          },
-        );
-      }
-    } catch (e) {
-      print('[chat_attachment.controller.dart] error on pick:');
-      print(e.toString());
-    }
+      },
+    );
   }
 
   void image({

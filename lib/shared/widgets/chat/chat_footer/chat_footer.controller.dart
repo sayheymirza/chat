@@ -105,6 +105,7 @@ class ChatFooterController extends GetxController {
     ).then((value) {
       // NavigationPopDialog();
       if (value != null) {
+        print(value);
         switch (value['action']) {
           case 'audio':
             Services.message.save(

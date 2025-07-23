@@ -9,6 +9,8 @@ class EventModel {
 }
 
 class EVENTS {
+  static String UPLOADING = 'event:uploading';
+
   static String NAVIGATION_BACK = 'navigation:back';
   static String NAVIGATION_PUSH = 'navigation:push';
   static String NAVIGATION_DIALOG = 'navigation:dialog';
