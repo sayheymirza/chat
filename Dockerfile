@@ -1,5 +1,5 @@
 # Install Operating system and dependencies
-FROM ubuntu:20.04
+FROM ubuntu:20.04 AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -40,10 +40,17 @@ RUN flutter pub get --verbose
 
 RUN flutter build web --web-renderer html --target lib/flavors/web/main.dart --verbose ; ./postbuild.sh
 
-# Record the exposed port
-EXPOSE 9000
+# Stage 2: Build the final production image with Nginx
+FROM nginx:alpine AS production
 
-# make server startup script executable and start the web server
-RUN ["chmod", "+x", "/app/server.sh"]
+## Copy built flutter web app from the build stage to Nginx web root
+COPY --from=build /app/build/web /usr/share/nginx/html
 
-ENTRYPOINT [ "/app/server.sh"]
+## Copy the custom Nginx configuration file
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+## Expose port 80 to the outside world
+EXPOSE 80
+
+## Start Nginx when the container launches
+CMD ["nginx", "-g", "daemon off;"]
