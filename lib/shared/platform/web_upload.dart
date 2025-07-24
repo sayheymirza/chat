@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:js';
+import 'dart:html' as html;
+
+import 'package:mime/mime.dart' as mime;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:js/js_util.dart';
@@ -42,14 +46,20 @@ Future<dynamic> ChooseAFile({String access = '*/*', dynamic onPick}) async {
 
   var file = result.files.first;
 
+  // convert file to blob url like: 'blob:http://localhost:1234/abcdef'
+  var blob = html.Blob(
+    [file.bytes],
+  );
+  var url = html.Url.createObjectUrl(blob);
+
   var data = {
     'filename': file.name,
     'size': file.size,
-    'blob': file.path,
+    'blob': url,
   };
 
   if (onPick != null) {
-    onPick(data);
+    onPick(jsonEncode(data));
   }
 
   return data;
