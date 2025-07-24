@@ -60,8 +60,9 @@ class GradientAppBarWidget extends StatelessWidget
                   } else {
                     if (kIsWeb) {
                       NavigationBack();
+                    } else {
+                      Get.back();
                     }
-                    Get.back();
                   }
                 },
               ),
