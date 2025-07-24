@@ -33,16 +33,26 @@ Future<dynamic> ChooseAFile({String access = '*/*', dynamic onPick}) async {
   );
 
   if (result == null) {
+    if (onPick != null) {
+      onPick(null);
+    }
+
     return null;
   }
 
   var file = result.files.first;
 
-  return {
+  var data = {
     'filename': file.name,
     'size': file.size,
     'blob': file.path,
   };
+
+  if (onPick != null) {
+    onPick(data);
+  }
+
+  return data;
 }
 
 Future<dynamic> UploadAFile({required String url, required File file}) async {
