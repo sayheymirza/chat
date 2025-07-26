@@ -38,7 +38,7 @@ RUN flutter pub get --verbose
 # RUN npm install --verbose
 # RUN npm run cli:web
 
-RUN flutter build web --web-renderer html --target lib/flavors/web/main.dart --verbose ; ./postbuild.sh
+RUN flutter build web --target lib/flavors/web/main.dart --verbose ; ./postbuild.sh
 
 # Stage 2: Build the final production image with Nginx
 FROM nginx:alpine AS production

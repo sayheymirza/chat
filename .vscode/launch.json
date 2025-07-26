@@ -41,9 +41,7 @@
         "--target",
         "lib/flavors/web/main.dart",
         "--web-hostname",
-        "0.0.0.0",
-        "--web-renderer",
-        "html"
+        "0.0.0.0"
       ]
     }
   ],
