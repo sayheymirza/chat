@@ -51,7 +51,7 @@ class DialogChangePasswordView extends GetView<DialogChangePasswordController> {
                             ),
                             onPressed: () {
                               controller.visablePassword.value =
-                                  !controller.visablePassword.firstRebuild;
+                                  !controller.visablePassword.value;
                             },
                           ),
                         ),
@@ -83,7 +83,7 @@ class DialogChangePasswordView extends GetView<DialogChangePasswordController> {
                             ),
                             onPressed: () {
                               controller.visablePassword.value =
-                                  !controller.visablePassword.firstRebuild;
+                                  !controller.visablePassword.value;
                             },
                           ),
                         ),
