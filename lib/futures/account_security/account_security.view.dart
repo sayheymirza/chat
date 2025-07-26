@@ -1,9 +1,11 @@
 import 'package:chat/futures/account_security/account_security.controller.dart';
 import 'package:chat/futures/dialog_change_password/dialog_change_password.view.dart';
 import 'package:chat/futures/dialog_change_phone/dialog_change_phone.view.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class AccountSecurityView extends GetView<AccountSecurityController> {
@@ -58,7 +60,7 @@ class AccountSecurityView extends GetView<AccountSecurityController> {
                 access: controller.permissionToCamera.value,
                 onTap: () {
                   Services.permission.ask("camera").then(
-                        (value) {
+                    (value) {
                       controller.init();
                     },
                   );
@@ -164,6 +166,7 @@ class AccountSecurityView extends GetView<AccountSecurityController> {
                 title: const Text("رمز عبور"),
                 trailing: const Icon(Icons.edit),
               ),
+              Gap(navigationBarHeight + 32),
             ],
           ),
         ),
