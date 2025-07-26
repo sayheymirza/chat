@@ -32,13 +32,13 @@ RUN flutter config --enable-web
 RUN mkdir /app/
 COPY . /app/
 WORKDIR /app/
-RUN flutter pub get --verbose
+RUN flutter pub get
 # RUN flutter pub outdated
 # RUN flutter pub upgrade --major-versions
 # RUN npm install --verbose
 # RUN npm run cli:web
 
-RUN flutter build web --target lib/flavors/web/main.dart --verbose ; ./postbuild.sh
+RUN flutter build web --target lib/flavors/web/main.dart ; ./postbuild.sh
 
 # Stage 2: Build the final production image with Nginx
 FROM nginx:alpine AS production
