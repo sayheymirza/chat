@@ -66,7 +66,7 @@ class GradientAppBarWidget extends StatelessWidget
                   }
                 },
               ),
-            if (right != null) Expanded(child: right!),
+            if (right != null) right!,
             if (title != null)
               Expanded(
                 child: Text(
