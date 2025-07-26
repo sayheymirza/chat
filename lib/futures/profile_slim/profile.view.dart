@@ -3,6 +3,7 @@ import 'package:chat/futures/profile_slim/profile.controller.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/title.widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -378,7 +379,11 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
             right: 10,
             child: IconButton(
               onPressed: () {
-                Get.back();
+                if (kIsWeb) {
+                  NavigationBack();
+                } else {
+                  Get.back();
+                }
               },
               icon: const Icon(Icons.arrow_back),
             ),
@@ -612,6 +617,7 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
+                NavigationToNamed('/auth/login');
                 Get.toNamed('/auth/login');
               },
               child: const Text(
