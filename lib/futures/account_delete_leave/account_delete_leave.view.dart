@@ -15,77 +15,80 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
     return Obx(
       () => Scaffold(
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: Size(Get.width, controller.texts['height']),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  controller.texts['gradient_from']!,
-                  controller.texts['gradient_to']!,
-                ],
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Gap(Get.mediaQuery.padding.top),
-                //   back button
-                IconButton(
-                  onPressed: () {
-                    if (kIsWeb) {
-                      Get.back();
-                    } else {
-                      NavigationBack();
-                    }
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-                const Spacer(),
-                const Gap(16),
-                Text(
-                  controller.texts['info_title']!,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const Gap(10),
-                Text(
-                  controller.texts['info_text']!,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              Container(
+                height: controller.texts['height'],
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      controller.texts['gradient_from']!,
+                      controller.texts['gradient_to']!,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Gap(Get.mediaQuery.padding.top),
+                    //   back button
+                    IconButton(
+                      onPressed: () {
+                        if (kIsWeb) {
+                          Get.back();
+                        } else {
+                          NavigationBack();
+                        }
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Gap(16),
+                    Text(
+                      controller.texts['info_title']!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Gap(10),
+                    Text(
+                      controller.texts['info_text']!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               // textarea for message
-              TextField(
-                maxLines: 3,
-                enabled: !controller.disabled.value,
-                decoration: InputDecoration(
-                    hintText: controller.texts['placeholder'],
-                    border: const OutlineInputBorder(),
-                    helperText: "حداقل 5 حرف بنویسید"),
-                onChanged: (value) {
-                  controller.description = value;
-                },
-                onSubmitted: (value) {
-                  controller.description = value;
-                  controller.disabled.value = false;
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: TextField(
+                  maxLines: 3,
+                  enabled: !controller.disabled.value,
+                  decoration: InputDecoration(
+                      hintText: controller.texts['placeholder'],
+                      border: const OutlineInputBorder(),
+                      helperText: "حداقل 5 حرف بنویسید"),
+                  onChanged: (value) {
+                    controller.description = value;
+                  },
+                  onSubmitted: (value) {
+                    controller.description = value;
+                    controller.disabled.value = false;
+                  },
+                ),
               ),
               Container(
                 width: Get.width - 32,
