@@ -22,7 +22,12 @@ class AuthForgotController extends GetxController {
 
       disabled.value = false;
       if (result.success) {
-        Get.offAndToNamed('/auth/login');
+        Get.offAndToNamed(
+          '/auth/login',
+          result: {
+            'phone': forgotFormKey.currentState!.value['phone'],
+          },
+        );
       }
     } catch (e) {
       disabled.value = false;

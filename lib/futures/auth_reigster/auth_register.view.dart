@@ -82,6 +82,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               step7(),
             ],
           ),
+          const Gap(32),
         ],
       ),
     );
@@ -581,6 +582,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
               ],
             ),
           ),
+          const Gap(16),
           FormBuilderTextField(
             name: 'about',
             decoration: InputDecoration(
@@ -704,6 +706,7 @@ class AuthRegisterView extends GetView<AuthRegisterController> {
     return Obx(
       () => Padding(
         padding: EdgeInsets.only(
+          top: 10,
           right: 32,
           bottom: kIsWeb ? 32 : navigationBarHeight + 32,
         ),

@@ -1,4 +1,8 @@
+import 'dart:math';
+
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/platform/navigation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -33,6 +37,25 @@ class _AuthViewState extends State<AuthView> {
       "path": "/page/privacy",
     },
   ];
+
+  List<int> avatars = RxList.empty(growable: true);
+
+  void generateAvatars() {
+    Random random = Random();
+    // random avatar ids between 1..13 (limit: 5) - not repeating
+    while (avatars.length < 6) {
+      int randomId = (1 + (12 * random.nextDouble())).toInt();
+      if (!avatars.contains(randomId)) {
+        avatars.add(randomId);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    generateAvatars();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +195,87 @@ class _AuthViewState extends State<AuthView> {
               subtitle:
                   "ما به صورت سخت گیرانه به تخلفات کاربران رسیدگی می کنیم و از ایجاد هر گونه مزاحمت جلوگیری می کنیم ",
             ),
-            Gap(MediaQuery.of(context).padding.bottom + 32),
+            // random avatars
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  const Text(
+                    'ماه عسلی های جدید',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: "YekanBakh",
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        color: Colors.grey,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'با ایجاد ',
+                          style: TextStyle(
+                            fontFamily: "YekanBakh",
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'حساب کاربری',
+                          style: TextStyle(
+                            color: Get.theme.primaryColor,
+                            decoration: TextDecoration.underline,
+                            fontFamily: "YekanBakh",
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.toNamed('/auth/register');
+                              NavigationToNamed('/auth/register');
+                            },
+                        ),
+                        const TextSpan(
+                          text: ' به جستجوی همسر اینده‌آت بپرداز!',
+                          style: TextStyle(
+                            fontFamily: "YekanBakh",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(40),
+              child: GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 40,
+                crossAxisSpacing: 40,
+                children: avatars
+                    .map((id) => Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.asset(
+                              'lib/assets/avatars/$id.jpg',
+                              width: 128,
+                              height: 128,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+              ),
+            ),
+            Gap(
+              navigationBarHeight + 32,
+            ),
           ],
         ),
       ),

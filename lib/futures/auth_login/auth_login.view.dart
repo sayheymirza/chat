@@ -162,7 +162,14 @@ class AuthLoginView extends GetView<AuthLoginController> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Get.toNamed('/auth/forgot');
+                Get.toNamed('/auth/forgot')!.then((value) {
+                  if (value != null && value['phone'] != null) {
+                    controller.loginFormKey.currentState!.patchValue({
+                      'phone': value['phone'],
+                      'password': '',
+                    });
+                  }
+                });
                 NavigationToNamed('/auth/forgot');
               },
               style: ButtonStyle(

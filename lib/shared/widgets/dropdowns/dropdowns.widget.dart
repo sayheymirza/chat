@@ -2,8 +2,9 @@ import 'dart:developer';
 
 import 'package:chat/shared/widgets/dropdowns/dropdowns.controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:get/get.dart';
+
+import 'form_builder_dropdown.dart';
 
 class DropdownsWidget extends GetView<DropdownsWidgetController> {
   final String group;
@@ -30,6 +31,7 @@ class DropdownsWidget extends GetView<DropdownsWidgetController> {
   @override
   Widget build(BuildContext context) {
     Get.put(DropdownsWidgetController());
+    FocusNode focusNode = FocusNode();
 
     if (items == null) {
       controller.load(group: group, parentId: parentId).then((_) {
@@ -38,6 +40,7 @@ class DropdownsWidget extends GetView<DropdownsWidgetController> {
 
       return Obx(
         () => FormBuilderDropdown<String>(
+          focusNode: focusNode,
           dropdownColor: Colors.white,
           name: name,
           decoration: decoration,
@@ -45,12 +48,7 @@ class DropdownsWidget extends GetView<DropdownsWidgetController> {
             controller.load(group: group, parentId: parentId);
           },
           items: controller.items.isEmpty
-              ? [
-                  const DropdownMenuItem(
-                    value: "",
-                    child: Text('در حال بارگذاری ...'),
-                  )
-                ]
+              ? []
               : controller.items
                   .map((e) => e as DropdownMenuItem<String>)
                   .toList(),
@@ -62,10 +60,14 @@ class DropdownsWidget extends GetView<DropdownsWidgetController> {
       );
     } else {
       return FormBuilderDropdown<String>(
+        focusNode: focusNode,
         dropdownColor: Colors.white,
         name: name,
         decoration: decoration,
         items: items!,
+        onReset: () {
+          controller.load(group: group, parentId: parentId);
+        },
         onChanged: onChange == null
             ? null
             : (value) => value == null ? null : onChange!(value),
