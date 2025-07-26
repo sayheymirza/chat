@@ -26,7 +26,7 @@ class TransactionsView extends GetView<TransactionsController> {
         },
         child: Scaffold(
           appBar: GradientAppBarWidget(
-            back: controller.page.value == 1,
+            back: true,
             onBack: () {
               controller.onBack();
             },

@@ -1,6 +1,5 @@
 import 'package:chat/futures/contact/contact.controller.dart';
 import 'package:chat/shared/constants.dart';
-import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/widgets/cached_image.widget.dart';
 import 'package:chat/shared/widgets/contact_form/contact_form.widget.dart';
@@ -27,7 +26,7 @@ class ContactView extends GetView<ContactController> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  NavigationBack();
+                  // NavigationBack();
                   Get.back();
                 },
               )
