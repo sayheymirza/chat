@@ -32,12 +32,14 @@ class CallController extends GetxController {
     room.events.on((event) {
       if (event is RoomEvent) {
         if (event is ParticipantConnectedEvent) {
+          Services.sound.stop(type: 'dialing');
           durationing();
         }
       }
       // if i connected to room and room is not empty
       if (event is RoomConnectedEvent) {
         if (room.remoteParticipants.isNotEmpty) {
+          Services.sound.stop(type: 'dialing');
           durationing();
         }
       }
