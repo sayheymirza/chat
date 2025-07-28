@@ -222,12 +222,6 @@ class PlayerController {
     Color? activeColor,
     List<dynamic> waveframe = const [],
   }) {
-    print('total duration in seconds: ${totalDuration.inSeconds}');
-    print('passed duration in seconds: ${passedDuration.inSeconds}');
-    print(
-      'remaining duration in seconds: ${totalDuration.inSeconds - passedDuration.inSeconds}',
-    );
-
     return SizedBox(
       width: width,
       height: 30,
@@ -276,8 +270,6 @@ class PlayerController {
                     ),
                     onChanged: (value) {
                       var seconds = value.toInt();
-
-                      print('seeking to: $seconds');
 
                       onSeek(Duration(seconds: seconds));
                     },
