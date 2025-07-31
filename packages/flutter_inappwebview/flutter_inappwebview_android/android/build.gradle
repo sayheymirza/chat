@@ -3,8 +3,15 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        google()
-        mavenCentral()
+        maven {
+            url = uri("https://proxy.doting.ir/maven_google")
+        }
+        maven {
+            url = uri("https://proxy.doting.ir/maven_apache")
+        }
+        maven {
+            url = uri("https://proxy.doting.ir/maven")
+        }
     }
 
     dependencies {
@@ -14,8 +21,15 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
-        google()
-        mavenCentral()
+        maven {
+            url = uri("https://proxy.doting.ir/maven_google")
+        }
+        maven {
+            url = uri("https://proxy.doting.ir/maven_apache")
+        }
+        maven {
+            url = uri("https://proxy.doting.ir/maven")
+        }
     }
 }
 

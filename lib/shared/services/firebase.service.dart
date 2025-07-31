@@ -9,7 +9,6 @@ import 'package:firebase_core/firebase_core.dart'
     show Firebase, FirebaseOptions;
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart'
     show
         FlutterError,
@@ -106,8 +105,8 @@ class FirebaseService extends GetxService {
     log('[firebase.service.dart] firebase_crashlytics');
     FirebaseAnalytics.instance;
 
-    log('[firebase.service.dart] firebase_remote_config');
-    FirebaseRemoteConfig.instance;
+    // log('[firebase.service.dart] firebase_remote_config');
+    // FirebaseRemoteConfig.instance;
     // await FirebaseRemoteConfig.instance.fetchAndActivate();
 
     log('[firebase.service.dart] firebase_messaging');
@@ -198,11 +197,11 @@ class FirebaseService extends GetxService {
     log('[firebase.service.dart] log event $type');
   }
 
-  Future<String?> getStringFromRemote({required String key}) async {
-    var value = FirebaseRemoteConfig.instance.getString(key);
+  // Future<String?> getStringFromRemote({required String key}) async {
+  //   var value = FirebaseRemoteConfig.instance.getString(key);
 
-    log('[firebase.service.dart] remote config key=$key value=$value');
+  //   log('[firebase.service.dart] remote config key=$key value=$value');
 
-    return value;
-  }
+  //   return value;
+  // }
 }

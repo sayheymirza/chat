@@ -46,7 +46,7 @@ dependencies:
   permission_handler: ^11.3.1
   video_player: ^2.9.2
   flutter_audio_waveforms: ^1.2.1+8
-  waveform_extractor: ^1.0.3
+  waveform_extractor: 1.1.3
   record: ^5.2.0
   video_player_control_panel: ^1.1.2
   glass: ^2.0.0+1
@@ -57,18 +57,17 @@ dependencies:
   flutter_inappwebview:
     path: ./packages/flutter_inappwebview/flutter_inappwebview
   flutter_image_compress: ^2.4.0
-  firebase_messaging: ^15.1.6
-  firebase_crashlytics: ^4.2.0
-  firebase_core: ^3.9.0
-  firebase_analytics: ^11.3.6
-  firebase_remote_config: ^5.3.0
+  firebase_messaging: 15.1.6
+  firebase_crashlytics: 4.2.0
+  firebase_core: 3.9.0
+  firebase_analytics: 11.3.6
   flutter_markdown: ^0.7.6+2
   flutter_html_v3: ^3.0.6
   sms_autofill: ^2.4.1
   livekit_client: ^2.3.1+hotfix.1
   js: ^0.7.1
-  flutter_poolakey:
-    path: ./lib/flavors/cafebazaar/flutter_poolakey
+  # flutter_poolakey:
+  #   path: ./lib/flavors/cafebazaar/flutter_poolakey
 dev_dependencies:
   flutter_test:
     sdk: flutter
