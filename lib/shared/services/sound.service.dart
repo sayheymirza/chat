@@ -9,6 +9,25 @@ class SoundService extends GetxService {
   PlayerController? dialingController;
   PlayerController? ringtoneController;
 
+  void load() {
+    Services.cache.put(
+      url: Services.configs.get(key: CONSTANTS.AUDIO_BEEP_BEEP),
+      category: 'audio',
+    );
+    Services.cache.put(
+      url: Services.configs.get(key: CONSTANTS.AUDIO_DIALING),
+      category: 'audio',
+    );
+    Services.cache.put(
+      url: Services.configs.get(key: CONSTANTS.AUDIO_RINGTONE),
+      category: 'audio',
+    );
+    Services.cache.put(
+      url: Services.configs.get(key: CONSTANTS.AUDIO_MESSAGE),
+      category: 'audio',
+    );
+  }
+
   void stop({required String type}) {
     log('[sound.service.dart] stop sound $type');
 

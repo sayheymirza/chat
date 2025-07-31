@@ -1,4 +1,5 @@
 import 'package:chat/shared/color.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/widgets/chat/chat_attachment/chat_attachment.controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -17,7 +18,7 @@ class ChatAttachmentView extends GetView<ChatAttachmentController> {
     Get.put(ChatAttachmentController());
 
     return Container(
-      height: 140,
+      height: 130 + navigationBarHeight,
       padding: EdgeInsets.only(top: 14),
       decoration: BoxDecoration(
         color: Colors.white,

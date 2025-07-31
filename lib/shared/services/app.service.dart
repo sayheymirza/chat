@@ -21,6 +21,11 @@ class AppService extends GetxService {
       );
       // store each config
       Services.configs.setFromMap(result.configs);
+
+      // precache call sounds
+      if (!kIsWeb) {
+        Services.sound.load();
+      }
     }
   }
 

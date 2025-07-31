@@ -79,7 +79,11 @@ class AccountDeleteLeaveController extends GetxController {
         // logout
         await Services.app.logout();
 
-        Restart.restartApp();
+        if (GetPlatform.isWeb) {
+          Get.offAllNamed('/');
+        } else {
+          Restart.restartApp();
+        }
       } else {
         showSnackbar(message: 'خطایی رخ داد');
       }

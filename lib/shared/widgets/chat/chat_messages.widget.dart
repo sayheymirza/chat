@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:chat/models/chat/chat.message.dart';
 import 'package:chat/shared/formats/chat.format.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class ChatMessagesController extends GetxController {
@@ -101,6 +102,7 @@ class ChatMessagesWidget extends StatelessWidget {
                   ...messages.map(
                       (message) => formatChatMessage(message, action: action)),
                   ...children,
+                  Gap(16),
                 ],
               ),
             ),
@@ -108,22 +110,24 @@ class ChatMessagesWidget extends StatelessWidget {
         ),
 
         // scroll to bottom (floating action button)
-        Obx(() => AnimatedPositioned(
-              left: 16,
-              bottom: chatController.showScrollToBottom.value
-                  ? 85 + Get.mediaQuery.padding.bottom
-                  : -100,
-              duration: Duration(milliseconds: 200),
-              child: FloatingActionButton(
-                shape: CircleBorder(),
-                backgroundColor: Get.theme.primaryColor,
-                onPressed: chatController.scrollToBottom,
-                child: Icon(
-                  Icons.arrow_downward,
-                  color: Get.theme.colorScheme.onPrimary,
-                ),
+        Obx(
+          () => AnimatedPositioned(
+            left: 16,
+            bottom: chatController.showScrollToBottom.value
+                ? 85 + Get.mediaQuery.padding.bottom
+                : -100,
+            duration: Duration(milliseconds: 200),
+            child: FloatingActionButton(
+              shape: CircleBorder(),
+              backgroundColor: Get.theme.primaryColor,
+              onPressed: chatController.scrollToBottom,
+              child: Icon(
+                Icons.arrow_downward,
+                color: Get.theme.colorScheme.onPrimary,
               ),
-            )),
+            ),
+          ),
+        ),
       ],
     );
   }
