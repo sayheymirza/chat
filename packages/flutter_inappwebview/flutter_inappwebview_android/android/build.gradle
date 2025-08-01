@@ -3,15 +3,18 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        maven {
-            url = uri("https://proxy.doting.ir/maven_google")
-        }
-        maven {
-            url = uri("https://proxy.doting.ir/maven_apache")
-        }
-        maven {
-            url = uri("https://proxy.doting.ir/maven")
-        }
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        // maven {
+        //     url = uri("https://proxy.doting.ir/maven_google")
+        // }
+        // maven {
+        //     url = uri("https://proxy.doting.ir/maven_apache")
+        // }
+        // maven {
+        //     url = uri("https://proxy.doting.ir/maven")
+        // }
     }
 
     dependencies {
@@ -21,15 +24,18 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
-        maven {
-            url = uri("https://proxy.doting.ir/maven_google")
-        }
-        maven {
-            url = uri("https://proxy.doting.ir/maven_apache")
-        }
-        maven {
-            url = uri("https://proxy.doting.ir/maven")
-        }
+        // maven {
+        //     url = uri("https://proxy.doting.ir/maven_google")
+        // }
+        // maven {
+        //     url = uri("https://proxy.doting.ir/maven_apache")
+        // }
+        // maven {
+        //     url = uri("https://proxy.doting.ir/maven")
+        // }
+        google()
+        mavenCentral()
+        gradlePluginPortal()
     }
 }
 

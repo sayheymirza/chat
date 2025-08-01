@@ -1,4 +1,5 @@
 import 'package:chat/futures/account_delete_leave/account_delete_leave.controller.dart';
+import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
           child: Column(
             children: [
               Container(
-                height: controller.texts['height'],
+                height: double.parse(controller.texts['height'].toString()),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -96,6 +97,7 @@ class AccountDeleteLeaveView extends GetView<AccountDeleteLeaveController> {
                   bottom: 10,
                   top: Get.mediaQuery.size.height -
                       controller.texts['height'] -
+                      navigationBarHeight -
                       200,
                 ),
                 child: ElevatedButton(

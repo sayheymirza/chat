@@ -45,6 +45,7 @@ class ApiUser extends ApiUserAbstract {
           'page': page,
           'limit': limit,
           "type": type,
+          'is_new': type != 'search',
           "filter": {
             "avatar": filter.avatar,
             "province":

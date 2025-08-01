@@ -51,7 +51,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
       body: Obx(
         () => SingleChildScrollView(
           padding: EdgeInsets.only(
-            bottom: navigationBarHeight + 32,
+            bottom: navigationBarHeight + 64,
           ),
           child: Column(
             children: [

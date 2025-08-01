@@ -219,6 +219,7 @@ class ApiChat extends ChatAbstract {
         data: {
           'chat_id': chatId,
           'user_id': int.parse(userId),
+          'is_new': true,
           'mode': mode,
           'type': type,
         },
