@@ -122,8 +122,10 @@ class TransactionsView extends GetView<TransactionsController> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  Get.toNamed('/app/transactions/${item.id}');
+                  controller.disabled.value = true;
                   NavigationToNamed('/app/transactions/${item.id}');
+                  Get.toNamed('/app/transactions/${item.id}')!
+                      .then((_) => controller.disabled.value = false);
                 },
                 child: const Text('جزئیات بیشتر'),
               ),

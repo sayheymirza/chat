@@ -13,6 +13,7 @@ class TransactionsController extends GetxController {
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxBool loading = false.obs;
+  RxBool disabled = false.obs;
 
   StreamSubscription<EventModel>? subevents;
 
@@ -35,6 +36,11 @@ class TransactionsController extends GetxController {
   }
 
   void onBack() {
+    if (disabled.value) {
+      disabled.value = false;
+      return;
+    }
+
     if (kIsWasm) {
       if (page.value - 1 == 0) {
         Get.back();

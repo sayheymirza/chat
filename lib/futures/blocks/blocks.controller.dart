@@ -17,6 +17,7 @@ class BlocksController extends GetxController
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxBool loading = false.obs;
+  RxBool disabled = false.obs;
   RxList<dynamic> pagination_history = <dynamic>[].obs;
 
   StreamSubscription<EventModel>? subevents;
@@ -99,6 +100,11 @@ class BlocksController extends GetxController
   }
 
   void onBack() {
+    if (disabled.value) {
+      disabled.value = false;
+      return;
+    }
+
     if (pagination_history.isNotEmpty) {
       var last = pagination_history.removeLast();
 

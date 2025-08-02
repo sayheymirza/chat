@@ -72,6 +72,7 @@ class SearchView extends GetView<SearchViewController> {
                       UserWidget(
                         item: item,
                         onTap: () {
+                          controller.disabled.value = true;
                           Get.toNamed(
                             '/app/profile/${item.id}',
                             arguments: {
@@ -80,6 +81,7 @@ class SearchView extends GetView<SearchViewController> {
                             },
                           )!
                               .then((_) {
+                            controller.disabled.value = false;
                             controller.submit();
                           });
                         },

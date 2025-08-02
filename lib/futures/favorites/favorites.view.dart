@@ -83,6 +83,7 @@ class FavoritesView extends GetView<FavoritesController> {
               UserWidget(
                 item: item,
                 onTap: () {
+                  controller.disabled.value = true;
                   NavigationToNamed('/app/profile/${item.id}');
                   Get.toNamed(
                     '/app/profile/${item.id}',
@@ -91,7 +92,10 @@ class FavoritesView extends GetView<FavoritesController> {
                       'options': true,
                     },
                   )!
-                      .then((_) => controller.submit());
+                      .then((_) {
+                    controller.disabled.value = false;
+                    controller.submit();
+                  });
                 },
               ),
             if (controller.profiles.isNotEmpty)

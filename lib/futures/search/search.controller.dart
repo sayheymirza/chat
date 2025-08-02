@@ -17,6 +17,7 @@ class SearchViewController extends GetxController {
   RxInt page = 1.obs;
   RxBool loading = false.obs;
   RxBool inited = false.obs;
+  RxBool disabled = false.obs;
 
   RxBool filterable = false.obs;
   RxBool backable = false.obs;
@@ -179,6 +180,11 @@ class SearchViewController extends GetxController {
   }
 
   void onBack() {
+    if (disabled.value) {
+      disabled.value = false;
+      return;
+    }
+
     if (kIsWasm) {
       if (filters_history.isEmpty) {
         Get.back();

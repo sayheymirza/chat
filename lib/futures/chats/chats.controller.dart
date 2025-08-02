@@ -14,6 +14,7 @@ class ChatsController extends GetxController {
   RxInt page = 1.obs;
   RxInt limit = 12.obs;
   RxBool loading = false.obs;
+  RxBool disabled = false.obs;
   StreamSubscription<ChatListModel>? stream;
   StreamSubscription<EventModel>? subevents;
 
@@ -48,6 +49,11 @@ class ChatsController extends GetxController {
   }
 
   void onBack() {
+    if (disabled.value) {
+      disabled.value = false;
+      return;
+    }
+
     if (page_history.isNotEmpty) {
       var last = page_history.last;
 
@@ -67,8 +73,12 @@ class ChatsController extends GetxController {
   }
 
   void open({required String id}) {
+    disabled.value = true;
     NavigationToNamed('/app/chat/$id');
-    Get.toNamed('/app/chat/$id')!.then((_) => load());
+    Get.toNamed('/app/chat/$id')!.then((_) {
+      load();
+      disabled.value = false;
+    });
   }
 
   void load({bool statusing = true}) async {
