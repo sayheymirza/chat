@@ -21,6 +21,7 @@ class CallController extends GetxController {
 
   Timer? timer;
   DateTime dateTime = DateTime(200, 1, 1, 0, 0, 0);
+  Timer? heartbeatTimer;
 
   @override
   void onInit() {
@@ -77,6 +78,10 @@ class CallController extends GetxController {
 
     if (timer != null) {
       timer!.cancel();
+    }
+
+    if (heartbeatTimer != null) {
+      heartbeatTimer!.cancel();
     }
   }
 
@@ -139,6 +144,13 @@ class CallController extends GetxController {
     } catch (e) {
       print('[call.controller.dart] camera error: $e');
     }
+
+    heartbeatTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (timer) {
+        Services.call.action(type: CALL_ACTIONS.HEARTBEAT);
+      },
+    );
 
     // update Getx Obx (when room updated)
     profiling.value = !camera.value;
