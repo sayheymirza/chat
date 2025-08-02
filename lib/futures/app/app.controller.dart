@@ -12,6 +12,7 @@ import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
 import 'package:chat/shared/vibration.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:restart_app/restart_app.dart';
 
@@ -200,7 +201,7 @@ class AppController extends GetxController {
   }
 
   void setView(int value) {
-    if (view.value == value) return;
+    if (view.value == value && kIsWeb) return;
 
     viewsHistory.add(view.value);
     view.value = value;

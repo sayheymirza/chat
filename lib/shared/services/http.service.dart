@@ -9,6 +9,7 @@ import 'package:chat/shared/platform/web_file_reader.dart'
     if (dart.library.io) 'package:chat/shared/platform/io_file_reader.dart'
     as platform;
 import 'package:dio/dio.dart' as Dio;
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -153,18 +154,38 @@ class HttpService extends GetxService {
       headers['Authorization'] = 'Bearer $accessToken';
     }
 
-    var bytes = await platform.readFileBytes(file);
+    late Dio.FormData data;
 
     // mime
     var fileMime = lookupMimeType(file.path);
 
-    Dio.FormData data = Dio.FormData.fromMap({
-      "file": Dio.MultipartFile.fromBytes(
-        bytes.toList(),
-        filename: basename(file.path),
-        contentType: MediaType.parse(fileMime ?? 'application/octet-stream'),
-      ),
-    });
+    if (kIsWeb) {
+      var bytes = await platform.readFileBytes(file);
+
+      data = Dio.FormData.fromMap({
+        "file": Dio.MultipartFile.fromBytes(
+          bytes.toList(),
+          filename: basename(file.path),
+          contentType: MediaType.parse(fileMime ?? 'application/octet-stream'),
+        ),
+      });
+    } else {
+      // Create a stream for the file
+      Stream<List<int>> fileStream = file.openRead();
+
+      int fileSize = await file.length();
+
+      // Use Dio to upload the file in streaming mode
+      data = Dio.FormData.fromMap({
+        "file": Dio.MultipartFile(
+          fileStream,
+          fileSize,
+          filename: basename(file.path),
+          // mime type
+          contentType: MediaType.parse(fileMime ?? 'application/octet-stream'),
+        ),
+      });
+    }
 
     var i = ++index;
 
@@ -181,6 +202,8 @@ class HttpService extends GetxService {
       cancelToken: cancelToken,
       onSendProgress: (int sent, int total) {
         var progress = Math.min(((100 * sent) / total).ceil(), 100);
+
+        print('$progress% - $sent/$total');
 
         callback(
           percent: progress,
