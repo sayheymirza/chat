@@ -127,8 +127,8 @@ class CallView extends GetView<CallController> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.white24,
-                        Colors.white54,
+                        Colors.black26,
+                        Colors.black54,
                       ],
                     ),
                   ),
@@ -209,15 +209,16 @@ class CallView extends GetView<CallController> {
             Text(
               label,
               style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: labelColor,
-                  shadows: [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Colors.black45,
-                    )
-                  ]),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: labelColor,
+                shadows: [
+                  BoxShadow(
+                    blurRadius: 4,
+                    color: Colors.black45,
+                  )
+                ],
+              ),
             ),
           ],
         ),
