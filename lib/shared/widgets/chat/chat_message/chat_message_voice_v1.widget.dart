@@ -152,6 +152,7 @@ class _ChatMessageVoiceV1WidgetState extends State<ChatMessageVoiceV1Widget> {
         widget.message.senderId!.isEmpty;
 
     return Container(
+      key: ValueKey("${widget.message.localId}-voice"),
       padding: EdgeInsets.all(8),
       child: Row(
         mainAxisSize: MainAxisSize.min,

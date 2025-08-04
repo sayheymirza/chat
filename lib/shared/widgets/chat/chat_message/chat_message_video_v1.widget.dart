@@ -138,6 +138,7 @@ class _ChatMessageVideoV1WidgetState extends State<ChatMessageVideoV1Widget> {
               borderRadius: BorderRadius.circular(6),
             ),
             child: AspectRatio(
+              key: ValueKey("${widget.message.localId}-video"),
               aspectRatio: controller.controller!.value.aspectRatio,
               child: JkVideoControlPanel(
                 controller.controller!,

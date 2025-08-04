@@ -113,13 +113,16 @@ class _ChatMessageAudioV1WidgetState extends State<ChatMessageAudioV1Widget> {
       action: widget.action,
       message: widget.message,
       child: child(
-        waveforms: widget.message.data['waveform'] ?? widget.message.data['waveforms'] ?? [],
+        waveforms: widget.message.data['waveform'] ??
+            widget.message.data['waveforms'] ??
+            [],
       ),
     );
   }
 
   Widget child({required List<double> waveforms}) {
     return Container(
+      key: ValueKey("${widget.message.localId}-audio"),
       padding: EdgeInsets.all(8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
