@@ -116,7 +116,7 @@ class AuthLoginView extends GetView<AuthLoginController> {
 
   Widget footer() {
     return Container(
-      height: kIsWeb ? 200 : 240,
+      height: kIsWeb ? 200 : 250,
       width: Get.width,
       color: Colors.white,
       padding: EdgeInsets.only(

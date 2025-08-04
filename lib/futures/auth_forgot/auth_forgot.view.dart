@@ -90,7 +90,7 @@ class AuthForgotView extends GetView<AuthForgotController> {
 
   Widget footer() {
     return Container(
-      height: kIsWeb ? 140 : 180,
+      height: kIsWeb ? 140 : 210,
       width: Get.width,
       color: Colors.white,
       padding: EdgeInsets.only(
