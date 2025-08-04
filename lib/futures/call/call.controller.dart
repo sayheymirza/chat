@@ -6,6 +6,7 @@ import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/services.dart';
 import 'package:get/get.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class CallController extends GetxController {
   // livekit
@@ -65,6 +66,8 @@ class CallController extends GetxController {
 
     await askPermissions();
 
+    WakelockPlus.enable();
+
     start();
   }
 
@@ -73,6 +76,8 @@ class CallController extends GetxController {
     super.onClose();
 
     await room.dispose();
+
+    await WakelockPlus.disable();
 
     Services.configs.unset(key: CONSTANTS.CALL_INCALL);
 

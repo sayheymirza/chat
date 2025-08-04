@@ -68,6 +68,7 @@ dependencies:
   js: ^0.7.1
   flutter_poolakey:
     path: ./lib/flavors/cafebazaar/flutter_poolakey
+  wakelock_plus: ^1.3.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
