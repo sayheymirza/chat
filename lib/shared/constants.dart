@@ -17,6 +17,7 @@ class CONSTANTS {
   static String STORAGE_SETTINGS_VIBRATION = "settings:vibration";
 
   static String STORAGE_LIVEKIT_URL = "livekit:url";
+  static String STORAGE_LIVEKIT_HEARTBEAT = "livekit:heartbeat";
 
   static String STORAGE_MAP_TYPE = "map:type";
   static String STORAGE_MAP_URL = "map:url";

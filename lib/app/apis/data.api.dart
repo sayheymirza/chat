@@ -155,6 +155,8 @@ class ApiData extends ApiDataAbstract {
           configs: {
             CONSTANTS.STORAGE_LIVEKIT_URL: result['result']['configs']['call']
                 ['livekit_server'],
+            CONSTANTS.STORAGE_LIVEKIT_HEARTBEAT: result['result']['configs']
+                ['call']['heartbeat'],
             CONSTANTS.STORAGE_MAP_TYPE: result['result']['configs']['map']
                 ['type'],
             CONSTANTS.STORAGE_MAP_URL: result['result']['configs']['map']

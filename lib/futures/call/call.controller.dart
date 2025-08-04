@@ -146,7 +146,13 @@ class CallController extends GetxController {
     }
 
     heartbeatTimer = Timer.periodic(
-      const Duration(seconds: 30),
+      Duration(
+        milliseconds: int.parse(
+          Services.configs
+              .get(key: CONSTANTS.STORAGE_LIVEKIT_HEARTBEAT)
+              .toString(),
+        ),
+      ),
       (timer) {
         Services.call.action(type: CALL_ACTIONS.HEARTBEAT);
       },
