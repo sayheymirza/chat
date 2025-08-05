@@ -1,4 +1,5 @@
 #!/bin/bash
+cp lib/assets/fonts/NotoColorEmoji-Regular.ttf build/web/assets/lib/assets/fonts/NotoColorEmoji-Regular.ttf
 
 # Calculate hash of build/web directory
 HASH=$(find ./build/web -type f -exec md5sum {} \; | sort -k 2 | md5sum | cut -d' ' -f1)
