@@ -8,6 +8,7 @@ import 'package:chat/models/call.model.dart';
 import 'package:chat/models/event.model.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/event.dart';
+import 'package:chat/shared/fonts.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
@@ -29,6 +30,8 @@ class AppController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    loadFontNotoColorEmoji();
 
     Services.notification.join();
 

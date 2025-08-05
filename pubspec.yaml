@@ -84,9 +84,9 @@ flutter:
     - family: YekanBakh
       fonts:
         - asset: lib/assets/fonts/YekanBakhFaNum-Regular.ttf
-    - family: NotoColorEmoji
-      fonts:
-        - asset: lib/assets/fonts/NotoColorEmoji-Regular.ttf
+    # - family: NotoColorEmoji
+    #   fonts:
+    #     - asset: lib/assets/fonts/NotoColorEmoji-Regular.ttf
   assets:
     - lib/assets/images/empty.png
     - lib/assets/images/confetti.png
