@@ -22,7 +22,6 @@ class SearchView extends GetView<SearchViewController> {
     Get.put(SearchViewController());
 
     controller.init(type: type);
-    controller.reset();
 
     return Obx(
       () => PopScope(

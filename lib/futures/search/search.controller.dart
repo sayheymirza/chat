@@ -53,14 +53,14 @@ class SearchViewController extends GetxController {
   void onClose() {
     super.onClose();
 
+    inited.value = false;
+
     subevents!.cancel();
   }
 
   void init({
     required String? type,
   }) {
-    inited.value = false;
-    this.type = type;
     switch (type) {
       case 'newest':
         title.value = 'جدید ترین کاربران';
@@ -96,6 +96,13 @@ class SearchViewController extends GetxController {
         color.value = Get.theme.primaryColor;
         break;
     }
+
+    print('inited: ${inited.value}, type: $type, this.type: ${this.type}');
+
+    if (inited.value == true && type == this.type) return;
+    reset();
+    this.type = type;
+    inited.value = true;
   }
 
   void reset() {
@@ -118,6 +125,7 @@ class SearchViewController extends GetxController {
 
   Future<void> submit() async {
     if (loading.value == true) return;
+    print('submitting .....');
     try {
       loading.value = true;
       var type = this.type ?? 'search';
