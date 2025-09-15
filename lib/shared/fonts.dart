@@ -1,7 +1,11 @@
 import 'package:flutter/services.dart';
 
 void loadFontNotoColorEmoji() async {
-  final fontLoader = FontLoader('NotoColorEmoji')
-    ..addFont(rootBundle.load('lib/assets/fonts/NotoColorEmoji-Regular.ttf'));
-  await fontLoader.load();
+  try {
+    final fontLoader = FontLoader('NotoColorEmoji')
+      ..addFont(rootBundle.load('lib/assets/fonts/NotoColorEmoji-Regular.ttf'));
+    await fontLoader.load();
+  } catch (e) {
+    //
+  }
 }
