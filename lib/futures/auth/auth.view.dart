@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
 import 'package:chat/shared/platform/navigation.dart';
+import 'package:chat/shared/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -48,6 +50,14 @@ class _AuthViewState extends State<AuthView> {
       if (!avatars.contains(randomId)) {
         avatars.add(randomId);
       }
+    }
+  }
+
+  void openLink(String key, {String path = ''}) {
+    var link = Services.configs.get(key: key);
+    print('$key = $link');
+    if (link != null) {
+      Services.launch.launch('$link$path');
     }
   }
 
@@ -154,6 +164,25 @@ class _AuthViewState extends State<AuthView> {
                   NavigationToNamed(link['path']);
                 },
               ),
+            ListTile(
+              dense: true,
+              leading: Icon(Icons.download, color: Colors.green),
+              title: Text(
+                CONSTANTS.FLAVOR == 'web' ? 'دانلود اپلیکیشن' : 'ورود به وب',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                if (CONSTANTS.FLAVOR == 'web') {
+                  openLink(CONSTANTS.STORAGE_LINK_DOWNLOAD);
+                } else {
+                  openLink(CONSTANTS.STORAGE_LINK_WEBSITE);
+                }
+
+                Get.back();
+              },
+            ),
           ],
         ),
       ),
@@ -376,6 +405,29 @@ class _AuthViewState extends State<AuthView> {
                 },
                 child: const Text(
                   "فراموشی رمز عبور",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap(12),
+          Row(
+            children: [
+              const SizedBox(
+                width: 150,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (CONSTANTS.FLAVOR == 'web') {
+                    openLink(CONSTANTS.STORAGE_LINK_DOWNLOAD);
+                  } else {
+                    openLink(CONSTANTS.STORAGE_LINK_WEBSITE);
+                  }
+                },
+                child: Text(
+                  CONSTANTS.FLAVOR == 'web' ? 'دانلود اپلیکیشن' : 'ورود به وب',
                   style: TextStyle(
                     color: Colors.white,
                   ),

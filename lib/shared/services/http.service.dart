@@ -46,6 +46,7 @@ class HttpService extends GetxService {
       'x-app-time': DateTime.now().toIso8601String(),
       'x-app-flavor': CONSTANTS.FLAVOR,
       'x-app-version': package.version,
+      'x-text-app': 'mahasal'
     };
 
     if (auth) {
