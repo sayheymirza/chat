@@ -7,6 +7,7 @@ import 'package:chat/pages.dart';
 import 'package:chat/shared/constants.dart';
 import 'package:chat/shared/event.dart';
 import 'package:chat/shared/navigation_bar_height.dart';
+import 'package:chat/shared/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
@@ -72,6 +73,8 @@ class _AppState extends State<App> {
       navigationBarHeight = val;
     }
 
+    Services.chrome.transparent();
+
     return GetMaterialApp(
       initialRoute: '/',
       debugShowCheckedModeBanner: false,
@@ -86,6 +89,9 @@ class _AppState extends State<App> {
         ),
       ),
       getPages: pages,
+      onGenerateRoute: (_) {
+        Services.chrome.transparent();
+      },
       translations: I18NTranslations(),
       locale: Locale(
         'fa',

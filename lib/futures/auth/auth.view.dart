@@ -65,6 +65,7 @@ class _AuthViewState extends State<AuthView> {
   void initState() {
     super.initState();
     generateAvatars();
+    Services.chrome.transparent();
   }
 
   @override

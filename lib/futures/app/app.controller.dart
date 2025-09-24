@@ -33,6 +33,8 @@ class AppController extends GetxController {
 
     loadFontNotoColorEmoji();
 
+    Services.chrome.transparent();
+
     Services.notification.join();
 
     Services.profile.fetchMyProfile();

@@ -105,7 +105,7 @@ ThemeData themeData = ThemeData(
   popupMenuTheme: const PopupMenuThemeData(
     color: Colors.white,
   ),
-  dialogTheme: const DialogTheme(
+  dialogTheme: const DialogThemeData(
     backgroundColor: Colors.white,
     surfaceTintColor: Colors.white,
     shape: RoundedRectangleBorder(

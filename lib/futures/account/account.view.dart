@@ -171,7 +171,7 @@ class AccountView extends GetView<AccountController> {
                 ),
                 if (kIsWeb &&
                     (Services.configs.get<String>(
-                                key: CONSTANTS.STORAGE_LINK_WEBLOG) ??
+                                key: CONSTANTS.STORAGE_LINK_DOWNLOAD) ??
                             '')
                         .isNotEmpty)
                   item(
@@ -180,8 +180,7 @@ class AccountView extends GetView<AccountController> {
                     color: Colors.blue,
                     onTap: () {
                       controller.openLink(
-                        CONSTANTS.STORAGE_LINK_WEBLOG,
-                        path: '/download',
+                        CONSTANTS.STORAGE_LINK_DOWNLOAD,
                       );
                     },
                   ),
