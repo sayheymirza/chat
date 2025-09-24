@@ -28,11 +28,6 @@ module.exports = {
             console.log(`> Changing application name to ${config['name']}`);
             await execSync(`dart run rename_app:main all="${config['name']}"`);
 
-            console.log(`> Changing application api branch to ${config['branch']}`);
-            process.chdir(path.join(__dirname, '..', '..', 'lib', 'app'));
-            await execSync(`git checkout ${config['branch']}`)
-            process.chdir(__dirname);
-
             console.log(`> Changing application logo`);
             await execSync(`flutter pub run flutter_launcher_icons -f ./scripts/cli/apps/${app}/flutter_launcher_icons.yaml`);
             fs.rmSync(path.join(__dirname, `../../android/app/src/main/res/mipmap-anydpi-v26`), {

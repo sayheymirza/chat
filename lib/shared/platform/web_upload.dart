@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:js';
 import 'dart:html' as html;
 
+// ignore: unused_import
 import 'package:mime/mime.dart' as mime;
 
 import 'package:file_picker/file_picker.dart';

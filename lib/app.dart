@@ -91,6 +91,7 @@ class _AppState extends State<App> {
       getPages: pages,
       onGenerateRoute: (_) {
         Services.chrome.transparent();
+        return null;
       },
       translations: I18NTranslations(),
       locale: Locale(

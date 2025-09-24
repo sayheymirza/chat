@@ -125,7 +125,7 @@
 
     <div class="loading-footer">
       <div class="loading-bar"></div>
-      <span>در حال بارگذاری اپ</span>
+      <span id="message"></span>
     </div>
   </div>
   <script src="flutter_bootstrap.js" async></script>
@@ -134,6 +134,26 @@
     const BUILD_HASH = null;  // This will be replaced by postbuild script
     let popedState = false;
     let paymentState;
+
+    const messages = [
+      'در حال بارگذاری اپ',
+      'در حال دانلود اپلیکیشن',
+      'لطفا کمی صبر کنید',
+      'این فرایند کمی زمان بر است',
+      'یک دقیقه تا دانلود اپلیکیشن',
+    ];
+
+    function changeMessage(index = 0) {
+      document.getElementById('message').innerText = messages[index] ?? 'دانلود تقریبا تمام شد';
+
+      return setTimeout(() => {
+        if(document.getElementById('loading').classList.contains('hidden')) {
+          return;
+        }
+
+        changeMessage(index + 1 > messages.length ? 0 : index + 1)
+      }, 1000);
+    }
 
     function GetPaymentState() {
       const state = paymentState;
@@ -178,6 +198,8 @@
         window.sendBackButtonEventToFlutter(window.location.pathname + window.location.search);
       }
     });
+    
+    changeMessage();
 
     window.addEventListener('load', function () {
       // Check if build hash has changed
@@ -203,8 +225,7 @@
 
       // Hide loading after Flutter app is initialized
       window.addEventListener('flutter-first-frame', function () {
-        var loading = document.getElementById('loading');
-        loading.classList.add('hidden');
+        document.getElementById('loading').classList.add('hidden');
       });
     });
   </script>
