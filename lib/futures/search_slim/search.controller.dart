@@ -16,6 +16,7 @@ class SearchViewSlimController extends GetxController {
   RxInt lastPage = 0.obs;
   RxInt page = 1.obs;
   RxBool loading = false.obs;
+  RxBool disabled = false.obs;
 
   RxBool filterable = false.obs;
   RxBool backable = true.obs;
@@ -142,6 +143,11 @@ class SearchViewSlimController extends GetxController {
   }
 
   void popFilters() {
+    if (disabled.value) {
+      disabled.value = false;
+      return;
+    }
+
     if (filters_history.isNotEmpty) {
       var last = filters_history.last;
 

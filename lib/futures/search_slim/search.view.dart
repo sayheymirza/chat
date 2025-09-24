@@ -56,13 +56,17 @@ class SearchSlimView extends GetView<SearchViewSlimController> {
                       UserWidget(
                         item: item,
                         onTap: () {
+                          controller.disabled.value = true;
                           Get.toNamed(
                             '/profile/${item.id}',
                             arguments: {
                               'id': item.id,
                               'options': true,
                             },
-                          );
+                          )!
+                              .then((_) {
+                            controller.disabled.value = false;
+                          });
                         },
                       ),
                     if (controller.profiles.isNotEmpty)

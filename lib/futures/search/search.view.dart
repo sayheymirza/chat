@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat/futures/search/search.controller.dart';
 import 'package:chat/shared/widgets/empty.widget.dart';
 import 'package:chat/shared/widgets/gradient_app_bar.widget.dart';
@@ -72,6 +74,7 @@ class SearchView extends GetView<SearchViewController> {
                         item: item,
                         onTap: () {
                           controller.disabled.value = true;
+
                           Get.toNamed(
                             '/app/profile/${item.id}',
                             arguments: {
@@ -80,7 +83,9 @@ class SearchView extends GetView<SearchViewController> {
                             },
                           )!
                               .then((_) {
-                            controller.disabled.value = false;
+                            Timer(Duration(seconds: 1), () {
+                              controller.disabled.value = false;
+                            });
                             controller.submit();
                           });
                         },

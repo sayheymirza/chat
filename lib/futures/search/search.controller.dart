@@ -124,7 +124,7 @@ class SearchViewController extends GetxController {
   }
 
   Future<void> submit() async {
-    if (loading.value == true) return;
+    if (loading.value == true || disabled.value == true) return;
     print('submitting .....');
     try {
       loading.value = true;
@@ -188,11 +188,6 @@ class SearchViewController extends GetxController {
   }
 
   void onBack() {
-    if (disabled.value) {
-      disabled.value = false;
-      return;
-    }
-
     if (kIsWasm) {
       if (filters_history.isEmpty) {
         Get.back();
@@ -209,6 +204,11 @@ class SearchViewController extends GetxController {
   }
 
   void popFilters() {
+    if (disabled.value) {
+      disabled.value = false;
+      return;
+    }
+
     if (filters_history.isNotEmpty) {
       var last = filters_history.last;
 
