@@ -205,6 +205,8 @@ class ApiData extends ApiDataAbstract {
                 ['menu_web_link'],
             CONSTANTS.STORAGE_LINK_WEBLOG: result['result']['configs']
                 ['menu_weblog_link'],
+            CONSTANTS.STORAGE_LINK_DOWNLOAD: result['result']['configs']
+                ['menu_download_link'],
             CONSTANTS.STORAGE_TEXT_EARNING_INCOME: result['result']['configs']
                 ['earning_income_text'],
             CONSTANTS.STORAGE_LATEST_VERSION: result['result']['configs']
