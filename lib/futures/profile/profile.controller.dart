@@ -6,6 +6,7 @@ import 'package:chat/models/profile.model.dart';
 import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,6 +30,10 @@ class ProfileController extends GetxController {
 
   Future<void> load() async {
     var args = Get.arguments;
+
+    if (kIsWeb) {
+      NavigationToNamed('/profile/$id');
+    }
 
     showOptions.value = args != null && args['options'] != false;
 

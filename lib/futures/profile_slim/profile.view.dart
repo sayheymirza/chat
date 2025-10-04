@@ -436,7 +436,7 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
             ),
           ),
           Positioned(
-            top: Get.mediaQuery.padding.top,
+            top: kIsWeb ? 10 : Get.mediaQuery.padding.top,
             left: 0,
             right: 0,
             child: appBar(

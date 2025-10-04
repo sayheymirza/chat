@@ -1,24 +1,57 @@
 import 'dart:async';
 
 import 'package:chat/app/apis/api.dart';
+import 'package:chat/models/event.model.dart';
 import 'package:chat/models/profile.model.dart';
+import 'package:chat/shared/event.dart';
+import 'package:chat/shared/platform/navigation.dart';
 import 'package:chat/shared/services.dart';
 import 'package:chat/shared/snackbar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class ProfileSlimController extends GetxController {
   RxBool loading = true.obs;
   Rx<ProfileModel> profile = ProfileModel().obs;
 
+  StreamSubscription<EventModel>? subevents;
+
   @override
   void onInit() {
     super.onInit();
 
     load();
+
+    subevents = event.on<EventModel>().listen((data) async {
+      if (data.event == EVENTS.NAVIGATION_BACK) {
+        onBack();
+      }
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+
+    subevents!.cancel();
+  }
+
+  void onBack() {
+    if (kIsWeb) {
+      print('on backkkk');
+
+      Get.back();
+
+      NavigationBack();
+    }
   }
 
   Future<void> load() async {
     var id = Get.parameters['id']!;
+
+    if (kIsWeb) {
+      NavigationToNamed('/profile/$id');
+    }
 
     if (id == 'me') {
       var result = await ApiService.user.me();
