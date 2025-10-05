@@ -207,6 +207,7 @@ class ProfileController extends GetxController {
         if (Get.previousRoute == path) {
           Get.back();
         } else {
+          NavigationToNamed(path);
           Get.toNamed(path);
         }
       }
@@ -222,7 +223,10 @@ class ProfileController extends GetxController {
       arguments: {
         'id': id,
       },
-    );
+    )!
+        .then((_) {
+      print('-----');
+    });
   }
 
   void report({

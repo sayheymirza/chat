@@ -46,6 +46,12 @@ class ProfileSlimController extends GetxController {
     }
   }
 
+  void unloading() {
+    Timer(Duration(milliseconds: 100), () {
+      loading.value = false;
+    });
+  }
+
   Future<void> load() async {
     var id = Get.parameters['id']!;
 
@@ -58,7 +64,7 @@ class ProfileSlimController extends GetxController {
 
       if (result != null) {
         profile.value = result;
-        loading.value = false;
+        unloading();
       } else {
         showSnackbar(message: 'خطا در دریافت پروفایل رخ داد');
       }
@@ -76,7 +82,7 @@ class ProfileSlimController extends GetxController {
 
       if (result != null) {
         profile.value = result;
-        loading.value = false;
+        unloading();
       }
     } catch (e) {
       print(e);

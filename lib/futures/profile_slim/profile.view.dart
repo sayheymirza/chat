@@ -20,13 +20,14 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
       backgroundColor: Colors.grey.shade100,
       body: Obx(
         () {
+          var data = controller.profile.value;
+
           if (controller.loading.value) {
             return Center(
               child: CircularProgressIndicator(),
             );
           }
 
-          var data = controller.profile.value;
           return Stack(
             children: [
               Container(
@@ -45,25 +46,25 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                 ),
               ),
               RefreshIndicator(
-                onRefresh: controller.load,
+                onRefresh: () => controller.load(),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       header(
-                        fullname: data.fullname!,
-                        verified: data.verified!,
-                        age: data.age!.toString(),
-                        id: data.id!,
-                        last: data.last!,
-                        avatar: data.avatar!,
+                        fullname: data.fullname ?? '',
+                        verified: data.verified ?? false,
+                        age: data.age?.toString() ?? '',
+                        id: data.id ?? '',
+                        last: data.last ?? '',
+                        avatar: data.avatar ?? '',
                       ),
-                      buttons(id: data.id!),
+                      buttons(id: data.id ?? ''),
                       // if (controller.showOptions.value) const Divider(),
                       row(
                         children: [
                           item(
                             title: "شهر",
-                            value: data.city!,
+                            value: data.city ?? '',
                             icon: const Icon(
                               Icons.location_on,
                               color: Colors.blue,
@@ -72,7 +73,7 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                           ),
                           item(
                             title: 'marriage_type_title'.tr,
-                            value: data.marriageType!,
+                            value: data.marriageType ?? '',
                             icon: const Icon(
                               Icons.favorite,
                               color: Colors.pink,
@@ -286,36 +287,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
                           ),
                         ],
                       ),
-                      if (Get.parameters['id'] == 'me' &&
-                          controller.profile.value.reports != 0)
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
-                          ),
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 20,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade100,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline_rounded,
-                                color: Colors.red,
-                              ),
-                              const Gap(10),
-                              Text(
-                                'شما ${controller.profile.value.reports ?? 0} تخلف گزارش شده دارید.',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       const SizedBox(
                         height: 100,
                       ),
@@ -388,14 +359,6 @@ class ProfileSlimView extends GetView<ProfileSlimController> {
               icon: const Icon(Icons.arrow_back),
             ),
           ),
-          //   if action exists Position to bottom and center
-          if (action != null)
-            Positioned(
-              bottom: Get.mediaQuery.padding.bottom + 20,
-              left: 20,
-              right: 20,
-              child: action,
-            ),
         ],
       ),
     );
