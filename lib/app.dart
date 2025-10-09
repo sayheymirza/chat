@@ -36,7 +36,7 @@ class _AppState extends State<App> {
       if (data.event == EVENTS.NAVIGATION_BACK) {
         String currentPath = data.value;
 
-        print('$currentPath, ${Get.currentRoute}');
+        print('history: $currentPath, flutter: ${Get.currentRoute}');
 
         if (dialoging) {
           dialoging = false;
